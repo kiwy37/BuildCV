@@ -1,0 +1,6 @@
+@BuildCV.Server_HostAddress = http://localhost:5042
+
+GET {{BuildCV.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

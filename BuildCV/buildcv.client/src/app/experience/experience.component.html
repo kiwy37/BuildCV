@@ -1,0 +1,142 @@
+<div class="section-container">
+  <div class="section-header">
+    <div class="icon-wrapper">
+      <i class="icon-briefcase"></i>
+    </div>
+    <div>
+      <h2>Work Experience</h2>
+      <p>Add your professional work history</p>
+    </div>
+  </div>
+
+  <div class="ats-tip">
+    <i class="icon-lightbulb"></i>
+    <div>
+      <strong>ATS Tip:</strong> Use action verbs (e.g., "Led", "Developed", "Managed") 
+      and include measurable achievements with specific numbers and percentages.
+    </div>
+  </div>
+
+  <form [formGroup]="experienceForm">
+    <div formArrayName="experiences">
+      <div *ngFor="let experience of experiences.controls; let i = index" class="experience-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="icon-briefcase"></i>
+            <h3>Experience {{ i + 1 }}</h3>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="btn-icon" (click)="moveExperienceUp(i)" 
+                    [disabled]="i === 0" title="Move up">
+              <i class="icon-arrow-up"></i>
+            </button>
+            <button type="button" class="btn-icon" (click)="moveExperienceDown(i)" 
+                    [disabled]="i === experiences.length - 1" title="Move down">
+              <i class="icon-arrow-down"></i>
+            </button>
+            <button type="button" class="btn-icon btn-danger" (click)="removeExperience(i)" 
+                    *ngIf="experiences.length > 1" title="Remove">
+              <i class="icon-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div [formGroupName]="i" class="form-grid">
+          <div class="form-group">
+            <label [for]="'jobTitle' + i">
+              Job Title <span class="required">*</span>
+            </label>
+            <input 
+              type="text" 
+              [id]="'jobTitle' + i" 
+              formControlName="jobTitle"
+              placeholder="Software Engineer"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label [for]="'company' + i">
+              Company <span class="required">*</span>
+            </label>
+            <input 
+              type="text" 
+              [id]="'company' + i" 
+              formControlName="company"
+              placeholder="Tech Company Inc."
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label [for]="'location' + i">Location</label>
+            <input 
+              type="text" 
+              [id]="'location' + i" 
+              formControlName="location"
+              placeholder="San Francisco, CA"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label [for]="'startDate' + i">
+              Start Date <span class="required">*</span>
+            </label>
+            <input 
+              type="month" 
+              [id]="'startDate' + i" 
+              formControlName="startDate"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label [for]="'endDate' + i">End Date</label>
+            <input 
+              type="month" 
+              [id]="'endDate' + i" 
+              formControlName="endDate"
+              class="form-input"
+              [disabled]="experience.get('isCurrent')?.value">
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                formControlName="isCurrent"
+                (change)="onCurrentJobChange(i)">
+              <span>I currently work here</span>
+            </label>
+          </div>
+
+          <!-- Responsibilities -->
+          <div class="form-group full-width">
+            <label>
+              Key Responsibilities & Achievements
+            </label>
+            <div formArrayName="responsibilities" class="responsibilities-list">
+              <div *ngFor="let resp of getResponsibilities(i).controls; let j = index" 
+                   class="responsibility-item">
+                <textarea 
+                  [formControlName]="j"
+                  placeholder="• Developed and maintained web applications using Angular and .NET"
+                  class="form-textarea"
+                  rows="2"></textarea>
+                <button type="button" class="btn-icon btn-danger" 
+                        (click)="removeResponsibility(i, j)"
+                        *ngIf="getResponsibilities(i).length > 1">
+                  <i class="icon-x"></i>
+                </button>
+              </div>
+              <button type="button" class="btn-secondary" (click)="addResponsibility(i)">
+                <i class="icon-plus"></i> Add Responsibility
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <button type="button" class="btn-add-more" (click)="addExperience()">
+    <i class="icon-plus"></i> Add Another Experience
+  </button>
+</div>

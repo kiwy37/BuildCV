@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BuildCV.Server.Models;
+using BuildCV.Server.Services;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
@@ -58,7 +60,7 @@ namespace BuildCV.Server.Controllers
         }
 
         [HttpPost("validate")]
-        public ActionResult<ValidationResult> ValidateCV([FromBody] CVData cvData)
+        public ActionResult<System.ComponentModel.DataAnnotations.ValidationResult> ValidateCV([FromBody] CVData cvData)
         {
             try
             {

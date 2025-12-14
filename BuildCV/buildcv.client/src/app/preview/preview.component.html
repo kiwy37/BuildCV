@@ -1,0 +1,129 @@
+<div class="section-container">
+  <div class="section-header">
+    <div class="icon-wrapper">
+      <i class="icon-eye"></i>
+    </div>
+    <div>
+      <h2>Preview & Export</h2>
+      <p>Review your CV and download in your preferred format</p>
+    </div>
+  </div>
+
+  <!-- Validation Results -->
+  <div class="validation-card" *ngIf="validationResult">
+    <div class="validation-header" [ngClass]="{'success': validationResult.isValid, 'warning': !validationResult.isValid}">
+      <i [class]="validationResult.isValid ? 'icon-check-circle' : 'icon-alert-circle'"></i>
+      <h3>{{ validationResult.isValid ? 'CV is Ready!' : 'Action Required' }}</h3>
+    </div>
+
+    <div class="validation-content" *ngIf="validationResult.errors.length > 0">
+      <h4>Errors:</h4>
+      <ul class="validation-list error-list">
+        <li *ngFor="let error of validationResult.errors">
+          <i class="icon-x-circle"></i>
+          {{ error }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="validation-content" *ngIf="validationResult.warnings.length > 0">
+      <h4>Suggestions:</h4>
+      <ul class="validation-list warning-list">
+        <li *ngFor="let warning of validationResult.warnings">
+          <i class="icon-info"></i>
+          {{ warning }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Template Selection -->
+  <div class="template-selection-card">
+    <h3>Choose Template</h3>
+    <div class="templates-grid">
+      <div 
+        *ngFor="let template of templates" 
+        class="template-card"
+        [ngClass]="{'selected': selectedTemplateId === template.id}"
+        (click)="selectTemplate(template.id)">
+        <div class="template-preview">
+          <img [src]="template.previewImage" [alt]="template.name">
+          <div class="template-overlay" *ngIf="selectedTemplateId === template.id">
+            <i class="icon-check"></i>
+          </div>
+        </div>
+        <div class="template-info">
+          <h4>{{ template.name }}</h4>
+          <p>{{ template.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CV Preview -->
+  <div class="preview-card">
+    <div class="preview-header">
+      <h3>Live Preview</h3>
+      <div class="preview-actions">
+        <button class="btn-icon" (click)="generatePreview()" title="Refresh">
+          <i class="icon-refresh"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="preview-container" *ngIf="!isLoading">
+      <div class="cv-preview" [innerHTML]="previewHtml"></div>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Generating preview...</p>
+    </div>
+  </div>
+
+  <!-- Export Options -->
+  <div class="export-card">
+    <h3>Download Your CV</h3>
+    <div class="export-buttons">
+      <button class="btn-export btn-primary" (click)="downloadPDF()" [disabled]="isLoading || !validationResult?.isValid">
+        <i class="icon-file-pdf"></i>
+        <div>
+          <strong>Download PDF</strong>
+          <span>Recommended for applications</span>
+        </div>
+      </button>
+      
+      <button class="btn-export btn-secondary" (click)="downloadWord()" [disabled]="isLoading">
+        <i class="icon-file-word"></i>
+        <div>
+          <strong>Download Word</strong>
+          <span>Editable format</span>
+        </div>
+      </button>
+    </div>
+
+    <div class="export-note">
+      <i class="icon-info"></i>
+      <p>Your CV is optimized for Applicant Tracking Systems (ATS) to maximize your chances of getting noticed.</p>
+    </div>
+  </div>
+
+  <!-- Quick Edit Buttons -->
+  <div class="quick-edit-card">
+    <h4>Need to make changes?</h4>
+    <div class="quick-edit-buttons">
+      <button class="btn-quick-edit" (click)="goToStep(1)">
+        <i class="icon-user"></i> Edit Personal Info
+      </button>
+      <button class="btn-quick-edit" (click)="goToStep(2)">
+        <i class="icon-briefcase"></i> Edit Experience
+      </button>
+      <button class="btn-quick-edit" (click)="goToStep(3)">
+        <i class="icon-graduation-cap"></i> Edit Education
+      </button>
+      <button class="btn-quick-edit" (click)="goToStep(4)">
+        <i class="icon-code"></i> Edit Skills
+      </button>
+    </div>
+  </div>
+</div>

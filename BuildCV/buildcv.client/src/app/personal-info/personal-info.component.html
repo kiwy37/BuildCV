@@ -1,0 +1,125 @@
+<div class="section-container">
+  <div class="section-header">
+    <div class="icon-wrapper">
+      <i class="icon-user"></i>
+    </div>
+    <div>
+      <h2>Personal Information</h2>
+      <p>Let's start with your basic information</p>
+    </div>
+  </div>
+
+  <!-- Contact Details Card -->
+  <div class="form-card">
+    <div class="card-header">
+      <i class="icon-id-card"></i>
+      <h3>Contact Details</h3>
+    </div>
+    
+    <form [formGroup]="personalInfoForm" class="form-grid">
+      <div class="form-group full-width">
+        <label for="fullName">
+          Full Name <span class="required">*</span>
+        </label>
+        <input 
+          type="text" 
+          id="fullName" 
+          formControlName="fullName"
+          placeholder="John Doe"
+          class="form-input">
+        <div class="error-message" *ngIf="personalInfoForm.get('fullName')?.invalid && personalInfoForm.get('fullName')?.touched">
+          Full name is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">
+          Email Address <span class="required">*</span>
+        </label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email"
+          placeholder="john.doe@email.com"
+          class="form-input">
+        <div class="error-message" *ngIf="personalInfoForm.get('email')?.invalid && personalInfoForm.get('email')?.touched">
+          Valid email is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input 
+          type="tel" 
+          id="phone" 
+          formControlName="phone"
+          placeholder="+1 (555) 123-4567"
+          class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input 
+          type="text" 
+          id="location" 
+          formControlName="location"
+          placeholder="New York, NY"
+          class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label for="linkedIn">LinkedIn Profile</label>
+        <input 
+          type="url" 
+          id="linkedIn" 
+          formControlName="linkedIn"
+          placeholder="linkedin.com/in/johndoe"
+          class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label for="website">Personal Website</label>
+        <input 
+          type="url" 
+          id="website" 
+          formControlName="website"
+          placeholder="www.johndoe.com"
+          class="form-input">
+      </div>
+    </form>
+  </div>
+
+  <!-- Professional Summary Card -->
+  <div class="form-card">
+    <div class="card-header">
+      <i class="icon-file-text"></i>
+      <h3>Professional Summary</h3>
+      <button class="btn-toggle" (click)="toggleSummary()">
+        {{ showSummary ? 'Hide' : 'Add Summary' }}
+      </button>
+    </div>
+
+    <div class="ats-tip">
+      <i class="icon-lightbulb"></i>
+      <div>
+        <strong>ATS Tip:</strong> Include relevant keywords from the job description 
+        and quantify your achievements (e.g., "5+ years experience", "increased sales by 25%").
+      </div>
+    </div>
+
+    <form [formGroup]="professionalSummaryForm" *ngIf="showSummary">
+      <div class="form-group">
+        <label for="professionalSummary">Professional Summary</label>
+        <textarea 
+          id="professionalSummary" 
+          formControlName="professionalSummary"
+          rows="6"
+          placeholder="Write a brief summary highlighting your professional experience, key skills, and career objectives..."
+          class="form-textarea"></textarea>
+        <div class="character-count">
+          {{ getCharacterCount() }} / 500 characters
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

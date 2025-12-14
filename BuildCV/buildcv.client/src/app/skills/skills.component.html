@@ -1,0 +1,85 @@
+<div class="section-container">
+  <div class="section-header">
+    <div class="icon-wrapper">
+      <i class="icon-code"></i>
+    </div>
+    <div>
+      <h2>Skills</h2>
+      <p>Add your technical and soft skills</p>
+    </div>
+  </div>
+
+  <div class="ats-tip">
+    <i class="icon-lightbulb"></i>
+    <div>
+      <strong>ATS Tip:</strong> Include both technical and soft skills relevant to the job. 
+      Use exact keywords from the job description to improve your ATS score.
+    </div>
+  </div>
+
+  <div class="skills-input-card">
+    <div class="input-wrapper">
+      <input 
+        type="text" 
+        [(ngModel)]="currentSkill"
+        (input)="onSkillInput($event)"
+        (keypress)="onKeyPress($event)"
+        placeholder="Type a skill (e.g., JavaScript, Project Management)"
+        class="skill-input">
+      <button class="btn-add-skill" (click)="addSkill()" [disabled]="!currentSkill.trim()">
+        <i class="icon-plus"></i> Add
+      </button>
+    </div>
+
+    <!-- Suggestions Dropdown -->
+    <div class="suggestions-dropdown" *ngIf="filteredSuggestions.length > 0">
+      <div 
+        *ngFor="let suggestion of filteredSuggestions" 
+        class="suggestion-item"
+        (click)="selectSuggestion(suggestion)">
+        {{ suggestion }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Skills Display -->
+  <div class="skills-display" *ngIf="skills.length > 0">
+    <div class="skills-grid">
+      <div *ngFor="let skill of skills; let i = index" class="skill-chip">
+        <span class="skill-name">{{ skill }}</span>
+        <div class="skill-actions">
+          <button class="btn-icon-small" (click)="moveSkillUp(i)" [disabled]="i === 0" title="Move up">
+            <i class="icon-chevron-up"></i>
+          </button>
+          <button class="btn-icon-small" (click)="moveSkillDown(i)" 
+                  [disabled]="i === skills.length - 1" title="Move down">
+            <i class="icon-chevron-down"></i>
+          </button>
+          <button class="btn-icon-small btn-danger" (click)="removeSkill(i)" title="Remove">
+            <i class="icon-x"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="skills.length === 0">
+    <i class="icon-inbox"></i>
+    <p>No skills added yet</p>
+    <p class="empty-state-subtitle">Start typing to add your skills</p>
+  </div>
+
+  <!-- Popular Skills Suggestions -->
+  <div class="popular-skills">
+    <h4>Popular Skills</h4>
+    <div class="popular-skills-grid">
+      <button 
+        *ngFor="let skill of skillSuggestions.slice(0, 12)" 
+        class="popular-skill-btn"
+        (click)="addSkill(skill)"
+        [disabled]="skills.includes(skill)">
+        <i class="icon-plus-circle"></i> {{ skill }}
+      </button>
+    </div>
+  </div>
+</div>

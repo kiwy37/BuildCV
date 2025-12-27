@@ -1,1 +1,142 @@
-<p>additional works!</p>
+<div class="section-container">
+  <div class="section-header">
+    <h2>
+      <i class="icon-trophy"></i>
+      Additional Information
+    </h2>
+  </div>
+
+  <!-- Certifications Section -->
+  <div class="form-card">
+    <div class="card-header">
+      <h3>
+        <i class="icon-trophy"></i>
+        Certifications
+      </h3>
+    </div>
+
+    <form [formGroup]="certificationsForm">
+      <div formArrayName="certifications">
+        <div *ngFor="let cert of certifications.controls; let i = index" class="education-card" style="margin-bottom: 1rem;">
+          <div class="card-header" style="border-bottom: 1px solid var(--border-color); margin-bottom: 1rem;">
+            <div class="card-title" style="font-size: 1rem;">
+              Certification {{ i + 1 }}
+            </div>
+            <button type="button" class="btn-icon btn-danger" (click)="removeCertification(i)" 
+                    *ngIf="certifications.length > 0">
+              <i class="icon-trash"></i>
+            </button>
+          </div>
+
+          <div [formGroupName]="i" class="form-grid">
+            <div class="form-group">
+              <label [for]="'certName' + i">
+                Certification Name <span class="required">*</span>
+              </label>
+              <input 
+                type="text" 
+                [id]="'certName' + i" 
+                formControlName="name"
+                placeholder="AWS Certified Solutions Architect"
+                class="form-input"
+                [class.ng-invalid]="cert.get('name')?.invalid && cert.get('name')?.touched"
+                [class.ng-touched]="cert.get('name')?.touched">
+              <div class="error-message" *ngIf="cert.get('name')?.invalid && cert.get('name')?.touched">
+                <i class="icon-alert-circle"></i> Certification name is required
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label [for]="'issuer' + i">
+                Issuing Organization <span class="required">*</span>
+              </label>
+              <input 
+                type="text" 
+                [id]="'issuer' + i" 
+                formControlName="issuer"
+                placeholder="Amazon Web Services"
+                class="form-input"
+                [class.ng-invalid]="cert.get('issuer')?.invalid && cert.get('issuer')?.touched"
+                [class.ng-touched]="cert.get('issuer')?.touched">
+              <div class="error-message" *ngIf="cert.get('issuer')?.invalid && cert.get('issuer')?.touched">
+                <i class="icon-alert-circle"></i> Issuer is required
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label [for]="'date' + i">
+                <i class="icon-calendar"></i> Date Obtained
+              </label>
+              <input 
+                type="month" 
+                [id]="'date' + i" 
+                formControlName="date"
+                class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label [for]="'credentialId' + i">Credential ID</label>
+              <input 
+                type="text" 
+                [id]="'credentialId' + i" 
+                formControlName="credentialId"
+                placeholder="ABC-123-XYZ"
+                class="form-input">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <button type="button" class="btn-secondary" (click)="addCertification()" style="width: 100%; margin-top: 1rem;">
+      <i class="icon-plus"></i> Add Certification
+    </button>
+  </div>
+
+  <!-- Languages Section -->
+  <div class="form-card">
+    <div class="card-header">
+      <h3>Languages</h3>
+    </div>
+
+    <div class="skills-input-card">
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          [(ngModel)]="currentLanguage"
+          (keypress)="onLanguageKeyPress($event)"
+          placeholder="Enter a language (e.g., English - Native)"
+          class="skill-input">
+        <button class="btn-add-skill" (click)="addLanguage()" [disabled]="!currentLanguage.trim()">
+          <i class="icon-plus"></i> Add
+        </button>
+      </div>
+    </div>
+
+    <!-- Languages Display -->
+    <div class="skills-display" *ngIf="languages.length > 0" style="margin-top: 1.5rem;">
+      <div class="skills-grid">
+        <div *ngFor="let language of languages; let i = index" class="skill-chip">
+          <span class="skill-name">{{ language }}</span>
+          <button class="btn-icon-small btn-danger" (click)="removeLanguage(i)" title="Remove">
+            <i class="icon-x"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="languages.length === 0" style="padding: 2rem 1rem;">
+      <i class="icon-inbox"></i>
+      <p>No languages added yet</p>
+      <p class="empty-state-subtitle">Add languages you speak</p>
+    </div>
+
+    <div class="ats-tip" style="margin-top: 1.5rem;">
+      <i class="icon-lightbulb"></i>
+      <div>
+        <strong>Tip:</strong> Include your proficiency level (Native, Fluent, Professional, Conversational).
+        Example: "English - Native", "Spanish - Professional"
+      </div>
+    </div>
+  </div>
+</div>

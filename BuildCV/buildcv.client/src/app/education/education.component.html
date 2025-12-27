@@ -1,1 +1,156 @@
-<p>education works!</p>
+<div class="section-container">
+  <div class="section-header">
+    <h2>Education</h2>
+    <p>Add your academic background</p>
+  </div>
+
+  <div class="ats-tip">
+    <i class="icon-lightbulb"></i>
+    <div>
+      <strong>ATS Tip:</strong> List your education in reverse chronological order. 
+      Include relevant coursework, honors, and achievements that align with the job requirements.
+    </div>
+  </div>
+
+  <form [formGroup]="educationForm">
+    <div formArrayName="education">
+      <div *ngFor="let edu of education.controls; let i = index" class="education-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="icon-graduation-cap"></i>
+            <h3>Education {{ i + 1 }}</h3>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="btn-icon" (click)="moveEducationUp(i)" 
+                    [disabled]="i === 0" title="Move up">
+              <i class="icon-arrow-up"></i>
+            </button>
+            <button type="button" class="btn-icon" (click)="moveEducationDown(i)" 
+                    [disabled]="i === education.length - 1" title="Move down">
+              <i class="icon-arrow-down"></i>
+            </button>
+            <button type="button" class="btn-icon btn-danger" (click)="removeEducation(i)" 
+                    *ngIf="education.length > 1" title="Remove">
+              <i class="icon-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div [formGroupName]="i" class="form-grid">
+          <div class="form-group full-width">
+            <label [for]="'degree' + i">
+              Degree / Certificate <span class="required">*</span>
+            </label>
+            <input 
+              type="text" 
+              [id]="'degree' + i" 
+              formControlName="degree"
+              placeholder="Bachelor of Science in Computer Science"
+              class="form-input"
+              [class.ng-invalid]="edu.get('degree')?.invalid && edu.get('degree')?.touched"
+              [class.ng-touched]="edu.get('degree')?.touched">
+            <div class="error-message" *ngIf="edu.get('degree')?.invalid && edu.get('degree')?.touched">
+              <i class="icon-alert-circle"></i> Degree is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label [for]="'institution' + i">
+              Institution <span class="required">*</span>
+            </label>
+            <input 
+              type="text" 
+              [id]="'institution' + i" 
+              formControlName="institution"
+              placeholder="University of Technology"
+              class="form-input"
+              [class.ng-invalid]="edu.get('institution')?.invalid && edu.get('institution')?.touched"
+              [class.ng-touched]="edu.get('institution')?.touched">
+            <div class="error-message" *ngIf="edu.get('institution')?.invalid && edu.get('institution')?.touched">
+              <i class="icon-alert-circle"></i> Institution is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label [for]="'location' + i">Location</label>
+            <input 
+              type="text" 
+              [id]="'location' + i" 
+              formControlName="location"
+              placeholder="Boston, MA"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label [for]="'startDate' + i">
+              <i class="icon-calendar"></i> Start Date <span class="required">*</span>
+            </label>
+            <input 
+              type="month" 
+              [id]="'startDate' + i" 
+              formControlName="startDate"
+              class="form-input"
+              [class.ng-invalid]="edu.get('startDate')?.invalid && edu.get('startDate')?.touched"
+              [class.ng-touched]="edu.get('startDate')?.touched">
+            <div class="error-message" *ngIf="edu.get('startDate')?.invalid && edu.get('startDate')?.touched">
+              <i class="icon-alert-circle"></i> Start date is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label [for]="'endDate' + i">
+              <i class="icon-calendar"></i> End Date <span class="required">*</span>
+            </label>
+            <input 
+              type="month" 
+              [id]="'endDate' + i" 
+              formControlName="endDate"
+              class="form-input"
+              [class.ng-invalid]="edu.get('endDate')?.invalid && edu.get('endDate')?.touched"
+              [class.ng-touched]="edu.get('endDate')?.touched">
+            <div class="error-message" *ngIf="edu.get('endDate')?.invalid && edu.get('endDate')?.touched">
+              <i class="icon-alert-circle"></i> End date is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label [for]="'gpa' + i">GPA (Optional)</label>
+            <input 
+              type="text" 
+              [id]="'gpa' + i" 
+              formControlName="gpa"
+              placeholder="3.8/4.0"
+              class="form-input">
+          </div>
+
+          <!-- Achievements -->
+          <div class="form-group full-width">
+            <label>Achievements & Honors</label>
+            <div formArrayName="achievements" class="responsibilities-list">
+              <div *ngFor="let achievement of getAchievements(i).controls; let j = index" 
+                   class="responsibility-item">
+                <textarea 
+                  [formControlName]="j"
+                  placeholder="• Dean's List, Summa Cum Laude, Relevant Coursework, etc."
+                  class="form-textarea"
+                  rows="2"></textarea>
+                <button type="button" class="btn-icon btn-danger" 
+                        (click)="removeAchievement(i, j)"
+                        *ngIf="getAchievements(i).length > 1">
+                  <i class="icon-x"></i>
+                </button>
+              </div>
+              <button type="button" class="btn-secondary" (click)="addAchievement(i)">
+                <i class="icon-plus"></i> Add Achievement
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <button type="button" class="btn-add-more" (click)="addEducation()">
+    <i class="icon-plus"></i> Add Another Education
+  </button>
+</div>

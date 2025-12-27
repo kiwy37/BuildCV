@@ -1,1 +1,113 @@
-<p>projects works!</p>
+<div class="section-container">
+  <div class="section-header">
+    <div class="icon-wrapper">
+      <i class="icon-folder"></i>
+    </div>
+    <div>
+      <h2>Projects</h2>
+      <p>Showcase your portfolio and side projects</p>
+    </div>
+  </div>
+
+  <div class="ats-tip">
+    <i class="icon-lightbulb"></i>
+    <div>
+      <strong>ATS Tip:</strong> Include projects that demonstrate skills relevant to the job. 
+      Mention technologies used and quantifiable results when possible.
+    </div>
+  </div>
+
+  <form [formGroup]="projectsForm">
+    <div formArrayName="projects">
+      <div *ngFor="let project of projects.controls; let i = index" class="project-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="icon-folder"></i>
+            <h3>Project {{ i + 1 }}</h3>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="btn-icon btn-danger" (click)="removeProject(i)" 
+                    *ngIf="projects.length > 1" title="Remove">
+              <i class="icon-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div [formGroupName]="i" class="form-grid">
+          <div class="form-group full-width">
+            <label [for]="'name' + i">
+              Project Name <span class="required">*</span>
+            </label>
+            <input 
+              type="text" 
+              [id]="'name' + i" 
+              formControlName="name"
+              placeholder="E-commerce Platform"
+              class="form-input"
+              [class.ng-invalid]="project.get('name')?.invalid && project.get('name')?.touched"
+              [class.ng-touched]="project.get('name')?.touched">
+            <div class="error-message" *ngIf="project.get('name')?.invalid && project.get('name')?.touched">
+              <i class="icon-alert-circle"></i> Project name is required
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label [for]="'description' + i">
+              Description <span class="required">*</span>
+            </label>
+            <textarea 
+              [id]="'description' + i" 
+              formControlName="description"
+              placeholder="Developed a full-stack e-commerce platform with payment integration, user authentication, and admin dashboard..."
+              class="form-textarea"
+              rows="4"
+              [class.ng-invalid]="project.get('description')?.invalid && project.get('description')?.touched"
+              [class.ng-touched]="project.get('description')?.touched"></textarea>
+            <div class="error-message" *ngIf="project.get('description')?.invalid && project.get('description')?.touched">
+              <i class="icon-alert-circle"></i> Description is required
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label [for]="'link' + i">
+              <i class="icon-link"></i> Project Link / GitHub URL
+            </label>
+            <input 
+              type="url" 
+              [id]="'link' + i" 
+              formControlName="link"
+              placeholder="https://github.com/username/project"
+              class="form-input">
+          </div>
+
+          <!-- Technologies -->
+          <div class="form-group full-width">
+            <label>Technologies Used</label>
+            <div formArrayName="technologies" class="responsibilities-list">
+              <div *ngFor="let tech of getTechnologies(i).controls; let j = index" 
+                   class="responsibility-item">
+                <input 
+                  type="text"
+                  [formControlName]="j"
+                  placeholder="React, Node.js, MongoDB, etc."
+                  class="form-input">
+                <button type="button" class="btn-icon btn-danger" 
+                        (click)="removeTechnology(i, j)"
+                        *ngIf="getTechnologies(i).length > 1">
+                  <i class="icon-x"></i>
+                </button>
+              </div>
+              <button type="button" class="btn-secondary" (click)="addTechnology(i)">
+                <i class="icon-plus"></i> Add Technology
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <button type="button" class="btn-add-more" (click)="addProject()">
+    <i class="icon-plus"></i> Add Another Project
+  </button>
+</div>

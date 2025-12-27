@@ -1,12 +1,7 @@
 <div class="section-container">
   <div class="section-header">
-    <div class="icon-wrapper">
-      <i class="icon-briefcase"></i>
-    </div>
-    <div>
-      <h2>Work Experience</h2>
-      <p>Add your professional work history</p>
-    </div>
+    <h2>Work Experience</h2>
+    <p>Add your professional work history</p>
   </div>
 
   <div class="ats-tip">
@@ -51,7 +46,12 @@
               [id]="'jobTitle' + i" 
               formControlName="jobTitle"
               placeholder="Software Engineer"
-              class="form-input">
+              class="form-input"
+              [class.ng-invalid]="experience.get('jobTitle')?.invalid && experience.get('jobTitle')?.touched"
+              [class.ng-touched]="experience.get('jobTitle')?.touched">
+            <div class="error-message" *ngIf="experience.get('jobTitle')?.invalid && experience.get('jobTitle')?.touched">
+              <i class="icon-alert-circle"></i> Job title is required
+            </div>
           </div>
 
           <div class="form-group">
@@ -63,7 +63,12 @@
               [id]="'company' + i" 
               formControlName="company"
               placeholder="Tech Company Inc."
-              class="form-input">
+              class="form-input"
+              [class.ng-invalid]="experience.get('company')?.invalid && experience.get('company')?.touched"
+              [class.ng-touched]="experience.get('company')?.touched">
+            <div class="error-message" *ngIf="experience.get('company')?.invalid && experience.get('company')?.touched">
+              <i class="icon-alert-circle"></i> Company is required
+            </div>
           </div>
 
           <div class="form-group">
@@ -84,7 +89,12 @@
               type="month" 
               [id]="'startDate' + i" 
               formControlName="startDate"
-              class="form-input">
+              class="form-input"
+              [class.ng-invalid]="experience.get('startDate')?.invalid && experience.get('startDate')?.touched"
+              [class.ng-touched]="experience.get('startDate')?.touched">
+            <div class="error-message" *ngIf="experience.get('startDate')?.invalid && experience.get('startDate')?.touched">
+              <i class="icon-alert-circle"></i> Start date is required
+            </div>
           </div>
 
           <div class="form-group">

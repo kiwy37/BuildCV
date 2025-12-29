@@ -1,0 +1,48 @@
+<div class="section-container">
+  <div class="section-header">
+    <h2>
+      <i class="icon-eye"></i>
+      Choose Your CV Theme
+    </h2>
+    <p>Select a professional template that matches your style</p>
+  </div>
+
+  <div class="themes-grid">
+    <div 
+      *ngFor="let theme of themes" 
+      class="theme-card"
+      [class.selected]="isSelected(theme.id)"
+      (click)="selectTheme(theme.id)">
+      
+      <div class="theme-image-wrapper">
+        <img [src]="theme.imageUrl" [alt]="theme.name" class="theme-image">
+        <div class="theme-overlay" *ngIf="isSelected(theme.id)">
+          <div class="checkmark">✓</div>
+        </div>
+      </div>
+      
+      <div class="theme-info">
+        <div class="theme-category">{{ theme.category }}</div>
+        <h3 class="theme-name">{{ theme.name }}</h3>
+        <p class="theme-description">{{ theme.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-selection-footer" *ngIf="selectedTheme">
+    <div class="selection-info">
+      <i class="icon-check-circle"></i>
+      <span>Theme selected! Click continue to preview and customize.</span>
+    </div>
+    <button class="btn-continue" (click)="goToPreview()">
+      Continue to Preview <i class="icon-arrow-right"></i>
+    </button>
+  </div>
+
+  <div class="theme-selection-footer placeholder" *ngIf="!selectedTheme">
+    <div class="selection-info muted">
+      <i class="icon-info"></i>
+      <span>Please select a theme to continue</span>
+    </div>
+  </div>
+</div>

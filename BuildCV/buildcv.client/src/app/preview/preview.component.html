@@ -1,121 +1,268 @@
-<div class="section-container">
-  <div class="section-header">
-    <h2>
-      <i class="icon-eye"></i>
-      Preview & Export
-    </h2>
-  </div>
-
-  <!-- Validation Results -->
-  <div class="validation-card" *ngIf="validationResult">
-    <div class="validation-header" [ngClass]="{'success': validationResult.isValid, 'warning': !validationResult.isValid}">
-      <i [class]="validationResult.isValid ? 'icon-check-circle' : 'icon-alert-circle'"></i>
-      <h3>{{ validationResult.isValid ? 'CV is Ready!' : 'Action Required' }}</h3>
+<div class="preview-container">
+  <!-- Customization Panel -->
+  <div class="customization-sidebar" [class.open]="showCustomizationPanel">
+    <div class="sidebar-header">
+      <h3>
+        <i class="icon-settings"></i>
+        Customize CV
+      </h3>
+      <button class="btn-close" (click)="toggleCustomizationPanel()">×</button>
     </div>
 
-    <div class="validation-content" *ngIf="validationResult.errors.length > 0">
-      <h4>Errors:</h4>
-      <ul class="validation-list error-list">
-        <li *ngFor="let error of validationResult.errors">
-          <i class="icon-x-circle"></i>
-          {{ error }}
-        </li>
-      </ul>
-    </div>
-
-    <div class="validation-content" *ngIf="validationResult.warnings.length > 0">
-      <h4>Suggestions:</h4>
-      <ul class="validation-list warning-list">
-        <li *ngFor="let warning of validationResult.warnings">
-          <i class="icon-info"></i>
-          {{ warning }}
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Template Selection -->
-  <div class="template-selection-card">
-    <h3>Choose Template</h3>
-    <div class="templates-grid">
-      <div 
-        *ngFor="let template of templates" 
-        class="template-card"
-        [ngClass]="{'selected': selectedTemplateId === template.id}"
-        (click)="selectTemplate(template.id)">
-        <div class="template-preview">
-          <img [src]="template.previewImage" [alt]="template.name">
-          <div class="template-overlay" *ngIf="selectedTemplateId === template.id">
-            <i class="icon-check"></i>
-          </div>
+    <div class="sidebar-content">
+      <!-- Font Settings -->
+      <div class="setting-group">
+        <h4>Typography</h4>
+        
+        <div class="setting-item">
+          <label>Font Size: {{customization.fontSize}}px</label>
+          <input 
+            type="range" 
+            [(ngModel)]="customization.fontSize" 
+            (input)="onCustomizationChange()"
+            min="10" 
+            max="20" 
+            step="1"
+            class="slider">
         </div>
-        <div class="template-info">
-          <h4>{{ template.name }}</h4>
-          <p>{{ template.description }}</p>
+
+        <div class="setting-item">
+          <label>Line Height: {{customization.lineHeight}}</label>
+          <input 
+            type="range" 
+            [(ngModel)]="customization.lineHeight" 
+            (input)="onCustomizationChange()"
+            min="1.2" 
+            max="2.0" 
+            step="0.1"
+            class="slider">
         </div>
       </div>
+
+      <!-- Spacing Settings -->
+      <div class="setting-group">
+        <h4>Margins</h4>
+        
+        <div class="spacing-grid">
+          <div class="setting-item">
+            <label>Top: {{customization.marginTop}}px</label>
+            <input 
+              type="range" 
+              [(ngModel)]="customization.marginTop" 
+              (input)="onCustomizationChange()"
+              min="0" 
+              max="60" 
+              step="5"
+              class="slider">
+          </div>
+
+          <div class="setting-item">
+            <label>Bottom: {{customization.marginBottom}}px</label>
+            <input 
+              type="range" 
+              [(ngModel)]="customization.marginBottom" 
+              (input)="onCustomizationChange()"
+              min="0" 
+              max="60" 
+              step="5"
+              class="slider">
+          </div>
+
+          <div class="setting-item">
+            <label>Left: {{customization.marginLeft}}px</label>
+            <input 
+              type="range" 
+              [(ngModel)]="customization.marginLeft" 
+              (input)="onCustomizationChange()"
+              min="0" 
+              max="80" 
+              step="5"
+              class="slider">
+          </div>
+
+          <div class="setting-item">
+            <label>Right: {{customization.marginRight}}px</label>
+            <input 
+              type="range" 
+              [(ngModel)]="customization.marginRight" 
+              (input)="onCustomizationChange()"
+              min="0" 
+              max="80" 
+              step="5"
+              class="slider">
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <h4>Padding</h4>
+        
+        <div class="spacing-grid">
+          <div class="setting-item">
+            <label>Top: {{customization.paddingTop}}px</label>
+            <input 
+              type="range" 
+              [(ngModel)]="customization.paddingTop" 
+              (input)="onCustomizationChange()"
+              min="0" 
+              max="80" 
+              step="5"
+              class="slider">
+          </div>
+
+          <div class="setting-item">
+            <label>Bottom: {{customization.paddingBottom}}px</label>
+            <input 
+              type="range" 
+              [(ngModel)]="customization.paddingBottom" 
+              (input)="onCustomizationChange()"
+              min="0" 
+              max="80" 
+              step="5"
+              class="slider">
+          </div>
+
+          <div class="setting-item">
+            <label>Left: {{customization.paddingLeft}}px</label>
+            <input 
+              type="range" 
+              [(ngModel)]="customization.paddingLeft" 
+              (input)="onCustomizationChange()"
+              min="0" 
+              max="100" 
+              step="5"
+              class="slider">
+          </div>
+
+          <div class="setting-item">
+            <label>Right: {{customization.paddingRight}}px</label>
+            <input 
+              type="range" 
+              [(ngModel)]="customization.paddingRight" 
+              (input)="onCustomizationChange()"
+              min="0" 
+              max="100" 
+              step="5"
+              class="slider">
+          </div>
+        </div>
+      </div>
+
+      <!-- Color Settings -->
+      <div class="setting-group">
+        <h4>Colors</h4>
+        
+        <div class="setting-item">
+          <label>Primary Color</label>
+          <div class="color-picker-wrapper">
+            <input 
+              type="color" 
+              [(ngModel)]="customization.primaryColor" 
+              (input)="onCustomizationChange()"
+              class="color-picker">
+            <span class="color-value">{{customization.primaryColor}}</span>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <label>Secondary Color</label>
+          <div class="color-picker-wrapper">
+            <input 
+              type="color" 
+              [(ngModel)]="customization.secondaryColor" 
+              (input)="onCustomizationChange()"
+              class="color-picker">
+            <span class="color-value">{{customization.secondaryColor}}</span>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <label>Text Color</label>
+          <div class="color-picker-wrapper">
+            <input 
+              type="color" 
+              [(ngModel)]="customization.textColor" 
+              (input)="onCustomizationChange()"
+              class="color-picker">
+            <span class="color-value">{{customization.textColor}}</span>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <label>Background Color</label>
+          <div class="color-picker-wrapper">
+            <input 
+              type="color" 
+              [(ngModel)]="customization.backgroundColor" 
+              (input)="onCustomizationChange()"
+              class="color-picker">
+            <span class="color-value">{{customization.backgroundColor}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reset Button -->
+      <button class="btn-reset" (click)="resetCustomization()">
+        <i class="icon-refresh"></i> Reset to Default
+      </button>
     </div>
   </div>
 
-  <!-- CV Preview -->
-  <div class="preview-card">
+  <!-- Main Preview Area -->
+  <div class="preview-main" [class.shifted]="showCustomizationPanel">
     <div class="preview-header">
-      <h3>Live Preview</h3>
+      <div class="preview-title">
+        <h2>
+          <i class="icon-eye"></i>
+          CV Preview
+        </h2>
+        <p>Review and customize your CV</p>
+      </div>
+
       <div class="preview-actions">
-        <button class="btn-icon" (click)="generatePreview()" title="Refresh">
-          <i class="icon-refresh"></i>
+        <button class="btn-secondary btn-customize" (click)="toggleCustomizationPanel()">
+          <i class="icon-sliders"></i>
+          {{ showCustomizationPanel ? 'Hide' : 'Show' }} Customization
+        </button>
+        <button class="btn-primary" (click)="downloadPDF()">
+          <i class="icon-download"></i>
+          Download PDF
         </button>
       </div>
     </div>
 
-    <div class="preview-container" *ngIf="!isLoading">
+    <!-- CV Preview -->
+    <div class="cv-preview-wrapper" *ngIf="!isLoading">
       <div class="cv-preview" [innerHTML]="previewHtml"></div>
     </div>
 
+    <!-- Loading State -->
     <div class="loading-state" *ngIf="isLoading">
       <div class="spinner"></div>
       <p>Generating preview...</p>
     </div>
-  </div>
 
-  <!-- Export Options -->
-  <div class="export-card">
-    <h3>Download Your CV</h3>
-    <div class="export-buttons">
-      <button class="btn-export btn-primary" (click)="downloadPDF()" [disabled]="isLoading || !validationResult?.isValid">
-        <i class="icon-file-pdf"></i>
-        <div>
-          <strong>Download PDF</strong>
-          <span>Print to PDF</span>
-        </div>
-      </button>
-      
-      <button class="btn-export btn-secondary" (click)="downloadWord()" [disabled]="isLoading">
-        <i class="icon-file-word"></i>
-        <div>
-          <strong>Download Word</strong>
-          <span>Convert from PDF</span>
-        </div>
-      </button>
-    </div>
-  </div>
-
-  <!-- Quick Edit Buttons -->
-  <div class="quick-edit-card">
-    <h4>Need to make changes?</h4>
-    <div class="quick-edit-buttons">
-      <button class="btn-quick-edit" (click)="goToStep(1)">
-        <i class="icon-user"></i> Edit Personal Info
-      </button>
-      <button class="btn-quick-edit" (click)="goToStep(2)">
-        <i class="icon-briefcase"></i> Edit Experience
-      </button>
-      <button class="btn-quick-edit" (click)="goToStep(3)">
-        <i class="icon-graduation-cap"></i> Edit Education
-      </button>
-      <button class="btn-quick-edit" (click)="goToStep(4)">
-        <i class="icon-code"></i> Edit Skills
-      </button>
+    <!-- Quick Edit Shortcuts -->
+    <div class="quick-edit-shortcuts">
+      <h4>Need to make changes?</h4>
+      <div class="shortcuts-grid">
+        <button class="shortcut-btn" (click)="goToStep(1)">
+          <i class="icon-user"></i>
+          <span>Personal Info</span>
+        </button>
+        <button class="shortcut-btn" (click)="goToStep(2)">
+          <i class="icon-briefcase"></i>
+          <span>Experience</span>
+        </button>
+        <button class="shortcut-btn" (click)="goToStep(3)">
+          <i class="icon-graduation-cap"></i>
+          <span>Education</span>
+        </button>
+        <button class="shortcut-btn" (click)="goToStep(4)">
+          <i class="icon-code"></i>
+          <span>Skills</span>
+        </button>
+      </div>
     </div>
   </div>
 </div>

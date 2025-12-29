@@ -13,6 +13,7 @@ import { PreviewComponent } from './preview/preview.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { AdditionalComponent } from './additional/additional.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ChooseThemeComponent } from './choose-theme/choose-theme.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     SkillsComponent,
     ProjectsComponent,
     AdditionalComponent,
-    PreviewComponent
+    PreviewComponent,
+    ChooseThemeComponent
   ],
   imports: [
     BrowserModule,

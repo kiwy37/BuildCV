@@ -80,26 +80,44 @@
               class="form-input">
           </div>
 
-          <!-- Technologies -->
+          <!-- Technologies as Chips -->
           <div class="form-group full-width">
             <label>Technologies Used</label>
-            <div formArrayName="technologies" class="responsibilities-list">
-              <div *ngFor="let tech of getTechnologies(i).controls; let j = index" 
-                   class="responsibility-item">
+            
+            <div class="technologies-input-card">
+              <div class="tech-input-wrapper">
                 <input 
-                  type="text"
-                  [formControlName]="j"
-                  placeholder="React, Node.js, MongoDB, etc."
-                  class="form-input">
-                <button type="button" class="btn-icon btn-danger" 
-                        (click)="removeTechnology(i, j)"
-                        *ngIf="getTechnologies(i).length > 1">
-                  <i class="icon-x"></i>
+                  type="text" 
+                  [(ngModel)]="currentTechnologies[i]"
+                  [ngModelOptions]="{standalone: true}"
+                  (keypress)="onTechKeyPress($event, i)"
+                  placeholder="Type a technology (e.g., React, Node.js)"
+                  class="tech-input">
+                <button type="button" class="btn-add-tech" (click)="addTechnology(i)" 
+                        [disabled]="!currentTechnologies[i]?.trim()">
+                  <i class="icon-plus"></i> Add
                 </button>
               </div>
-              <button type="button" class="btn-secondary" (click)="addTechnology(i)">
-                <i class="icon-plus"></i> Add Technology
-              </button>
+
+              <!-- Technologies Display as Chips -->
+              <div class="technologies-display" *ngIf="project.get('technologies')?.value?.length > 0">
+                <div class="technologies-grid">
+                  <div *ngFor="let tech of project.get('technologies')?.value; let j = index" class="tech-chip">
+                    <span class="tech-name">{{ tech }}</span>
+                    <div class="tech-actions">
+                      <button type="button" class="btn-icon-small btn-danger" (click)="removeTechnology(i, j)" title="Remove">
+                        <i class="icon-x"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="empty-state" *ngIf="!project.get('technologies')?.value || project.get('technologies')?.value?.length === 0" style="padding: 2rem 1rem;">
+                <i class="icon-inbox"></i>
+                <p>No technologies added yet</p>
+                <p class="empty-state-subtitle">Start typing to add technologies</p>
+              </div>
             </div>
           </div>
         </div>

@@ -10,6 +10,7 @@ import { Project } from '../cv-data.model';
 })
 export class ProjectsComponent implements OnInit {
   projectsForm!: FormGroup;
+  currentTechnologies: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -32,18 +33,13 @@ export class ProjectsComponent implements OnInit {
   }
 
   createProjectGroup(project?: Project): FormGroup {
+    this.currentTechnologies[this.projects.length] = '';
     return this.fb.group({
       name: [project?.name || '', Validators.required],
       description: [project?.description || '', Validators.required],
       link: [project?.link || ''],
-      technologies: this.fb.array(
-        project?.technologies?.map(t => this.fb.control(t)) || [this.fb.control('')]
-      )
+      technologies: [project?.technologies || []]
     });
-  }
-
-  getTechnologies(projectIndex: number): FormArray {
-    return this.projects.at(projectIndex).get('technologies') as FormArray;
   }
 
   addProject(): void {
@@ -52,16 +48,38 @@ export class ProjectsComponent implements OnInit {
 
   removeProject(index: number): void {
     this.projects.removeAt(index);
+    this.currentTechnologies.splice(index, 1);
     this.saveProjects();
   }
 
   addTechnology(projectIndex: number): void {
-    this.getTechnologies(projectIndex).push(this.fb.control(''));
+    const tech = this.currentTechnologies[projectIndex]?.trim();
+    if (!tech) return;
+
+    const project = this.projects.at(projectIndex);
+    const technologies = project.get('technologies')?.value || [];
+    
+    if (!technologies.includes(tech)) {
+      technologies.push(tech);
+      project.patchValue({ technologies });
+      this.currentTechnologies[projectIndex] = '';
+      this.saveProjects();
+    }
   }
 
   removeTechnology(projectIndex: number, techIndex: number): void {
-    this.getTechnologies(projectIndex).removeAt(techIndex);
+    const project = this.projects.at(projectIndex);
+    const technologies = [...(project.get('technologies')?.value || [])];
+    technologies.splice(techIndex, 1);
+    project.patchValue({ technologies });
     this.saveProjects();
+  }
+
+  onTechKeyPress(event: KeyboardEvent, projectIndex: number): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.addTechnology(projectIndex);
+    }
   }
 
   loadExistingData(): void {
@@ -78,11 +96,6 @@ export class ProjectsComponent implements OnInit {
   }
 
   saveProjects(): void {
-    const projects = this.projects.value.map((proj: any) => ({
-      ...proj,
-      technologies: proj.technologies.filter((t: string) => t.trim() !== '')
-    }));
-    
-    this.cvService.updateCVData({ projects });
+    this.cvService.updateCVData({ projects: this.projects.value });
   }
 }

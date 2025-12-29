@@ -1,5 +1,38 @@
+<!-- Move header outside preview container so it can be full-width and wider -->
+<div class="preview-header">
+  <div class="preview-title">
+    <h2>
+      <i class="icon-eye"></i>
+      CV Preview & Customization
+    </h2>
+    <p>Current theme: <strong>{{ selectedTheme | titlecase }}</strong></p>
+  </div>
+
+  <div class="preview-actions">
+    <button class="btn-secondary" (click)="backToThemeSelection()">
+      <i class="icon-arrow-left"></i>
+      Change Theme
+    </button>
+
+    <button class="btn-secondary btn-customize" (click)="toggleCustomizationPanel()">
+      <i class="icon-sliders"></i>
+      Customize CV
+    </button>
+
+    <div class="zoom-controls">
+      <label style="font-size:0.95rem;color:var(--text-secondary);">Zoom: {{ (zoom * 100) | number:'1.0-0' }}%</label>
+      <input type="range" min="50" max="150" [value]="zoom * 100" (input)="setZoom($any($event.target).value)" class="slider-zoom">
+    </div>
+
+    <button class="btn-primary" (click)="downloadPDF()">
+      <i class="icon-download"></i>
+      Download PDF
+    </button>
+  </div>
+</div>
+
 <div class="preview-container">
-  <!-- Customization Sidebar -->
+  <!-- Left: customization panel -->
   <div class="customization-sidebar" [class.open]="showCustomizationPanel">
     <div class="sidebar-header">
       <h3>
@@ -10,6 +43,7 @@
     </div>
 
     <div class="sidebar-content">
+      <!-- Repeat same content as above - keep one source of truth in the file -->
       <!-- Typography Settings -->
       <div class="setting-group">
         <h4>📝 Typography</h4>
@@ -233,33 +267,11 @@
     </div>
   </div>
 
-  <!-- Main Preview Area -->
   <div class="preview-main" [class.shifted]="showCustomizationPanel">
-    <!-- Top Action Bar -->
-    <div class="preview-header">
-      <div class="preview-title">
-        <h2>
-          <i class="icon-eye"></i>
-          CV Preview & Customization
-        </h2>
-        <p>Current theme: <strong>{{ selectedTheme | titlecase }}</strong></p>
-      </div>
-
-      <div class="preview-actions">
-        <button class="btn-secondary" (click)="backToThemeSelection()">
-          <i class="icon-arrow-left"></i>
-          Change Theme
-        </button>
-        <button class="btn-primary" (click)="downloadPDF()">
-          <i class="icon-download"></i>
-          Download PDF
-        </button>
-      </div>
-    </div>
-
     <!-- CV Preview -->
-    <div class="cv-preview-wrapper" *ngIf="!isLoading">
-      <div class="cv-preview" [innerHTML]="previewHtml"></div>
+    <div class="cv-preview-wrapper" #cvWrapper *ngIf="!isLoading">
+      <div class="cv-preview" #cvPreview [innerHTML]="previewHtml" [style.transform]="'scale(' + effectiveScale + ')'">
+      </div>
     </div>
 
     <!-- Loading State -->

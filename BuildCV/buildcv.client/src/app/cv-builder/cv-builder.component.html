@@ -4,26 +4,29 @@
     <p>Create your professional CV with our step-by-step builder</p>
   </div>
 
-  <!-- Step Navigation -->
-  <div class="step-navigation">
-    <div *ngFor="let step of steps" 
-         class="step-item" 
-         [ngClass]="getStepClass(step.number)"
-         (click)="goToStep(step.number)">
-      <div class="step-icon">
-        <i class="icon-{{step.icon}}"></i>
+  
+    <!-- Step Navigation (hidden on final step) -->
+    <ng-container *ngIf="currentStep !== totalSteps">
+      <div class="step-navigation">
+        <div *ngFor="let step of steps" 
+             class="step-item" 
+             [ngClass]="getStepClass(step.number)"
+             (click)="goToStep(step.number)">
+          <div class="step-icon">
+            <i class="icon-{{step.icon}}"></i>
+          </div>
+          <div class="step-info">
+            <div class="step-title">{{step.title}}</div>
+            <div class="step-subtitle">{{step.subtitle}}</div>
+          </div>
+        </div>
       </div>
-      <div class="step-info">
-        <div class="step-title">{{step.title}}</div>
-        <div class="step-subtitle">{{step.subtitle}}</div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Progress Bar -->
-  <div class="progress-bar">
-    <div class="progress-fill" [style.width.%]="(currentStep / totalSteps) * 100"></div>
-  </div>
+      <!-- Progress Bar -->
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="(currentStep / totalSteps) * 100"></div>
+      </div>
+    </ng-container>
 
   <!-- Step Content -->
   <div class="step-content">
@@ -34,23 +37,26 @@
     <app-projects *ngIf="currentStep === 5"></app-projects>
     <app-additional *ngIf="currentStep === 6"></app-additional>
     <app-choose-theme *ngIf="currentStep === 7"></app-choose-theme>
+    <app-preview *ngIf="currentStep === 8"></app-preview>
   </div>
 
   <!-- Navigation Buttons -->
   <div class="step-navigation-buttons">
-    <button class="btn-back" 
-            (click)="previousStep()" 
-            [disabled]="currentStep === 1">
+    <button
+      class="btn-back"
+      (click)="previousStep()"
+      [disabled]="currentStep === 1"
+    >
       <i class="icon-arrow-left"></i> Back
     </button>
-    
-    <div class="step-indicator">
-      Step {{currentStep}} of {{totalSteps}}
-    </div>
-    
-    <button class="btn-next" 
-            (click)="nextStep()" 
-            *ngIf="currentStep < totalSteps">
+
+    <div class="step-indicator">Step {{ currentStep }} of {{ totalSteps }}</div>
+
+    <button
+      class="btn-next"
+      (click)="nextStep()"
+      *ngIf="currentStep < totalSteps"
+    >
       Next <i class="icon-arrow-right"></i>
     </button>
   </div>

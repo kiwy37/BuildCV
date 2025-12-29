@@ -7,7 +7,16 @@ export interface CVData {
   projects: Project[];
   certifications: Certification[];
   languages: string[];
+  references?: Reference[];
   selectedTheme?: string;
+  photoUrl?: string; 
+}
+
+export interface Reference { 
+  name: string;
+  position: string;
+  phone: string;
+  email?: string;
 }
 
 export interface PersonalInfo {

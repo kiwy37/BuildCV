@@ -1,7 +1,7 @@
 import { CvService } from '../cv.service';
 import { CVData } from '../cv-data.model';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 interface CustomizationSettings {
   fontSize: number;
@@ -33,6 +33,9 @@ export class PreviewComponent implements OnInit {
   previewHtml: SafeHtml = '';
   isLoading: boolean = false;
   showCustomizationPanel: boolean = true;
+  zoom: number = 1.0;
+  // actual scale applied to the preview. Use this to implement fit-to-container when zoom is 100%
+  effectiveScale: number = 1.0;
 
   customization: CustomizationSettings = {
     fontSize: 14,
@@ -58,6 +61,9 @@ export class PreviewComponent implements OnInit {
     private sanitizer: DomSanitizer
   ) {}
 
+  @ViewChild('cvWrapper', { static: false }) cvWrapper?: ElementRef<HTMLDivElement>;
+  @ViewChild('cvPreview', { static: false }) cvPreview?: ElementRef<HTMLDivElement>;
+
   ngOnInit(): void {
     this.cvData = this.cvService.getCVData();
     this.selectedTheme = (this.cvData as any).selectedTheme || 'lima';
@@ -71,12 +77,18 @@ export class PreviewComponent implements OnInit {
     this.generatePreview();
   }
 
+  ngAfterViewInit(): void {
+    // ensure scale is updated once view is initialized
+    setTimeout(() => this.updateEffectiveScale(), 50);
+  }
+
   toggleCustomizationPanel(): void {
     this.showCustomizationPanel = !this.showCustomizationPanel;
   }
 
   onCustomizationChange(): void {
-    this.generatePreview();
+    // Update preview without showing the loading spinner for smoother UX
+    this.generatePreview(false);
     localStorage.setItem('cvCustomization', JSON.stringify(this.customization));
   }
 
@@ -99,13 +111,16 @@ export class PreviewComponent implements OnInit {
       headingFontSize: 24,
       sectionSpacing: 20
     };
-    this.generatePreview();
+    // Reset and update preview without showing loading spinner
+    this.generatePreview(false);
     localStorage.removeItem('cvCustomization');
   }
 
-  generatePreview(): void {
-    this.isLoading = true;
-    
+  generatePreview(showLoading: boolean = true): void {
+    if (showLoading) {
+      this.isLoading = true;
+    }
+
     setTimeout(() => {
       let html = '';
       switch(this.selectedTheme) {
@@ -126,8 +141,53 @@ export class PreviewComponent implements OnInit {
       }
       
       this.previewHtml = this.sanitizer.bypassSecurityTrustHtml(html);
+      // Ensure spinner is hidden once generation completes
       this.isLoading = false;
     }, 300);
+  }
+
+  setZoom(value: string | number): void {
+    const v = Number(value);
+    if (!isNaN(v)) {
+      this.zoom = Math.max(0.5, Math.min(1.5, v / 100));
+      // recalc effectiveScale after user changes zoom
+      setTimeout(() => this.updateEffectiveScale(), 0);
+    }
+  }
+
+  private updateEffectiveScale(): void {
+    // When user zoom is 100% (zoom === 1.0) we want to fit the whole CV inside the
+    // preview wrapper both horizontally and vertically. Otherwise use the explicit zoom.
+    try {
+      const wrapper = this.cvWrapper?.nativeElement;
+      const preview = this.cvPreview?.nativeElement;
+      if (!wrapper || !preview) {
+        this.effectiveScale = this.zoom;
+        return;
+      }
+
+      if (Math.abs(this.zoom - 1) < 0.001) {
+        // natural sizes (before transform): preview element may have a set width (max-width:850px)
+        const wrapperW = wrapper.clientWidth - 32; // account for padding in wrapper
+        const wrapperH = wrapper.clientHeight - 32;
+
+        const previewW = preview.scrollWidth || preview.offsetWidth;
+        const previewH = preview.scrollHeight || preview.offsetHeight;
+
+        if (previewW > 0 && previewH > 0) {
+          const scaleW = wrapperW / previewW;
+          const scaleH = wrapperH / previewH;
+          const fitScale = Math.min(scaleW, scaleH, 1);
+          this.effectiveScale = Number(fitScale.toFixed(4));
+        } else {
+          this.effectiveScale = 1;
+        }
+      } else {
+        this.effectiveScale = this.zoom;
+      }
+    } catch (e) {
+      this.effectiveScale = this.zoom;
+    }
   }
 
   private applyCustomStyles(): string {
@@ -142,8 +202,8 @@ export class PreviewComponent implements OnInit {
   private applyContainerStyles(): string {
     const c = this.customization;
     return `
-      margin: ${c.marginTop}px ${c.marginRight}px ${c.marginBottom}px ${c.marginLeft}px !important;
-      padding: ${c.paddingTop}px ${c.paddingRight}px ${c.paddingBottom}px ${c.paddingLeft}px !important;
+      /* Use padding instead of margin so the preview can be centered inside the wrapper */
+      padding: ${c.paddingTop + c.marginTop}px ${c.paddingRight + c.marginRight}px ${c.paddingBottom + c.marginBottom}px ${c.paddingLeft + c.marginLeft}px !important;
       background-color: ${c.backgroundColor} !important;
       max-width: 850px;
       margin-left: auto;
@@ -296,9 +356,119 @@ export class PreviewComponent implements OnInit {
     `;
   }
 
-  private generateRotterdamTemplate(): string {
-    return this.generateLimaTemplate();
-  }
+ private generateRotterdamTemplate(): string {
+  const c = this.customization;
+  const pi = this.cvData.personalInfo;
+  
+  // Culori din imagine (sau din customization dacă vrei să fie editabile)
+  const sidebarBg = '#e3d5c8'; // Bejul din imagine
+  const headerBg = '#3d3d3d';  // Griul închis din imagine
+
+  return `
+    <div class="cv-rotterdam-container" style="
+        font-family: 'Roboto', sans-serif;
+        display: flex;
+        width: 850px;
+        min-height: 1100px;
+        background: white;
+        color: ${c.textColor};
+        font-size: ${c.fontSize}px;
+        line-height: ${c.lineHeight};
+        text-align: left;
+    ">
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;700&display=swap');
+        .sidebar { width: 35%; background-color: ${sidebarBg}; padding: 40px 30px; box-sizing: border-box; }
+        .main-content { width: 65%; display: flex; flex-direction: column; }
+        .rt-header { background-color: ${headerBg}; color: white; padding: 50px 40px; }
+        .rt-header h1 { font-family: 'Playfair Display', serif; font-size: ${c.headingFontSize * 1.8}px; margin: 0; line-height: 1.1; }
+        .rt-header p { text-transform: uppercase; letter-spacing: 4px; font-size: 0.8rem; margin-top: 10px; opacity: 0.9; }
+        .content-body { padding: 40px; }
+        .section-title { 
+            text-transform: uppercase; 
+            font-size: 1.1rem; 
+            font-weight: 700;
+            border-bottom: 1px solid #ddd; 
+            padding-bottom: 5px; 
+            margin: ${c.sectionSpacing}px 0 15px 0; 
+            letter-spacing: 2px;
+            color: ${c.primaryColor};
+        }
+        .sidebar-title { 
+            text-transform: uppercase; 
+            font-size: 1rem; 
+            border-bottom: 2px solid #333; 
+            padding-bottom: 5px; 
+            margin-bottom: 15px; 
+            margin-top: 25px;
+        }
+        .contact-item { display: flex; align-items: center; margin-bottom: 12px; font-size: 0.85rem; }
+        .icon-circle { 
+            width: 24px; height: 24px; background: black; color: white; 
+            border-radius: 50%; display: flex; justify-content: center; 
+            align-items: center; margin-right: 12px; font-size: 10px;
+        }
+        .job-title { font-weight: 700; margin-top: 15px; }
+        .job-meta { font-weight: 700; color: #666; font-size: 0.9rem; }
+        ul { padding-left: 18px; margin-top: 8px; }
+        li { margin-bottom: 4px; }
+      </style>
+
+      <div class="sidebar">
+
+
+        <div class="contact-info">
+          <div class="contact-item"><div class="icon-circle">📞</div> ${pi.phone || ''}</div>
+          <div class="contact-item"><div class="icon-circle">✉️</div> ${pi.email || ''}</div>
+          <div class="contact-item"><div class="icon-circle">📍</div> ${pi.location || ''}</div>
+        </div>
+
+        <div class="sidebar-title">Kişisel Bilgiler</div>
+        <div style="font-size: 0.9rem;">
+            <strong>Doğum tarihi</strong><br><span style="color:#555">12-10-1996</span><br><br>
+            <strong>Uyruğu</strong><br><span style="color:#555">Türk</span>
+        </div>
+
+        <div class="sidebar-title">Referanslar</div>
+        ${(this.cvData.references || []).map(ref => `
+          <div style="font-size: 0.85rem; margin-bottom: 15px;">
+            <strong>${ref.name}</strong><br>
+            <span style="color:#666">${ref.position}<br>${ref.phone}</span>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="main-content">
+        <div class="rt-header">
+          <h1>${pi.fullName || 'Nume Prenume'}</h1>
+          <p>Grafik ve Web Tasarımcısı</p>
+        </div>
+
+        <div class="content-body">
+          <div class="section-title">Hakkımda</div>
+          <p style="color:#444">${this.cvData.professionalSummary || ''}</p>
+
+          <div class="section-title">İş Deneyimi</div>
+          ${this.cvData.experiences.map(exp => `
+            <div style="margin-bottom: 20px;">
+              <div class="job-title">${exp.jobTitle}</div>
+              <div class="job-meta">${exp.company} / ${exp.startDate} - ${exp.endDate}</div>
+              <ul>${exp.responsibilities.map(r => `<li>${r}</li>`).join('')}</ul>
+            </div>
+          `).join('')}
+
+          <div class="section-title">Eğitim</div>
+          ${this.cvData.education.map(edu => `
+            <div style="margin-bottom: 15px;">
+              <div class="job-title">${edu.degree}</div>
+              <div class="job-meta">${edu.institution} / ${edu.endDate}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
 
   private generateRigaTemplate(): string {
     return this.generateLimaTemplate();

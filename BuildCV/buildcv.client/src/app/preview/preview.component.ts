@@ -18,6 +18,8 @@ interface CustomizationSettings {
   secondaryColor: string;
   textColor: string;
   backgroundColor: string;
+  headingFontSize: number;
+  sectionSpacing: number;
 }
 
 @Component({
@@ -30,7 +32,7 @@ export class PreviewComponent implements OnInit {
   selectedTheme: string = 'lima';
   previewHtml: SafeHtml = '';
   isLoading: boolean = false;
-  showCustomizationPanel: boolean = false;
+  showCustomizationPanel: boolean = true;
 
   customization: CustomizationSettings = {
     fontSize: 14,
@@ -46,7 +48,9 @@ export class PreviewComponent implements OnInit {
     primaryColor: '#4F46E5',
     secondaryColor: '#10B981',
     textColor: '#2D3748',
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
+    headingFontSize: 24,
+    sectionSpacing: 20
   };
 
   constructor(
@@ -57,6 +61,13 @@ export class PreviewComponent implements OnInit {
   ngOnInit(): void {
     this.cvData = this.cvService.getCVData();
     this.selectedTheme = (this.cvData as any).selectedTheme || 'lima';
+    
+    // Load saved customization if exists
+    const savedCustomization = localStorage.getItem('cvCustomization');
+    if (savedCustomization) {
+      this.customization = JSON.parse(savedCustomization);
+    }
+    
     this.generatePreview();
   }
 
@@ -66,6 +77,7 @@ export class PreviewComponent implements OnInit {
 
   onCustomizationChange(): void {
     this.generatePreview();
+    localStorage.setItem('cvCustomization', JSON.stringify(this.customization));
   }
 
   resetCustomization(): void {
@@ -83,9 +95,12 @@ export class PreviewComponent implements OnInit {
       primaryColor: '#4F46E5',
       secondaryColor: '#10B981',
       textColor: '#2D3748',
-      backgroundColor: '#FFFFFF'
+      backgroundColor: '#FFFFFF',
+      headingFontSize: 24,
+      sectionSpacing: 20
     };
     this.generatePreview();
+    localStorage.removeItem('cvCustomization');
   }
 
   generatePreview(): void {
@@ -130,6 +145,9 @@ export class PreviewComponent implements OnInit {
       margin: ${c.marginTop}px ${c.marginRight}px ${c.marginBottom}px ${c.marginLeft}px !important;
       padding: ${c.paddingTop}px ${c.paddingRight}px ${c.paddingBottom}px ${c.paddingLeft}px !important;
       background-color: ${c.backgroundColor} !important;
+      max-width: 850px;
+      margin-left: auto;
+      margin-right: auto;
     `;
   }
 
@@ -139,29 +157,66 @@ export class PreviewComponent implements OnInit {
       <div class="cv-lima" style="${this.applyContainerStyles()}">
         <style>
           .cv-lima { ${this.applyCustomStyles()} }
-          .cv-lima h1 { color: ${c.primaryColor} !important; font-size: ${c.fontSize * 2.2}px !important; }
-          .cv-lima h2 { color: ${c.primaryColor} !important; font-size: ${c.fontSize * 1.6}px !important; }
-          .cv-lima h3 { color: ${c.textColor} !important; font-size: ${c.fontSize * 1.2}px !important; }
-          .cv-lima .section-title { color: ${c.primaryColor} !important; border-bottom-color: ${c.primaryColor} !important; }
+          .cv-lima h1 { 
+            color: ${c.primaryColor} !important; 
+            font-size: ${c.headingFontSize}px !important; 
+            margin-bottom: ${c.sectionSpacing * 0.5}px !important;
+          }
+          .cv-lima h2 { 
+            color: ${c.primaryColor} !important; 
+            font-size: ${c.fontSize * 1.4}px !important; 
+            margin-top: ${c.sectionSpacing}px !important;
+            margin-bottom: ${c.sectionSpacing * 0.5}px !important;
+            padding-bottom: ${c.sectionSpacing * 0.3}px !important;
+            border-bottom: 2px solid ${c.primaryColor} !important;
+          }
+          .cv-lima h3 { 
+            color: ${c.textColor} !important; 
+            font-size: ${c.fontSize * 1.15}px !important; 
+            margin-bottom: ${c.sectionSpacing * 0.3}px !important;
+          }
+          .cv-lima .contact-info { 
+            color: ${c.textColor} !important; 
+            margin-bottom: ${c.sectionSpacing}px !important;
+            opacity: 0.8;
+          }
+          .cv-lima .section { 
+            margin-bottom: ${c.sectionSpacing}px !important; 
+          }
+          .cv-lima .item { 
+            margin-bottom: ${c.sectionSpacing * 0.8}px !important; 
+          }
           .cv-lima a { color: ${c.secondaryColor} !important; }
+          .cv-lima ul { 
+            margin-top: ${c.sectionSpacing * 0.4}px !important;
+            padding-left: ${c.paddingLeft * 0.5}px !important;
+          }
+          .cv-lima li { 
+            margin-bottom: ${c.sectionSpacing * 0.2}px !important; 
+          }
         </style>
+        
         <h1>${this.cvData.personalInfo.fullName || 'Your Name'}</h1>
         <div class="contact-info">
-          ${this.cvData.personalInfo.email} | ${this.cvData.personalInfo.phone} | ${this.cvData.personalInfo.location}
+          ${this.cvData.personalInfo.email}${this.cvData.personalInfo.phone ? ' | ' + this.cvData.personalInfo.phone : ''}${this.cvData.personalInfo.location ? ' | ' + this.cvData.personalInfo.location : ''}
         </div>
+        
         ${this.cvData.professionalSummary ? `
           <div class="section">
-            <h2 class="section-title">Professional Summary</h2>
+            <h2>Professional Summary</h2>
             <p>${this.cvData.professionalSummary}</p>
           </div>
         ` : ''}
+        
         ${this.cvData.experiences && this.cvData.experiences.length > 0 ? `
           <div class="section">
-            <h2 class="section-title">Experience</h2>
+            <h2>Experience</h2>
             ${this.cvData.experiences.map(exp => `
               <div class="item">
                 <h3>${exp.jobTitle}</h3>
-                <div>${exp.company} | ${exp.startDate} - ${exp.isCurrent ? 'Present' : exp.endDate}</div>
+                <div style="opacity: 0.8; margin-bottom: 8px;">
+                  ${exp.company}${exp.location ? ' | ' + exp.location : ''} | ${exp.startDate} - ${exp.isCurrent ? 'Present' : exp.endDate}
+                </div>
                 ${exp.responsibilities && exp.responsibilities.length > 0 ? `
                   <ul>
                     ${exp.responsibilities.map(r => `<li>${r}</li>`).join('')}
@@ -171,20 +226,86 @@ export class PreviewComponent implements OnInit {
             `).join('')}
           </div>
         ` : ''}
+        
+        ${this.cvData.education && this.cvData.education.length > 0 ? `
+          <div class="section">
+            <h2>Education</h2>
+            ${this.cvData.education.map(edu => `
+              <div class="item">
+                <h3>${edu.degree}</h3>
+                <div style="opacity: 0.8; margin-bottom: 8px;">
+                  ${edu.institution}${edu.location ? ' | ' + edu.location : ''} | ${edu.startDate} - ${edu.endDate}
+                </div>
+                ${edu.gpa ? `<div style="opacity: 0.8;">GPA: ${edu.gpa}</div>` : ''}
+                ${edu.achievements && edu.achievements.length > 0 ? `
+                  <ul>
+                    ${edu.achievements.map(a => `<li>${a}</li>`).join('')}
+                  </ul>
+                ` : ''}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+        
+        ${this.cvData.skills && this.cvData.skills.length > 0 ? `
+          <div class="section">
+            <h2>Skills</h2>
+            <div>${this.cvData.skills.join(' • ')}</div>
+          </div>
+        ` : ''}
+        
+        ${this.cvData.projects && this.cvData.projects.length > 0 ? `
+          <div class="section">
+            <h2>Projects</h2>
+            ${this.cvData.projects.map(proj => `
+              <div class="item">
+                <h3>${proj.name}</h3>
+                <p>${proj.description}</p>
+                ${proj.technologies && proj.technologies.length > 0 ? `
+                  <div style="opacity: 0.8; margin-top: 8px;">
+                    <strong>Technologies:</strong> ${proj.technologies.join(', ')}
+                  </div>
+                ` : ''}
+                ${proj.link ? `<div style="margin-top: 4px;"><a href="${proj.link}" target="_blank">${proj.link}</a></div>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+        
+        ${this.cvData.certifications && this.cvData.certifications.length > 0 ? `
+          <div class="section">
+            <h2>Certifications</h2>
+            ${this.cvData.certifications.map(cert => `
+              <div class="item">
+                <h3>${cert.name}</h3>
+                <div style="opacity: 0.8;">
+                  ${cert.issuer}${cert.date ? ' | ' + cert.date : ''}${cert.credentialId ? ' | ID: ' + cert.credentialId : ''}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+        
+        ${this.cvData.languages && this.cvData.languages.length > 0 ? `
+          <div class="section">
+            <h2>Languages</h2>
+            <div>${this.cvData.languages.join(' • ')}</div>
+          </div>
+        ` : ''}
       </div>
     `;
   }
 
   private generateRotterdamTemplate(): string {
-    return `<div style="${this.applyContainerStyles()}"><h1>Rotterdam Template</h1><p>Coming soon...</p></div>`;
+    return this.generateLimaTemplate();
   }
 
   private generateRigaTemplate(): string {
-    return `<div style="${this.applyContainerStyles()}"><h1>Riga Template</h1><p>Coming soon...</p></div>`;
+    return this.generateLimaTemplate();
   }
 
   private generateATSTemplate(): string {
-    return `<div style="${this.applyContainerStyles()}"><h1>ATS Template</h1><p>Coming soon...</p></div>`;
+    return this.generateLimaTemplate();
   }
 
   downloadPDF(): void {
@@ -194,7 +315,7 @@ export class PreviewComponent implements OnInit {
       return;
     }
 
-    const cvContent = this.previewHtml;
+    const cvContent = document.querySelector('.cv-preview')?.innerHTML || '';
     
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -206,7 +327,11 @@ export class PreviewComponent implements OnInit {
             body { margin: 0; padding: 0; }
             @page { margin: 0; }
           }
-          body { margin: 0; padding: 0; }
+          body { 
+            margin: 0; 
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+          }
         </style>
       </head>
       <body>
@@ -226,5 +351,9 @@ export class PreviewComponent implements OnInit {
 
   goToStep(step: number): void {
     this.cvService.setCurrentStep(step);
+  }
+
+  backToThemeSelection(): void {
+    this.cvService.setCurrentStep(7);
   }
 }

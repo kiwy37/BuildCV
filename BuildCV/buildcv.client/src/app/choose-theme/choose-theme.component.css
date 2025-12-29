@@ -34,6 +34,13 @@
   background: var(--background);
 }
 
+/* Frame around the theme image so the preview thumbnails have visible borders */
+.theme-image-wrapper {
+  border: 3px solid var(--border-color);
+  border-radius: calc(var(--radius-lg) - 4px);
+  box-sizing: border-box;
+}
+
 .theme-image {
   width: 100%;
   height: 100%;
@@ -44,47 +51,8 @@
 .theme-card:hover .theme-image {
   transform: scale(1.05);
 }
-
-.theme-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.95), rgba(118, 75, 162, 0.95));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.checkmark {
-  width: 80px;
-  height: 80px;
-  background: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  color: var(--primary-color);
-  font-weight: bold;
-  animation: scaleIn 0.3s ease;
-}
-
-@keyframes scaleIn {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
-  }
+.theme-card:hover .theme-image {
+  transform: scale(1.05);
 }
 
 .theme-info {

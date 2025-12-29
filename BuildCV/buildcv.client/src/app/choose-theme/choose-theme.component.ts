@@ -1,5 +1,4 @@
-// BuildCV/buildcv.client/src/app/choose-theme/choose-theme.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CvService } from '../cv.service';
 
 interface Theme {
@@ -15,26 +14,26 @@ interface Theme {
   templateUrl: './choose-theme.component.html',
   styleUrls: ['./choose-theme.component.css']
 })
-export class ChooseThemeComponent implements OnInit {
+export class ChooseThemeComponent {
   themes: Theme[] = [
     {
       id: 'lima',
       name: 'Lima',
-      description: 'Professional two-column layout',
+      description: 'Professional two-column layout with elegant styling',
       imageUrl: 'https://storage.googleapis.com/resume-images/resume/en/lima.jpg',
       category: 'Professional'
     },
     {
       id: 'rotterdam',
       name: 'Rotterdam',
-      description: 'Modern minimalist design',
+      description: 'Modern minimalist design with clean lines',
       imageUrl: 'https://storage.googleapis.com/rd-assets/resumes/rotterdam.jpg',
       category: 'Modern'
     },
     {
       id: 'riga',
       name: 'Riga',
-      description: 'Creative sidebar layout',
+      description: 'Creative sidebar layout with bold colors',
       imageUrl: 'https://storage.googleapis.com/rd-assets/resumes/riga.jpg',
       category: 'Creative'
     },
@@ -47,31 +46,22 @@ export class ChooseThemeComponent implements OnInit {
     }
   ];
 
-  selectedTheme: string | null = null;
+  selectedThemeId?: string;
 
-  constructor(private cvService: CvService) {}
-
-  ngOnInit(): void {
-    // Check if theme was already selected
-    const cvData = this.cvService.getCVData();
-    if ((cvData as any).selectedTheme) {
-      this.selectedTheme = (cvData as any).selectedTheme;
+  constructor(private cvService: CvService) {
+    // Initialize selectedThemeId from stored CV data if present
+    const cvData = this.cvService.getCVData() as any;
+    if (cvData && cvData.selectedTheme) {
+      this.selectedThemeId = cvData.selectedTheme;
     }
   }
 
-  selectTheme(themeId: string): void {
-    this.selectedTheme = themeId;
-    // Save selected theme
-    this.cvService.updateCVData({ selectedTheme: themeId } as any);
-  }
+  selectTheme(theme: Theme): void {
+    this.selectedThemeId = theme.id;
 
-  goToPreview(): void {
-    if (this.selectedTheme) {
-      this.cvService.nextStep();
-    }
+    // Immediately save the selected theme and navigate to Preview (step 8)
+    this.cvService.updateCVData({ selectedTheme: theme.id } as any);
+    this.cvService.setCurrentStep(8);
   }
-
-  isSelected(themeId: string): boolean {
-    return this.selectedTheme === themeId;
-  }
+  
 }

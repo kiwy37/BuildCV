@@ -55,6 +55,7 @@ i[class^="icon-"]::before {
 .icon-lightbulb::before { content: "💡"; }
 .icon-arrow-left::before { content: "←"; }
 .icon-arrow-right::before { content: "→"; }
+.icon-sliders::before { content: "📑"; }
 .icon-arrow-up::before { content: "↑"; }
 .icon-arrow-down::before { content: "↓"; }
 .icon-chevron-up::before { content: "⌃"; }

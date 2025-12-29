@@ -8,7 +8,7 @@ import { CvService } from '../cv.service';
 })
 export class CvBuilderComponent implements OnInit {
   currentStep: number = 1;
-  totalSteps: number = 7;
+  totalSteps: number = 8;
 
   steps = [
     { number: 1, title: 'Personal Info', subtitle: 'Basic information', icon: 'user' },
@@ -17,7 +17,8 @@ export class CvBuilderComponent implements OnInit {
     { number: 4, title: 'Skills', subtitle: 'Technical & soft skills', icon: 'code' },
     { number: 5, title: 'Projects', subtitle: 'Portfolio projects', icon: 'folder' },
     { number: 6, title: 'Additional', subtitle: 'Certifications & awards', icon: 'trophy' },
-    { number: 7, title: 'Preview', subtitle: 'Review & download', icon: 'eye' }
+    { number: 7, title: 'Choose Theme', subtitle: 'Select template', icon: 'eye' },
+    { number: 8, title: 'Preview', subtitle: 'Review & customize', icon: 'sliders' }
   ];
 
   constructor(private cvService: CvService) {}
@@ -29,7 +30,6 @@ export class CvBuilderComponent implements OnInit {
   }
 
   goToStep(step: number): void {
-    // Only allow going to completed steps or the next step
     if (step <= this.currentStep || this.canProceedToStep(step)) {
       this.cvService.setCurrentStep(step);
     }
@@ -74,7 +74,9 @@ export class CvBuilderComponent implements OnInit {
         return true;
       case 6: // Additional (optional)
         return true;
-      case 7: // Preview
+      case 7: // Choose Theme
+        return !!(cvData as any).selectedTheme;
+      case 8: // Preview
         return true;
       default:
         return true;
@@ -132,7 +134,6 @@ export class CvBuilderComponent implements OnInit {
   }
 
   private canProceedToStep(targetStep: number): boolean {
-    // Check if all previous steps are valid
     for (let i = 1; i < targetStep; i++) {
       const originalStep = this.currentStep;
       this.currentStep = i;
@@ -161,6 +162,9 @@ export class CvBuilderComponent implements OnInit {
         break;
       case 4:
         message = 'Please add at least one skill.';
+        break;
+      case 7:
+        message = 'Please select a theme before continuing.';
         break;
       default:
         message = 'Please complete all required fields.';

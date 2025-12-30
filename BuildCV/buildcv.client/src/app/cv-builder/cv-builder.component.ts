@@ -8,17 +8,18 @@ import { CvService } from '../cv.service';
 })
 export class CvBuilderComponent implements OnInit {
   currentStep: number = 1;
-  totalSteps: number = 8;
+  totalSteps: number = 9;
 
   steps = [
-    { number: 1, title: 'Personal Info', subtitle: 'Basic information', icon: 'user' },
-    { number: 2, title: 'Experience', subtitle: 'Work history', icon: 'briefcase' },
-    { number: 3, title: 'Education', subtitle: 'Academic background', icon: 'graduation-cap' },
-    { number: 4, title: 'Skills', subtitle: 'Technical & soft skills', icon: 'code' },
-    { number: 5, title: 'Projects', subtitle: 'Portfolio projects', icon: 'folder' },
-    { number: 6, title: 'Additional', subtitle: 'Certifications & awards', icon: 'trophy' },
-    { number: 7, title: 'Choose Theme', subtitle: 'Select template', icon: 'eye' },
-    { number: 8, title: 'Preview', subtitle: 'Review & customize', icon: 'sliders' }
+    { number: 1, title: 'Upload CV', subtitle: 'Import from PDF/Word', icon: 'upload' },
+    { number: 2, title: 'Personal Info', subtitle: 'Basic information', icon: 'user' },
+    { number: 3, title: 'Experience', subtitle: 'Work history', icon: 'briefcase' },
+    { number: 4, title: 'Education', subtitle: 'Academic background', icon: 'graduation-cap' },
+    { number: 5, title: 'Skills', subtitle: 'Technical & soft skills', icon: 'code' },
+    { number: 6, title: 'Projects', subtitle: 'Portfolio projects', icon: 'folder' },
+    { number: 7, title: 'Additional', subtitle: 'Certifications & awards', icon: 'trophy' },
+    { number: 8, title: 'Choose Theme', subtitle: 'Select template', icon: 'eye' },
+    { number: 9, title: 'Preview', subtitle: 'Review & customize', icon: 'sliders' }
   ];
 
   constructor(private cvService: CvService) {}
@@ -62,21 +63,24 @@ export class CvBuilderComponent implements OnInit {
     const cvData = this.cvService.getCVData();
 
     switch (this.currentStep) {
-      case 1: // Personal Info
+      case 1: // Upload CV
+        // optional; allow users to skip upload
+        return true;
+      case 2: // Personal Info
         return this.validatePersonalInfo(cvData);
-      case 2: // Experience
+      case 3: // Experience
         return this.validateExperience(cvData);
-      case 3: // Education
+      case 4: // Education
         return this.validateEducation(cvData);
-      case 4: // Skills
+      case 5: // Skills
         return cvData.skills && cvData.skills.length > 0;
-      case 5: // Projects (optional)
+      case 6: // Projects (optional)
         return true;
-      case 6: // Additional (optional)
+      case 7: // Additional (optional)
         return true;
-      case 7: // Choose Theme
+      case 8: // Choose Theme
         return !!(cvData as any).selectedTheme;
-      case 8: // Preview
+      case 9: // Preview
         return true;
       default:
         return true;

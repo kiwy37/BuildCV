@@ -75,6 +75,17 @@ i[class^="icon-"]::before {
 .icon-file-word::before { content: "📘"; }
 .icon-link::before { content: "🔗"; }
 .icon-calendar::before { content: "📅"; }
+.icon-upload::before { content: "⬆️"; }
+.icon-camera::before { content: "📷"; }
+.icon-shield::before { content: "🛡️"; }
+.icon-clock::before { content: "⏰"; }
+.icon-edit::before { content: "✏️"; }
+.icon-check::before { content: "✓"; }
+.icon-alert-circle::before { content: "⚠️"; }
+.icon-trash::before { content: "🗑️"; }
+.icon-user::before { content: "👤"; }
+.icon-arrow-right::before { content: "→"; }
+.icon-file-text::before { content: "📄"; }
 
 /* CV Builder Container */
 .cv-builder-container {

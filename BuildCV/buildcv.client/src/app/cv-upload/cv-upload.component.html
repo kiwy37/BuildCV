@@ -1,0 +1,34 @@
+<div class="cv-upload">
+	<div class="upload-actions">
+		<input id="cv-file-input" type="file" accept=".pdf,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" (change)="onFileSelected($event)" hidden />
+		<button class="btn-primary" (click)="triggerFileInput()" [disabled]="isUploading">Upload CV (PDF/DOCX)</button>
+	</div>
+
+	<div class="status" *ngIf="isUploading">
+		<p>Processing file...</p>
+	</div>
+
+	<div class="status error" *ngIf="uploadError">
+		<p>{{ uploadError }}</p>
+	</div>
+
+	<div class="status success" *ngIf="uploadSuccess">
+		<p>File parsed successfully.</p>
+	</div>
+
+	<div class="parsed-preview" *ngIf="extractedData">
+		<h4>Parsed data (preview)</h4>
+		<div *ngIf="extractedData.personalInfo">
+			<div><strong>Name:</strong> {{ extractedData.personalInfo.fullName }}</div>
+			<div><strong>Email:</strong> {{ extractedData.personalInfo.email }}</div>
+			<div><strong>Phone:</strong> {{ extractedData.personalInfo.phone }}</div>
+			<div><strong>Location:</strong> {{ extractedData.personalInfo.location }}</div>
+		</div>
+		<div *ngIf="extractedData.skills && extractedData.skills.length">
+			<strong>Skills:</strong> {{ extractedData.skills.join(', ') }}
+		</div>
+		<div style="margin-top:0.75rem;">
+			<button class="btn-secondary" (click)="applyExtractedData()">Use Parsed Data</button>
+		</div>
+	</div>
+</div>

@@ -14,6 +14,7 @@ import { ProjectsComponent } from './projects/projects.component';
 import { AdditionalComponent } from './additional/additional.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChooseThemeComponent } from './choose-theme/choose-theme.component';
+import { CvUploadComponent } from './cv-upload/cv-upload.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { ChooseThemeComponent } from './choose-theme/choose-theme.component';
     ProjectsComponent,
     AdditionalComponent,
     PreviewComponent,
-    ChooseThemeComponent
+    ChooseThemeComponent,
+    CvUploadComponent
   ],
   imports: [
     BrowserModule,

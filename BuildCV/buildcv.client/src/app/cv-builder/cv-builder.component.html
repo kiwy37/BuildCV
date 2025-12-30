@@ -30,14 +30,15 @@
 
   <!-- Step Content -->
   <div class="step-content">
-    <app-personal-info *ngIf="currentStep === 1"></app-personal-info>
-    <app-experience *ngIf="currentStep === 2"></app-experience>
-    <app-education *ngIf="currentStep === 3"></app-education>
-    <app-skills *ngIf="currentStep === 4"></app-skills>
-    <app-projects *ngIf="currentStep === 5"></app-projects>
-    <app-additional *ngIf="currentStep === 6"></app-additional>
-    <app-choose-theme *ngIf="currentStep === 7"></app-choose-theme>
-    <app-preview *ngIf="currentStep === 8"></app-preview>
+    <app-cv-upload *ngIf="currentStep === 1"></app-cv-upload>
+    <app-personal-info *ngIf="currentStep === 2"></app-personal-info>
+    <app-experience *ngIf="currentStep === 3"></app-experience>
+    <app-education *ngIf="currentStep === 4"></app-education>
+    <app-skills *ngIf="currentStep === 5"></app-skills>
+    <app-projects *ngIf="currentStep === 6"></app-projects>
+    <app-additional *ngIf="currentStep === 7"></app-additional>
+    <app-choose-theme *ngIf="currentStep === 8"></app-choose-theme>
+    <app-preview *ngIf="currentStep === 9"></app-preview>
   </div>
 
   <!-- Navigation Buttons -->

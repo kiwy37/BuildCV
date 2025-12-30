@@ -1,3 +1,4 @@
+// BuildCV/buildcv.client/src/app/cv.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -10,7 +11,7 @@ export class CvService {
   private cvDataSubject = new BehaviorSubject<CVData>(this.getInitialCVData());
   public cvData$ = this.cvDataSubject.asObservable();
 
-  private currentStepSubject = new BehaviorSubject<number>(1);
+  private currentStepSubject = new BehaviorSubject<number>(0); // Start at 0
   public currentStep$ = this.currentStepSubject.asObservable();
 
   constructor(private http: HttpClient) {
@@ -37,7 +38,8 @@ export class CvService {
       skills: [],
       projects: [],
       certifications: [],
-      languages: []
+      languages: [],
+      photoUrl: ''
     };
   }
 
@@ -72,7 +74,7 @@ export class CvService {
   }
 
   previousStep(): void {
-    if (this.currentStepSubject.value > 1) {
+    if (this.currentStepSubject.value > 0) {
       this.currentStepSubject.next(this.currentStepSubject.value - 1);
     }
   }
@@ -98,6 +100,6 @@ export class CvService {
   resetCV(): void {
     this.cvDataSubject.next(this.getInitialCVData());
     localStorage.removeItem('cvData');
-    this.currentStepSubject.next(1);
+    this.currentStepSubject.next(0); // Reset to upload step
   }
 }

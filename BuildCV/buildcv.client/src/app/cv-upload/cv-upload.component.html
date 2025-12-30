@@ -1,34 +1,144 @@
-<div class="cv-upload">
-	<div class="upload-actions">
-		<input id="cv-file-input" type="file" accept=".pdf,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" (change)="onFileSelected($event)" hidden />
-		<button class="btn-primary" (click)="triggerFileInput()" [disabled]="isUploading">Upload CV (PDF/DOCX)</button>
-	</div>
+<div class="cv-upload-container">
+  <div class="upload-section">
+    <h2>Upload Your CV</h2>
+    <div class="file-input-wrapper">
+      <input 
+        type="file" 
+        (change)="onFileSelected($event)" 
+        accept=".pdf"
+        id="fileInput"
+        #fileInput
+      >
+      <label for="fileInput" class="file-label">
+        <span *ngIf="!selectedFile">Select a PDF file</span>
+        <span *ngIf="selectedFile">{{ selectedFile.name }}</span>
+      </label>
+    </div>
 
-	<div class="status" *ngIf="isUploading">
-		<p>Processing file...</p>
-	</div>
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
 
-	<div class="status error" *ngIf="uploadError">
-		<p>{{ uploadError }}</p>
-	</div>
+    <div *ngIf="isLoading" class="loading">
+      <div class="spinner"></div>
+      <p>Parsing CV...</p>
+    </div>
+  </div>
 
-	<div class="status success" *ngIf="uploadSuccess">
-		<p>File parsed successfully.</p>
-	</div>
+  <div *ngIf="parsedResume && !isLoading" class="results-section">
+    <h2>Parsing Results</h2>
 
-	<div class="parsed-preview" *ngIf="extractedData">
-		<h4>Parsed data (preview)</h4>
-		<div *ngIf="extractedData.personalInfo">
-			<div><strong>Name:</strong> {{ extractedData.personalInfo.fullName }}</div>
-			<div><strong>Email:</strong> {{ extractedData.personalInfo.email }}</div>
-			<div><strong>Phone:</strong> {{ extractedData.personalInfo.phone }}</div>
-			<div><strong>Location:</strong> {{ extractedData.personalInfo.location }}</div>
-		</div>
-		<div *ngIf="extractedData.skills && extractedData.skills.length">
-			<strong>Skills:</strong> {{ extractedData.skills.join(', ') }}
-		</div>
-		<div style="margin-top:0.75rem;">
-			<button class="btn-secondary" (click)="applyExtractedData()">Use Parsed Data</button>
-		</div>
-	</div>
+    <!-- Profile Section -->
+    <div class="section">
+      <h3>Profile</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Name:</span>
+          <span class="value">{{ parsedResume.profile.name }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Email:</span>
+          <span class="value">{{ parsedResume.profile.email }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Phone:</span>
+          <span class="value">{{ parsedResume.profile.phone }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Location:</span>
+          <span class="value">{{ parsedResume.profile.location }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">URL:</span>
+          <span class="value">{{ parsedResume.profile.url }}</span>
+        </div>
+        <div class="info-item full-width" *ngIf="parsedResume.profile.summary">
+          <span class="label">Summary:</span>
+          <span class="value">{{ parsedResume.profile.summary }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Education Section -->
+    <div class="section" *ngIf="parsedResume.education.length > 0">
+      <h3>Education</h3>
+      <div *ngFor="let edu of parsedResume.education" class="subsection">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Institution:</span>
+            <span class="value">{{ edu.school }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Degree:</span>
+            <span class="value">{{ edu.degree }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">GPA:</span>
+            <span class="value">{{ edu.gpa }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Period:</span>
+            <span class="value">{{ edu.date }}</span>
+          </div>
+        </div>
+        <ul class="descriptions" *ngIf="edu.descriptions.length > 0">
+          <li *ngFor="let desc of edu.descriptions">{{ desc }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Work Experience Section -->
+    <div class="section" *ngIf="parsedResume.workExperience.length > 0">
+      <h3>Work Experience</h3>
+      <div *ngFor="let work of parsedResume.workExperience" class="subsection">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Company:</span>
+            <span class="value">{{ work.company }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Position:</span>
+            <span class="value">{{ work.jobTitle }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Period:</span>
+            <span class="value">{{ work.date }}</span>
+          </div>
+        </div>
+        <ul class="descriptions" *ngIf="work.descriptions.length > 0">
+          <li *ngFor="let desc of work.descriptions">{{ desc }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Projects Section -->
+    <div class="section" *ngIf="parsedResume.projects.length > 0">
+      <h3>Projects</h3>
+      <div *ngFor="let project of parsedResume.projects" class="subsection">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Project Name:</span>
+            <span class="value">{{ project.name }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Period:</span>
+            <span class="value">{{ project.date }}</span>
+          </div>
+        </div>
+        <ul class="descriptions" *ngIf="project.descriptions.length > 0">
+          <li *ngFor="let desc of project.descriptions">{{ desc }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Skills Section -->
+    <div class="section" *ngIf="parsedResume.skills.length > 0">
+      <h3>Skills</h3>
+      <div class="skills-list">
+        <span *ngFor="let skill of parsedResume.skills" class="skill-tag">
+          {{ skill }}
+        </span>
+      </div>
+    </div>
+  </div>
 </div>

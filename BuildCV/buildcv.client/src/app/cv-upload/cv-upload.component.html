@@ -25,8 +25,11 @@
     </div>
   </div>
 
-  <div *ngIf="parsedResume && !isLoading" class="results-section">
-    <h2>Parsing Results</h2>
+<!-- La sfârșitul div-ului .results-section, după toate secțiunile -->
+<div *ngIf="parsedResume && !isLoading" style="margin-top: 2rem; text-align: center;">
+  <button class="btn-primary" (click)="continueToNextStep()" style="padding: 1rem 2rem;">
+    <i class="icon-arrow-right"></i> Continue to Personal Info
+  </button>
 
     <!-- Profile Section -->
     <div class="section">

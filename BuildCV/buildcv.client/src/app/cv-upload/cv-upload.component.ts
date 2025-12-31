@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CvService } from '../cv.service';
 import * as pdfjsLib from 'pdfjs-dist';
 
 interface TextItem {
@@ -53,7 +54,7 @@ interface ResumeData {
 @Component({
   selector: 'app-cv-upload',
   templateUrl: './cv-upload.component.html',
-  styleUrls: ['./cv-upload.component.css']
+  styleUrls: ['./cv-upload.component.css'],
 })
 export class CvUploadComponent {
   selectedFile: File | null = null;
@@ -61,7 +62,7 @@ export class CvUploadComponent {
   isLoading = false;
   error: string | null = null;
 
-  constructor() {
+  constructor(private cvService: CvService) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.js';
   }
 
@@ -81,18 +82,13 @@ export class CvUploadComponent {
     this.error = null;
 
     try {
-      // Step 1: Extract text items from PDF
       const textItems = await this.extractTextItems(file);
-      
-      // Step 2: Group text items into lines
       const lines = this.groupTextItemsIntoLines(textItems);
-      
-      // Step 3: Group lines into sections
       const sections = this.groupLinesIntoSections(lines);
-      
-      // Step 4: Extract information from sections
       this.parsedResume = this.extractResumeFromSections(sections);
-      
+
+      // NEW: Convert parsed data to CVData format and save to service
+      this.saveToCvService(this.parsedResume);
     } catch (err) {
       this.error = 'Error parsing CV: ' + (err as Error).message;
       console.error(err);
@@ -101,7 +97,189 @@ export class CvUploadComponent {
     }
   }
 
-  // STEP 1: Extract text items from PDF
+  // NEW METHOD: Convert and save parsed data to CvService
+  private saveToCvService(resumeData: ResumeData): void {
+    // Update Personal Info
+    this.cvService.updatePersonalInfo({
+      fullName: resumeData.profile.name || '',
+      email: resumeData.profile.email || '',
+      phone: resumeData.profile.phone || '',
+      location: resumeData.profile.location || '',
+      linkedIn: resumeData.profile.url?.includes('linkedin')
+        ? resumeData.profile.url
+        : '',
+      website:
+        resumeData.profile.url && !resumeData.profile.url.includes('linkedin')
+          ? resumeData.profile.url
+          : '',
+    });
+
+    // Update Professional Summary
+    if (resumeData.profile.summary) {
+      this.cvService.updateCVData({
+        professionalSummary: resumeData.profile.summary,
+      });
+    }
+
+    // Update Work Experience
+    const experiences = resumeData.workExperience.map((exp) => ({
+      jobTitle: exp.jobTitle || '',
+      company: exp.company || '',
+      location: '',
+      startDate: this.extractStartDate(exp.date),
+      endDate: this.extractEndDate(exp.date),
+      isCurrent: this.isCurrentJob(exp.date),
+      responsibilities: exp.descriptions.map((d) => d.trim()),
+    }));
+    this.cvService.updateCVData({ experiences });
+
+    // Update Education
+    const education = resumeData.education.map((edu) => ({
+      degree: edu.degree || '',
+      institution: edu.school || '',
+      location: '',
+      startDate: this.extractStartDate(edu.date),
+      endDate: this.extractEndDate(edu.date),
+      gpa: edu.gpa || '',
+      achievements: edu.descriptions.map((d) => d.trim()),
+    }));
+    this.cvService.updateCVData({ education });
+
+    // Update Skills
+    if (resumeData.skills && resumeData.skills.length > 0) {
+      this.cvService.updateCVData({ skills: resumeData.skills });
+    }
+
+    // Update Projects
+    const projects = resumeData.projects.map((proj) => ({
+      name: proj.name || '',
+      description: proj.descriptions.join(' '),
+      link: '',
+      technologies: this.extractTechnologies(proj.descriptions),
+    }));
+    this.cvService.updateCVData({ projects });
+
+    console.log('✅ CV data saved to service successfully!');
+  }
+
+  // Helper: Extract start date from date string
+  private extractStartDate(dateStr: string): string {
+    if (!dateStr) return '';
+
+    // Try to match patterns like "Jan 2020 - Dec 2022" or "2020 - 2022"
+    const match = dateStr.match(/(\w+\s+\d{4}|\d{4})/);
+    if (match) {
+      return this.formatDate(match[1]);
+    }
+    return '';
+  }
+
+  // Helper: Extract end date from date string
+  private extractEndDate(dateStr: string): string {
+    if (!dateStr) return '';
+
+    // Check if it's current
+    if (this.isCurrentJob(dateStr)) {
+      return '';
+    }
+
+    // Try to match patterns like "Jan 2020 - Dec 2022"
+    const match = dateStr.match(/-\s*(\w+\s+\d{4}|\d{4})/);
+    if (match) {
+      return this.formatDate(match[1]);
+    }
+    return '';
+  }
+
+  // Helper: Check if job is current
+  private isCurrentJob(dateStr: string): boolean {
+    return (
+      dateStr.toLowerCase().includes('present') ||
+      dateStr.toLowerCase().includes('current')
+    );
+  }
+
+  // Helper: Format date to YYYY-MM format for month input
+  private formatDate(dateStr: string): string {
+    try {
+      // Handle "Jan 2020" format
+      const monthNames = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
+
+      const parts = dateStr.trim().split(/\s+/);
+
+      if (parts.length === 2) {
+        // "Jan 2020" format
+        const monthIndex = monthNames.findIndex((m) =>
+          parts[0].toLowerCase().startsWith(m.toLowerCase())
+        );
+        if (monthIndex >= 0) {
+          const month = String(monthIndex + 1).padStart(2, '0');
+          return `${parts[1]}-${month}`;
+        }
+      } else if (parts.length === 1 && /^\d{4}$/.test(parts[0])) {
+        // Just year "2020"
+        return `${parts[0]}-01`;
+      }
+
+      return dateStr;
+    } catch (e) {
+      return dateStr;
+    }
+  }
+
+  // Helper: Extract technologies from descriptions
+  private extractTechnologies(descriptions: string[]): string[] {
+    const techKeywords = [
+      'JavaScript',
+      'TypeScript',
+      'Python',
+      'Java',
+      'C#',
+      'C++',
+      'React',
+      'Angular',
+      'Vue',
+      'Node.js',
+      '.NET',
+      'Spring',
+      'SQL',
+      'MongoDB',
+      'PostgreSQL',
+      'MySQL',
+      'AWS',
+      'Azure',
+      'Docker',
+      'Kubernetes',
+      'Git',
+    ];
+
+    const found = new Set<string>();
+    const text = descriptions.join(' ');
+
+    techKeywords.forEach((tech) => {
+      if (text.includes(tech)) {
+        found.add(tech);
+      }
+    });
+
+    return Array.from(found);
+  }
+
+  // [Keep all the existing parsing methods below - they remain unchanged]
+
   private async extractTextItems(file: File): Promise<TextItem[]> {
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -110,7 +288,7 @@ export class CvUploadComponent {
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const textContent = await page.getTextContent();
-      
+
       let prevItem: any = null;
 
       textContent.items.forEach((item: any) => {
@@ -119,11 +297,8 @@ export class CvUploadComponent {
         const y = transform[5];
         const width = item.width;
         const x2 = x1 + width;
-        
-        // Detect if it's bold (font name contains "Bold")
+
         const bold = item.fontName?.includes('Bold') || false;
-        
-        // Detect newline (if Y coordinate changed significantly)
         const newLine = prevItem ? Math.abs(y - prevItem.y) > 5 : true;
 
         textItems.push({
@@ -132,7 +307,7 @@ export class CvUploadComponent {
           x2,
           y,
           bold,
-          newLine
+          newLine,
         });
 
         prevItem = { y };
@@ -142,16 +317,19 @@ export class CvUploadComponent {
     return textItems;
   }
 
-  // STEP 2: Group text items into lines
   private groupTextItemsIntoLines(textItems: TextItem[]): Line[] {
     if (textItems.length === 0) return [];
 
-    // Calculate average character width
-    const totalWidth = textItems.reduce((sum, item) => sum + (item.x2 - item.x1), 0);
-    const totalChars = textItems.reduce((sum, item) => sum + item.text.length, 0);
+    const totalWidth = textItems.reduce(
+      (sum, item) => sum + (item.x2 - item.x1),
+      0
+    );
+    const totalChars = textItems.reduce(
+      (sum, item) => sum + item.text.length,
+      0
+    );
     const avgCharWidth = totalWidth / totalChars;
 
-    // Merge nearby text items
     const mergedItems: TextItem[] = [];
     let currentItem = { ...textItems[0] };
 
@@ -159,7 +337,6 @@ export class CvUploadComponent {
       const item = textItems[i];
       const distance = item.x1 - currentItem.x2;
 
-      // If distance is small and they're on the same line, merge them
       if (distance < avgCharWidth && Math.abs(item.y - currentItem.y) < 2) {
         currentItem.text += item.text;
         currentItem.x2 = item.x2;
@@ -170,12 +347,11 @@ export class CvUploadComponent {
     }
     mergedItems.push(currentItem);
 
-    // Group items into lines based on Y coordinate
     const lines: Line[] = [];
     let currentLine: TextItem[] = [];
     let currentY = mergedItems[0].y;
 
-    mergedItems.forEach(item => {
+    mergedItems.forEach((item) => {
       if (Math.abs(item.y - currentY) < 5) {
         currentLine.push(item);
       } else {
@@ -191,30 +367,38 @@ export class CvUploadComponent {
       lines.push({ items: currentLine, y: currentY });
     }
 
-    // Sort lines from top to bottom
     return lines.sort((a, b) => b.y - a.y);
   }
 
-  // STEP 3: Group lines into sections
   private groupLinesIntoSections(lines: Line[]): Section[] {
     const sections: Section[] = [];
     const sectionKeywords = [
-      'WORK EXPERIENCE', 'EXPERIENCE', 'EMPLOYMENT',
-      'EDUCATION', 'ACADEMIC',
-      'SKILLS', 'TECHNICAL SKILLS',
-      'PROJECTS', 'PROJECT',
-      'CERTIFICATIONS', 'CERTIFICATES'
+      'WORK EXPERIENCE',
+      'EXPERIENCE',
+      'EMPLOYMENT',
+      'EDUCATION',
+      'ACADEMIC',
+      'SKILLS',
+      'TECHNICAL SKILLS',
+      'PROJECTS',
+      'PROJECT',
+      'CERTIFICATIONS',
+      'CERTIFICATES',
     ];
 
-    // First section is always PROFILE
     let currentSection: Section = { title: 'PROFILE', lines: [] };
-    
-    lines.forEach(line => {
-      const lineText = line.items.map(i => i.text).join('').trim();
-      
-      // Check if it's a section title
-      const isSectionTitle = this.isSectionTitle(line, lineText, sectionKeywords);
-      
+
+    lines.forEach((line) => {
+      const lineText = line.items
+        .map((i) => i.text)
+        .join('')
+        .trim();
+      const isSectionTitle = this.isSectionTitle(
+        line,
+        lineText,
+        sectionKeywords
+      );
+
       if (isSectionTitle) {
         if (currentSection.lines.length > 0) {
           sections.push(currentSection);
@@ -232,20 +416,23 @@ export class CvUploadComponent {
     return sections;
   }
 
-  private isSectionTitle(line: Line, text: string, keywords: string[]): boolean {
-    // Main heuristic: single item, bold, uppercase
-    if (line.items.length === 1 && 
-        line.items[0].bold && 
-        text === text.toUpperCase() &&
-        text.length > 2) {
+  private isSectionTitle(
+    line: Line,
+    text: string,
+    keywords: string[]
+  ): boolean {
+    if (
+      line.items.length === 1 &&
+      line.items[0].bold &&
+      text === text.toUpperCase() &&
+      text.length > 2
+    ) {
       return true;
     }
 
-    // Fallback: keyword matching
-    return keywords.some(keyword => text.toUpperCase().includes(keyword));
+    return keywords.some((keyword) => text.toUpperCase().includes(keyword));
   }
 
-  // STEP 4: Extract resume data from sections
   private extractResumeFromSections(sections: Section[]): ResumeData {
     const resume: ResumeData = {
       profile: {
@@ -254,22 +441,26 @@ export class CvUploadComponent {
         phone: '',
         location: '',
         url: '',
-        summary: ''
+        summary: '',
       },
       education: [],
       workExperience: [],
       projects: [],
-      skills: []
+      skills: [],
     };
 
-    sections.forEach(section => {
+    sections.forEach((section) => {
       const title = section.title.toUpperCase();
 
       if (title === 'PROFILE' || sections.indexOf(section) === 0) {
         resume.profile = this.extractProfile(section);
       } else if (title.includes('EDUCATION')) {
         resume.education = this.extractEducation(section);
-      } else if (title.includes('WORK') || title.includes('EXPERIENCE') || title.includes('EMPLOYMENT')) {
+      } else if (
+        title.includes('WORK') ||
+        title.includes('EXPERIENCE') ||
+        title.includes('EMPLOYMENT')
+      ) {
         resume.workExperience = this.extractWorkExperience(section);
       } else if (title.includes('PROJECT')) {
         resume.projects = this.extractProjects(section);
@@ -281,24 +472,35 @@ export class CvUploadComponent {
     return resume;
   }
 
+  continueToNextStep(): void {
+    this.cvService.setCurrentStep(2); // Navigate to Personal Info step
+  }
+
+  // [Keep all other existing methods: extractProfile, extractEducation,
+  // extractWorkExperience, extractProjects, extractSkills, etc.]
+  // These remain unchanged from your original code
+
   private extractProfile(section: Section): any {
-    const allItems = section.lines.flatMap(line => line.items);
-    
+    const allItems = section.lines.flatMap((line) => line.items);
+
     return {
       name: this.findBestMatch(allItems, this.nameFeatures.bind(this)),
       email: this.findBestMatch(allItems, this.emailFeatures.bind(this)),
       phone: this.findBestMatch(allItems, this.phoneFeatures.bind(this)),
       location: this.findBestMatch(allItems, this.locationFeatures.bind(this)),
       url: this.findBestMatch(allItems, this.urlFeatures.bind(this)),
-      summary: this.findBestMatch(allItems, this.summaryFeatures.bind(this))
+      summary: this.findBestMatch(allItems, this.summaryFeatures.bind(this)),
     };
   }
 
-  private findBestMatch(items: TextItem[], featureFunc: (text: string, item: TextItem) => number): string {
+  private findBestMatch(
+    items: TextItem[],
+    featureFunc: (text: string, item: TextItem) => number
+  ): string {
     let bestScore = -Infinity;
     let bestText = '';
 
-    items.forEach(item => {
+    items.forEach((item) => {
       const score = featureFunc(item.text, item);
       if (score > bestScore) {
         bestScore = score;
@@ -309,7 +511,6 @@ export class CvUploadComponent {
     return bestText;
   }
 
-  // Feature scoring functions
   private nameFeatures(text: string, item: TextItem): number {
     let score = 0;
     if (/^[a-zA-Z\s\.]+$/.test(text)) score += 3;
@@ -358,59 +559,60 @@ export class CvUploadComponent {
     let score = 0;
     if (text.length > 50 && text.length < 300) score += 3;
     if (!item.bold) score += 1;
-    if (text.includes('@') || text.includes('/') || /\d{3}/.test(text)) score -= 4;
+    if (text.includes('@') || text.includes('/') || /\d{3}/.test(text))
+      score -= 4;
     return score;
   }
 
   private extractEducation(section: Section): any[] {
     const subsections = this.splitIntoSubsections(section.lines);
-    return subsections.map(subsection => {
-      const items = subsection.flatMap(line => line.items);
+    return subsections.map((subsection) => {
+      const items = subsection.flatMap((line) => line.items);
       const descriptions = this.extractDescriptions(subsection);
-      
+
       return {
         school: this.findBestMatch(items, this.schoolFeatures.bind(this)),
         degree: this.findBestMatch(items, this.degreeFeatures.bind(this)),
         gpa: this.findBestMatch(items, this.gpaFeatures.bind(this)),
         date: this.findBestMatch(items, this.dateFeatures.bind(this)),
-        descriptions
+        descriptions,
       };
     });
   }
 
   private extractWorkExperience(section: Section): any[] {
     const subsections = this.splitIntoSubsections(section.lines);
-    return subsections.map(subsection => {
-      const items = subsection.flatMap(line => line.items);
+    return subsections.map((subsection) => {
+      const items = subsection.flatMap((line) => line.items);
       const descriptions = this.extractDescriptions(subsection);
-      
+
       return {
         company: this.findBestMatch(items, this.companyFeatures.bind(this)),
         jobTitle: this.findBestMatch(items, this.jobTitleFeatures.bind(this)),
         date: this.findBestMatch(items, this.dateFeatures.bind(this)),
-        descriptions
+        descriptions,
       };
     });
   }
 
   private extractProjects(section: Section): any[] {
     const subsections = this.splitIntoSubsections(section.lines);
-    return subsections.map(subsection => {
-      const items = subsection.flatMap(line => line.items);
+    return subsections.map((subsection) => {
+      const items = subsection.flatMap((line) => line.items);
       const descriptions = this.extractDescriptions(subsection);
-      
+
       return {
         name: this.findBestMatch(items, this.projectFeatures.bind(this)),
         date: this.findBestMatch(items, this.dateFeatures.bind(this)),
-        descriptions
+        descriptions,
       };
     });
   }
 
   private extractSkills(section: Section): string[] {
     const skills: string[] = [];
-    section.lines.forEach(line => {
-      line.items.forEach(item => {
+    section.lines.forEach((line) => {
+      line.items.forEach((item) => {
         if (item.text.trim() && !item.text.includes('•')) {
           skills.push(item.text.trim());
         }
@@ -422,8 +624,7 @@ export class CvUploadComponent {
   private splitIntoSubsections(lines: Line[]): Line[][] {
     const subsections: Line[][] = [];
     let currentSubsection: Line[] = [];
-    
-    // Calculate typical line gap
+
     const gaps: number[] = [];
     for (let i = 1; i < lines.length; i++) {
       gaps.push(lines[i - 1].y - lines[i].y);
@@ -434,8 +635,8 @@ export class CvUploadComponent {
     lines.forEach((line, index) => {
       if (index > 0) {
         const gap = lines[index - 1].y - line.y;
-        const hasBoldItem = line.items.some(item => item.bold);
-        
+        const hasBoldItem = line.items.some((item) => item.bold);
+
         if (gap > threshold || hasBoldItem) {
           if (currentSubsection.length > 0) {
             subsections.push(currentSubsection);
@@ -455,8 +656,11 @@ export class CvUploadComponent {
 
   private extractDescriptions(lines: Line[]): string[] {
     const descriptions: string[] = [];
-    lines.forEach(line => {
-      const text = line.items.map(i => i.text).join(' ').trim();
+    lines.forEach((line) => {
+      const text = line.items
+        .map((i) => i.text)
+        .join(' ')
+        .trim();
       if (text.startsWith('•') || text.startsWith('-')) {
         descriptions.push(text);
       }
@@ -464,19 +668,26 @@ export class CvUploadComponent {
     return descriptions;
   }
 
-  // Additional feature functions
   private schoolFeatures(text: string, item: TextItem): number {
     let score = 0;
     const keywords = ['University', 'College', 'School', 'Institute'];
-    if (keywords.some(k => text.includes(k))) score += 3;
+    if (keywords.some((k) => text.includes(k))) score += 3;
     if (item.bold) score += 2;
     return score;
   }
 
   private degreeFeatures(text: string, item: TextItem): number {
     let score = 0;
-    const keywords = ['Bachelor', 'Master', 'PhD', 'Associate', 'Degree', 'Science', 'Arts'];
-    if (keywords.some(k => text.includes(k))) score += 3;
+    const keywords = [
+      'Bachelor',
+      'Master',
+      'PhD',
+      'Associate',
+      'Degree',
+      'Science',
+      'Arts',
+    ];
+    if (keywords.some((k) => text.includes(k))) score += 3;
     if (text.includes('GPA')) score += 1;
     return score;
   }
@@ -491,7 +702,8 @@ export class CvUploadComponent {
   private dateFeatures(text: string, item: TextItem): number {
     let score = 0;
     if (/(?:19|20)\d{2}/.test(text)) score += 3;
-    if (/Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/.test(text)) score += 2;
+    if (/Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/.test(text))
+      score += 2;
     if (/Spring|Summer|Fall|Winter/.test(text)) score += 2;
     if (text.includes('Present')) score += 2;
     if (text.includes('-')) score += 1;
@@ -500,9 +712,18 @@ export class CvUploadComponent {
 
   private jobTitleFeatures(text: string, item: TextItem): number {
     let score = 0;
-    const keywords = ['Engineer', 'Developer', 'Manager', 'Analyst', 'Designer', 
-                     'Intern', 'Assistant', 'Coordinator', 'Specialist'];
-    if (keywords.some(k => text.includes(k))) score += 3;
+    const keywords = [
+      'Engineer',
+      'Developer',
+      'Manager',
+      'Analyst',
+      'Designer',
+      'Intern',
+      'Assistant',
+      'Coordinator',
+      'Specialist',
+    ];
+    if (keywords.some((k) => text.includes(k))) score += 3;
     if (!item.bold) score += 1;
     if (/(?:19|20)\d{2}/.test(text)) score -= 3;
     return score;
@@ -514,7 +735,7 @@ export class CvUploadComponent {
     if (text.length > 3 && text.length < 50) score += 1;
     if (/(?:19|20)\d{2}/.test(text)) score -= 3;
     const jobKeywords = ['Engineer', 'Developer', 'Manager', 'Intern'];
-    if (jobKeywords.some(k => text.includes(k))) score -= 2;
+    if (jobKeywords.some((k) => text.includes(k))) score -= 2;
     return score;
   }
 

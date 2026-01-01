@@ -110,3 +110,8 @@
   min-height: auto;
   margin-bottom: 1rem;
 }
+
+.cv-builder-container {
+  display: flex;
+  flex-direction: column;
+}

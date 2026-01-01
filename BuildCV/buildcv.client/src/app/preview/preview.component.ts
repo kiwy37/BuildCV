@@ -37,6 +37,8 @@ export class PreviewComponent implements OnInit {
   zoom: number = 1.0;
   // actual scale applied to the preview. Use this to implement fit-to-container when zoom is 100%
   effectiveScale: number = 1.0;
+  // paper size for preview (A4 or Letter)
+  pageSize: 'A4' | 'Letter' = 'A4';
 
   customization: CustomizationSettings = {
     fontSize: 14,
@@ -158,6 +160,12 @@ export class PreviewComponent implements OnInit {
     }
   }
 
+  onPageSizeChange(): void {
+    // regenerate preview sizing and refit
+    this.generatePreview(false);
+    setTimeout(() => this.updateEffectiveScale(), 50);
+  }
+
   private updateEffectiveScale(): void {
     // When user zoom is 100% (zoom === 1.0) we want to fit the whole CV inside the
     // preview wrapper both horizontally and vertically. Otherwise use the explicit zoom.
@@ -238,11 +246,12 @@ export class PreviewComponent implements OnInit {
 
   private applyContainerStyles(): string {
     const c = this.customization;
+    const maxWidth = this.pageSize === 'A4' ? 794 : 816; // approximate px widths for preview
     return `
       /* Use padding instead of margin so the preview can be centered inside the wrapper */
       padding: ${c.paddingTop + c.marginTop}px ${c.paddingRight + c.marginRight}px ${c.paddingBottom + c.marginBottom}px ${c.paddingLeft + c.marginLeft}px !important;
       background-color: ${c.backgroundColor} !important;
-      max-width: 850px;
+      max-width: ${maxWidth}px;
       margin-left: auto;
       margin-right: auto;
     `;

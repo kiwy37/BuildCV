@@ -1,43 +1,4 @@
-<!-- Move header outside preview container so it can be full-width and wider -->
-<div class="preview-header">
-  <div class="preview-title">
-    <h2>
-      <i class="icon-eye"></i>
-      CV Preview & Customization
-    </h2>
-    <p>Current theme: <strong>{{ selectedTheme | titlecase }}</strong></p>
-  </div>
-
-  <div class="preview-actions">
-    <button class="btn-secondary" (click)="backToThemeSelection()">
-      <i class="icon-arrow-left"></i>
-      Change Theme
-    </button>
-
-    <button class="btn-secondary btn-customize" (click)="toggleCustomizationPanel()">
-      <i class="icon-sliders"></i>
-      Customize CV
-    </button>
-
-    <div class="zoom-controls">
-      <label style="font-size:0.95rem;color:var(--text-secondary);">Zoom: {{ (zoom * 100) | number:'1.0-0' }}%</label>
-      <input type="range" min="50" max="150" [value]="zoom * 100" (input)="setZoom($any($event.target).value)" class="slider-zoom">
-    </div>
-
-    <!-- Quick font picker visible in header for easy access -->
-    <div class="font-select-wrapper">
-      <label style="font-size:0.9rem;color:var(--text-secondary);margin-right:0.5rem;">Font:</label>
-      <select [(ngModel)]="customization.fontFamily" (change)="onCustomizationChange()" class="font-select">
-        <option *ngFor="let f of ['Roboto', 'Lato', 'Montserrat', 'Open Sans', 'Raleway', 'Caladea', 'Lora', 'Roboto Slab', 'Playfair Display', 'Merriweather']" [value]="f">{{f}}</option>
-      </select>
-    </div>
-
-    <button class="btn-primary" (click)="downloadPDF()">
-      <i class="icon-download"></i>
-      Download PDF
-    </button>
-  </div>
-</div>
+<!-- Header removed per request. Zoom and download moved above the CV preview. -->
 
 <div class="preview-container">
   <!-- Left: customization panel -->
@@ -47,14 +8,15 @@
         <i class="icon-sliders"></i>
         Customize CV
       </h3>
-      <button class="btn-close" (click)="toggleCustomizationPanel()">×</button>
+      <button class="btn-close" (click)="toggleCustomizationPanel()">‹</button>
     </div>
 
     <div class="sidebar-content">
-      <!-- Repeat same content as above - keep one source of truth in the file -->
       <!-- Font Family Selection -->
-      <div class="setting-group">
-        <h4>🔤 Font Family</h4>
+      <details class="setting-group" open>
+        <summary>
+          <h4>🔤 Font Family</h4>
+        </summary>
         <div class="font-selection">
           <button 
             *ngFor="let font of ['Roboto', 'Lato', 'Montserrat', 'Open Sans', 'Raleway', 'Caladea', 'Lora', 'Roboto Slab', 'Playfair Display', 'Merriweather']"
@@ -65,12 +27,13 @@
             {{ font }}
           </button>
         </div>
-      </div>
+      </details>
 
       <!-- Typography Settings -->
-      <div class="setting-group">
-        <h4>📝 Typography</h4>
-        
+      <details class="setting-group">
+        <summary>
+          <h4>📝 Typography</h4>
+        </summary>
         <div class="setting-item">
           <label>Body Font Size: {{customization.fontSize}}px</label>
           <input 
@@ -118,12 +81,13 @@
             step="2"
             class="slider">
         </div>
-      </div>
+      </details>
 
       <!-- Margins -->
-      <div class="setting-group">
-        <h4>📏 Page Margins</h4>
-        
+      <details class="setting-group">
+        <summary>
+          <h4>📏 Page Margins</h4>
+        </summary>
         <div class="spacing-grid">
           <div class="setting-item">
             <label>Top: {{customization.marginTop}}px</label>
@@ -173,12 +137,13 @@
               class="slider">
           </div>
         </div>
-      </div>
+      </details>
 
       <!-- Padding -->
-      <div class="setting-group">
-        <h4>📦 Content Padding</h4>
-        
+      <details class="setting-group">
+        <summary>
+          <h4>📦 Content Padding</h4>
+        </summary>
         <div class="spacing-grid">
           <div class="setting-item">
             <label>Top: {{customization.paddingTop}}px</label>
@@ -228,12 +193,13 @@
               class="slider">
           </div>
         </div>
-      </div>
+      </details>
 
       <!-- Colors -->
-      <div class="setting-group">
-        <h4>🎨 Colors</h4>
-        
+      <details class="setting-group">
+        <summary>
+          <h4>🎨 Colors</h4>
+        </summary>
         <div class="setting-item">
           <label>Primary Color (Headings)</label>
           <div class="color-picker-wrapper">
@@ -281,7 +247,7 @@
             <span class="color-value">{{customization.backgroundColor}}</span>
           </div>
         </div>
-      </div>
+      </details>
 
       <!-- Reset Button -->
       <button class="btn-reset" (click)="resetCustomization()">
@@ -290,7 +256,32 @@
     </div>
   </div>
 
+  <!-- Sidebar toggle (visible even when sidebar is closed) -->
+  <button class="sidebar-toggle" (click)="toggleCustomizationPanel()" [attr.aria-expanded]="showCustomizationPanel">
+    {{ showCustomizationPanel ? '‹' : '›' }}
+  </button>
+
   <div class="preview-main" [class.shifted]="showCustomizationPanel">
+    <div class="preview-top-actions">
+      <div class="page-size-select">
+        <label style="font-size:0.9rem;color:var(--text-secondary);margin-right:0.5rem;">Size:</label>
+        <select [(ngModel)]="pageSize" (change)="onPageSizeChange()" class="font-select">
+          <option value="A4">A4</option>
+          <option value="Letter">Letter</option>
+        </select>
+      </div>
+
+      <div class="actions-right">
+        <div class="zoom-controls">
+          <label style="font-size:0.95rem;color:var(--text-secondary);">Zoom: {{ (zoom * 100) | number:'1.0-0' }}%</label>
+          <input type="range" min="50" max="150" [value]="zoom * 100" (input)="setZoom($any($event.target).value)" class="slider-zoom">
+        </div>
+
+        <button class="btn-primary btn-download-small" (click)="downloadPDF()">
+          <i class="icon-download"></i>
+        </button>
+      </div>
+    </div>
     <!-- CV Preview -->
     <div class="cv-preview-wrapper" #cvWrapper *ngIf="!isLoading">
       <div class="cv-preview" #cvPreview [innerHTML]="previewHtml" [style.transform]="'scale(' + effectiveScale + ')'">

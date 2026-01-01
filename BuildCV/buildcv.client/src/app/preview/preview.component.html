@@ -24,6 +24,14 @@
       <input type="range" min="50" max="150" [value]="zoom * 100" (input)="setZoom($any($event.target).value)" class="slider-zoom">
     </div>
 
+    <!-- Quick font picker visible in header for easy access -->
+    <div class="font-select-wrapper">
+      <label style="font-size:0.9rem;color:var(--text-secondary);margin-right:0.5rem;">Font:</label>
+      <select [(ngModel)]="customization.fontFamily" (change)="onCustomizationChange()" class="font-select">
+        <option *ngFor="let f of ['Roboto', 'Lato', 'Montserrat', 'Open Sans', 'Raleway', 'Caladea', 'Lora', 'Roboto Slab', 'Playfair Display', 'Merriweather']" [value]="f">{{f}}</option>
+      </select>
+    </div>
+
     <button class="btn-primary" (click)="downloadPDF()">
       <i class="icon-download"></i>
       Download PDF
@@ -44,6 +52,21 @@
 
     <div class="sidebar-content">
       <!-- Repeat same content as above - keep one source of truth in the file -->
+      <!-- Font Family Selection -->
+      <div class="setting-group">
+        <h4>🔤 Font Family</h4>
+        <div class="font-selection">
+          <button 
+            *ngFor="let font of ['Roboto', 'Lato', 'Montserrat', 'Open Sans', 'Raleway', 'Caladea', 'Lora', 'Roboto Slab', 'Playfair Display', 'Merriweather']"
+            class="font-btn"
+            [ngClass]="{'active': customization.fontFamily === font}"
+            (click)="customization.fontFamily = font; onCustomizationChange()"
+            [style.fontFamily]="font">
+            {{ font }}
+          </button>
+        </div>
+      </div>
+
       <!-- Typography Settings -->
       <div class="setting-group">
         <h4>📝 Typography</h4>

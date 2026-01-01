@@ -59,9 +59,9 @@ export class ChooseThemeComponent {
   selectTheme(theme: Theme): void {
     this.selectedThemeId = theme.id;
 
-    // Immediately save the selected theme and navigate to Preview (step 8)
+    // Immediately save the selected theme and navigate to Preview (step 9)
     this.cvService.updateCVData({ selectedTheme: theme.id } as any);
-    this.cvService.setCurrentStep(8);
+    this.cvService.setCurrentStep(9);
   }
   
 }

@@ -1,0 +1,112 @@
+/* Compact Step Navigation */
+.step-navigation {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+  width: 100%;
+}
+
+.step-item {
+  background: var(--white);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.step-item:hover {
+  border-color: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.step-item.active {
+  border-color: var(--primary-color);
+  background-color: #EEF2FF;
+}
+
+.step-item.completed {
+  border-color: var(--success-color);
+  background-color: #ECFDF5;
+}
+
+.step-item.completed::after {
+  content: "✓";
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  width: 20px;
+  height: 20px;
+  background: var(--success-color);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.step-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--primary-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.step-item.active .step-icon {
+  background: var(--primary-color);
+}
+
+.step-item.completed .step-icon {
+  background: var(--success-color);
+}
+
+.step-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.15rem;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.step-subtitle {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  line-height: 1.1;
+}
+
+/* Progress Bar */
+.progress-bar {
+  height: 4px;
+  background-color: var(--border-color);
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+  transition: width 0.3s ease;
+}
+
+/* Step Content */
+.step-content {
+  min-height: auto;
+  margin-bottom: 1rem;
+}

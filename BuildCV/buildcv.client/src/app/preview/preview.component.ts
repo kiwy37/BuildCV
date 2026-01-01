@@ -246,7 +246,7 @@ export class PreviewComponent implements OnInit {
 
   private applyContainerStyles(): string {
     const c = this.customization;
-    const maxWidth = this.pageSize === 'A4' ? 794 : 816; // approximate px widths for preview
+    const maxWidth = 794; // keep width constant; pageSize now only toggles aspect ratio via CSS
     return `
       /* Use padding instead of margin so the preview can be centered inside the wrapper */
       padding: ${c.paddingTop + c.marginTop}px ${c.paddingRight + c.marginRight}px ${c.paddingBottom + c.marginBottom}px ${c.paddingLeft + c.marginLeft}px !important;
@@ -259,146 +259,155 @@ export class PreviewComponent implements OnInit {
 
   private generateLimaTemplate(): string {
     const c = this.customization;
+    const pi = this.cvData.personalInfo || {} as any;
     return `
-      <div class="cv-lima" style="${this.applyContainerStyles()}">
+      <div class="cv-lima-container" style="${this.applyContainerStyles()} background: ${c.backgroundColor};">
         <style>
           ${this.getGoogleFontImport(c.fontFamily)}
-          .cv-lima { ${this.applyCustomStyles()} }
-          .cv-lima h1 { 
-            color: ${c.primaryColor} !important; 
-            font-size: ${c.headingFontSize}px !important; 
-            margin-bottom: ${c.sectionSpacing * 0.5}px !important;
-          }
-          .cv-lima h2 { 
-            color: ${c.primaryColor} !important; 
-            font-size: ${c.fontSize * 1.4}px !important; 
-            margin-top: ${c.sectionSpacing}px !important;
-            margin-bottom: ${c.sectionSpacing * 0.5}px !important;
-            padding-bottom: ${c.sectionSpacing * 0.3}px !important;
-            border-bottom: 2px solid ${c.primaryColor} !important;
-          }
-          .cv-lima h3 { 
-            color: ${c.textColor} !important; 
-            font-size: ${c.fontSize * 1.15}px !important; 
-            margin-bottom: ${c.sectionSpacing * 0.3}px !important;
-          }
-          .cv-lima .contact-info { 
-            color: ${c.textColor} !important; 
-            margin-bottom: ${c.sectionSpacing}px !important;
-            opacity: 0.8;
-          }
-          .cv-lima .section { 
-            margin-bottom: ${c.sectionSpacing}px !important; 
-          }
-          .cv-lima .item { 
-            margin-bottom: ${c.sectionSpacing * 0.8}px !important; 
-          }
-          .cv-lima a { color: ${c.secondaryColor} !important; }
-          .cv-lima ul { 
-            margin-top: ${c.sectionSpacing * 0.4}px !important;
-            padding-left: ${c.paddingLeft * 0.5}px !important;
-          }
-          .cv-lima li { 
-            margin-bottom: ${c.sectionSpacing * 0.2}px !important; 
-          }
+          .cv-lima-container { font-family: ${this.getFontStack(c.fontFamily)}; color: ${c.textColor}; }
+          .lima-wrap { display: flex; width: 100%; min-height: 1100px; background: white; box-shadow: 0 0 0 rgba(0,0,0,0); }
+          .lima-sidebar { width: 30%; background: #2b3442; color: #d1d5db; padding: 36px 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px; }
+          .lima-profile { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+          .lima-avatar { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; background: #e5e7eb; }
+          .lima-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+          .lima-sidebar h4 { color: #f8fafc; margin: 0; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+          .lima-section { margin-top: 8px; }
+          .lima-section p, .lima-section div { color: #cbd5e1; font-size: ${c.fontSize}px; line-height: ${c.lineHeight}; }
+          .lima-links a { color: #cbd5e1; text-decoration: none; display:block; margin-bottom:6px; }
+
+          .lima-main { width: 70%; padding: 36px 44px; box-sizing: border-box; display: flex; flex-direction: column; }
+          .lm-header { display:flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+          .lm-title { font-family: ${this.getFontStack(c.fontFamily)}; color: ${c.textColor}; }
+          .lm-title h1 { margin: 0; font-size: ${c.headingFontSize * 1.4}px; letter-spacing: 1px; }
+          .lm-title h2 { margin: 6px 0 0 0; color: ${c.primaryColor}; font-size: ${c.headingFontSize}px; font-weight:700; }
+          .lm-contact { text-align: right; color: ${c.textColor}; opacity: 0.8; font-size: ${c.fontSize}px; }
+
+          .lm-body { margin-top: 18px; display: flex; flex-direction: column; gap: 18px; }
+          .section-title { text-transform: uppercase; font-weight:700; letter-spacing: 1px; color: ${c.textColor}; margin-bottom:8px; }
+
+          /* Experience two-column layout with vertical rule */
+          .experience-item { display: grid; grid-template-columns: 28% 1fr; gap: 18px; align-items: start; padding: 12px 0; border-top: 1px solid #e6e6e6; }
+          .exp-left { color: ${c.textColor}; opacity: 0.8; font-size: ${c.fontSize - 1}px; }
+          .exp-right h3 { margin: 0; font-size: ${c.fontSize * 1.05}px; color: ${c.primaryColor}; }
+          .exp-right ul { margin: 8px 0 0 0; padding-left: 18px; }
+
+          .education-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+          .skill-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+          /* small bullets under hobbies */
+          .hobby-list { display:flex; gap:8px; flex-wrap:wrap; }
+          .hobby { background:#f3f4f6; padding:6px 10px; border-radius:999px; font-size:0.85rem; color:#374151; }
+
+          /* make lists look neat */
+          .lm-body p, .lm-body li { color: ${c.textColor}; font-size: ${c.fontSize}px; line-height: ${c.lineHeight}; }
         </style>
-        
-        <h1>${this.cvData.personalInfo.fullName || 'Your Name'}</h1>
-        <div class="contact-info">
-          ${this.cvData.personalInfo.email}${this.cvData.personalInfo.phone ? ' | ' + this.cvData.personalInfo.phone : ''}${this.cvData.personalInfo.location ? ' | ' + this.cvData.personalInfo.location : ''}
-        </div>
-        
-        ${this.cvData.professionalSummary ? `
-          <div class="section">
-            <h2>Professional Summary</h2>
-            <p>${this.cvData.professionalSummary}</p>
-          </div>
-        ` : ''}
-        
-        ${this.cvData.experiences && this.cvData.experiences.length > 0 ? `
-          <div class="section">
-            <h2>Experience</h2>
-            ${this.cvData.experiences.map(exp => `
-              <div class="item">
-                <h3>${exp.jobTitle}</h3>
-                <div style="opacity: 0.8; margin-bottom: 8px;">
-                  ${exp.company}${exp.location ? ' | ' + exp.location : ''} | ${exp.startDate} - ${exp.isCurrent ? 'Present' : exp.endDate}
-                </div>
-                ${exp.responsibilities && exp.responsibilities.length > 0 ? `
-                  <ul>
-                    ${exp.responsibilities.map(r => `<li>${r}</li>`).join('')}
-                  </ul>
-                ` : ''}
+
+        <div class="lima-wrap">
+          <aside class="lima-sidebar">
+            <div class="lima-profile">
+              <div class="lima-avatar">
+                ${pi.photoUrl ? `<img src="${pi.photoUrl}" alt="avatar">` : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#d1d5db,#94a3b8);"></div>`}
               </div>
-            `).join('')}
-          </div>
-        ` : ''}
-        
-        ${this.cvData.education && this.cvData.education.length > 0 ? `
-          <div class="section">
-            <h2>Education</h2>
-            ${this.cvData.education.map(edu => `
-              <div class="item">
-                <h3>${edu.degree}</h3>
-                <div style="opacity: 0.8; margin-bottom: 8px;">
-                  ${edu.institution}${edu.location ? ' | ' + edu.location : ''} | ${edu.startDate} - ${edu.endDate}
-                </div>
-                ${edu.gpa ? `<div style="opacity: 0.8;">GPA: ${edu.gpa}</div>` : ''}
-                ${edu.achievements && edu.achievements.length > 0 ? `
-                  <ul>
-                    ${edu.achievements.map(a => `<li>${a}</li>`).join('')}
-                  </ul>
-                ` : ''}
+              <div style="text-align:center; color:#f8fafc; font-weight:700;">${pi.fullName || 'Your Name'}</div>
+              <div style="text-align:center; color:#cbd5e1">${pi.title || pi.profession || ''}</div>
+            </div>
+
+            ${this.cvData.professionalSummary ? `
+              <div class="lima-section">
+                <h4>About</h4>
+                <p>${this.cvData.professionalSummary}</p>
               </div>
-            `).join('')}
-          </div>
-        ` : ''}
-        
-        ${this.cvData.skills && this.cvData.skills.length > 0 ? `
-          <div class="section">
-            <h2>Skills</h2>
-            <div>${this.cvData.skills.join(' • ')}</div>
-          </div>
-        ` : ''}
-        
-        ${this.cvData.projects && this.cvData.projects.length > 0 ? `
-          <div class="section">
-            <h2>Projects</h2>
-            ${this.cvData.projects.map(proj => `
-              <div class="item">
-                <h3>${proj.name}</h3>
-                <p>${proj.description}</p>
-                ${proj.technologies && proj.technologies.length > 0 ? `
-                  <div style="opacity: 0.8; margin-top: 8px;">
-                    <strong>Technologies:</strong> ${proj.technologies.join(', ')}
+            ` : ''}
+
+            ${pi.links && pi.links.length ? `
+              <div class="lima-section lima-links">
+                <h4>Links</h4>
+                ${pi.links.map((l:any)=>`<a href="${l}" target="_blank">${l}</a>`).join('')}
+              </div>
+            ` : ''}
+
+            ${this.cvData.languages && this.cvData.languages.length ? `
+              <div class="lima-section">
+                <h4>Languages</h4>
+                <div>${this.cvData.languages.join(', ')}</div>
+              </div>
+            ` : ''}
+
+            ${this.cvData.references && this.cvData.references.length ? `
+              <div class="lima-section">
+                <h4>References</h4>
+                ${this.cvData.references.map((r:any)=>`<div style="font-weight:600;color:#f8fafc">${r.name}</div><div style="font-size:0.85rem;color:#cbd5e1">${r.title || ''}${r.phone ? ' | ' + r.phone : ''}</div>`).join('')}
+              </div>
+            ` : ''}
+          </aside>
+
+          <main class="lima-main">
+            <div class="lm-header">
+              <div class="lm-title">
+                <h1>${pi.fullName || 'Your Name'}</h1>
+                <h2>${pi.title || ''}</h2>
+              </div>
+              <div class="lm-contact">
+                <div>${pi.location || ''}</div>
+                <div>${pi.email || ''}</div>
+                <div>${pi.phone || ''}</div>
+              </div>
+            </div>
+
+            <div class="lm-body">
+              ${this.cvData.experiences && this.cvData.experiences.length ? `
+                <section>
+                  <div class="section-title">Work Experience</div>
+                  ${this.cvData.experiences.map((e:any)=>`
+                    <div class="experience-item">
+                      <div class="exp-left">
+                        <div style="font-weight:700">${e.company}</div>
+                        <div>${e.location || ''}</div>
+                        <div style="margin-top:6px;opacity:0.8">${e.startDate} - ${e.isCurrent ? 'Present' : e.endDate}</div>
+                      </div>
+                      <div class="exp-right">
+                        <h3>${e.jobTitle}</h3>
+                        ${e.responsibilities && e.responsibilities.length ? `<ul>${e.responsibilities.map((r:any)=>`<li>${r}</li>`).join('')}</ul>` : ''}
+                      </div>
+                    </div>
+                  `).join('')}
+                </section>
+              ` : ''}
+
+              ${this.cvData.education && this.cvData.education.length ? `
+                <section>
+                  <div class="section-title">Education</div>
+                  <div class="education-grid">
+                    ${this.cvData.education.map((ed:any)=>`
+                      <div>
+                        <div style="font-weight:700">${ed.institution}</div>
+                        <div style="opacity:0.8">${ed.degree} • ${ed.startDate} - ${ed.endDate}</div>
+                      </div>
+                    `).join('')}
                   </div>
-                ` : ''}
-                ${proj.link ? `<div style="margin-top: 4px;"><a href="${proj.link}" target="_blank">${proj.link}</a></div>` : ''}
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
-        
-        ${this.cvData.certifications && this.cvData.certifications.length > 0 ? `
-          <div class="section">
-            <h2>Certifications</h2>
-            ${this.cvData.certifications.map(cert => `
-              <div class="item">
-                <h3>${cert.name}</h3>
-                <div style="opacity: 0.8;">
-                  ${cert.issuer}${cert.date ? ' | ' + cert.date : ''}${cert.credentialId ? ' | ID: ' + cert.credentialId : ''}
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
-        
-        ${this.cvData.languages && this.cvData.languages.length > 0 ? `
-          <div class="section">
-            <h2>Languages</h2>
-            <div>${this.cvData.languages.join(' • ')}</div>
-          </div>
-        ` : ''}
+                </section>
+              ` : ''}
+
+              ${this.cvData.skills && this.cvData.skills.length ? `
+                <section>
+                  <div class="section-title">Skills</div>
+                  <div class="skill-grid">
+                    ${this.cvData.skills.map((s:any)=>`<div style="padding:6px 8px;background:#f8fafc;border-radius:6px;">${s}</div>`).join('')}
+                  </div>
+                </section>
+              ` : ''}
+
+              ${this.cvData.hobbies && this.cvData.hobbies.length ? `
+                <section>
+                  <div class="section-title">Hobbies</div>
+                  <div class="hobby-list">
+                    ${this.cvData.hobbies.map((h:any)=>`<div class="hobby">${h}</div>`).join('')}
+                  </div>
+                </section>
+              ` : ''}
+            </div>
+          </main>
+        </div>
       </div>
     `;
   }
@@ -536,9 +545,9 @@ export class PreviewComponent implements OnInit {
 
       <div class="main-content">
         <div class="rt-header">
-          ${this.cvData.photoUrl ? `
+          ${pi.photoUrl ? `
           <div class="rt-profile-pic">
-            <img src="${this.cvData.photoUrl}" alt="Profile">
+            <img src="${pi.photoUrl}" alt="Profile">
           </div>
           ` : ''}
           <div class="rt-header-info">
@@ -619,11 +628,247 @@ export class PreviewComponent implements OnInit {
 }
 
   private generateRigaTemplate(): string {
-    return this.generateLimaTemplate();
+    const c = this.customization;
+    const pi = this.cvData.personalInfo || {} as any;
+
+    return `
+      <div class="cv-riga-container" style="${this.applyContainerStyles()} background: ${c.backgroundColor};">
+        <style>
+          ${this.getGoogleFontImport(c.fontFamily)}
+          .cv-riga-container { font-family: ${this.getFontStack(c.fontFamily)}; color: ${c.textColor}; }
+          .riga-page { width: 100%; min-height: 1100px; background: white; display: flex; flex-direction: column; }
+
+          /* strong navy top band */
+          .riga-top { background: #1f2937; color: #fff; padding: 34px 24px 28px 24px; text-align: center; }
+          .riga-top .small { color: #d6c39a; letter-spacing: 6px; font-size: 12px; margin-bottom: 6px; display:block; }
+          .riga-top h1 { margin: 6px 0 6px 0; font-size: ${c.headingFontSize * 2}px; letter-spacing: 6px; text-transform:uppercase; }
+          .riga-top h2 { margin: 0; font-size: ${c.fontSize + 2}px; color: #b88c3a; font-weight:700; letter-spacing: 2px; }
+
+          .riga-body { display:flex; }
+          .riga-left { width: 34%; background: #f4f4f6; padding: 24px 28px 40px 28px; box-sizing: border-box; position: relative; }
+          .riga-right { width: 66%; padding: 28px 44px 40px 44px; box-sizing: border-box; }
+
+          /* avatar overlaps the top band */
+          .riga-avatar { width: 140px; height: 140px; border-radius: 50%; overflow: hidden; margin: -70px auto 14px auto; border: 6px solid #fff; box-shadow: 0 6px 18px rgba(17,24,39,0.12); background:#e6e7ea }
+          .riga-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+
+          .left-section { padding-top: 8px; }
+          .left-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:22px; }
+          .left-heading h4 { margin:0; text-transform:uppercase; letter-spacing:1px; color:#374151; font-size:0.95rem; }
+          .left-hr { height:1px; background:#d1d5db; margin-top:12px; }
+
+          .edu-item { margin:12px 0; }
+          .edu-item .degree { font-weight:700; color:#111827; }
+          .edu-item .meta { color:#8b8f95; font-size:0.9rem; margin-top:6px; }
+
+          .lang-item { margin:10px 0; }
+          .lang-label { font-size:0.9rem; color:#374151; font-weight:600; margin-bottom:8px; }
+          .lang-bar { height:8px; background:#e6e6e6; border-radius:999px; overflow:hidden; }
+          .lang-fill { height:8px; background:#b88c3a; width:60%; }
+
+          /* right column styling */
+          .section-title { text-transform:uppercase; font-weight:700; letter-spacing:1px; color:#374151; margin: 6px 0 12px 0; border-bottom:1px solid #e6e6e6; padding-bottom:8px; }
+
+          .job { margin-bottom:18px; }
+          .job h3 { margin: 0; font-size: ${c.fontSize * 1.05}px; color:#111827; }
+          .job .company { color:#b88c3a; font-weight:700; margin-top:6px; }
+          .job p { margin:8px 0 0 0; color:#4b5563; line-height:${c.lineHeight}; }
+
+          .skills-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:8px; }
+          .skill-row { display:flex; align-items:center; gap:12px; }
+          .skill-name { width:40%; font-weight:600; color:#374151; }
+          .skill-meter { flex:1; height:8px; background:#e6e6e6; border-radius:999px; overflow:hidden; }
+          .skill-meter .fill { height:8px; background:#b88c3a; width:70%; }
+
+          /* small print tweak for contact row */
+          .contact-row { display:flex; gap:18px; justify-content:center; color:#c9cdd2; margin-top:8px; }
+
+          @media print, (max-width:720px) {
+            .riga-body { flex-direction:column; }
+            .riga-left, .riga-right { width:100%; }
+            .riga-top h1 { font-size: 26px; }
+            .riga-avatar { margin-top:-56px; }
+          }
+        </style>
+
+        <div class="riga-page">
+          <div class="riga-top">
+            <span class="small">C I M</span>
+            <h1>${pi.fullName || 'Your Name'}</h1>
+            <h2>${pi.title || pi.profession || ''}</h2>
+            <div class="contact-row">
+              <div>${pi.location || ''}</div>
+              <div>${pi.phone || ''}</div>
+              <div>${pi.email || ''}</div>
+            </div>
+          </div>
+
+          <div class="riga-body">
+            <aside class="riga-left">
+              <div class="riga-avatar">
+                ${pi.photoUrl ? `<img src="${pi.photoUrl}" alt="avatar">` : `<div style="width:100%;height:100%;"></div>`}
+              </div>
+              <div class="left-section">
+                <div style="text-align:center;font-weight:700;color:#111827">${pi.fullName || ''}</div>
+                <div style="text-align:center;color:#8b8f95;margin-bottom:8px">${pi.title || ''}</div>
+
+                ${this.cvData.education && this.cvData.education.length ? `
+                  <div>
+                    <div class="left-heading"><h4>Education</h4></div>
+                    <div class="left-hr"></div>
+                    ${this.cvData.education.map((ed:any)=>`
+                      <div class="edu-item"><div class="degree">${ed.degree}</div><div class="meta">${ed.institution} • ${ed.endDate || ''}</div></div>
+                    `).join('')}
+                  </div>
+                ` : ''}
+
+                ${this.cvData.languages && this.cvData.languages.length ? `
+                  <div>
+                    <div class="left-heading"><h4>Languages</h4></div>
+                    <div class="left-hr"></div>
+                    ${this.cvData.languages.map((l:any)=>`
+                      <div class="lang-item"><div class="lang-label">${l.name || l}</div><div class="lang-bar"><div class="lang-fill" style="width:${(l.levelPercent||60)}%"></div></div></div>
+                    `).join('')}
+                  </div>
+                ` : ''}
+
+                ${this.cvData.skills && this.cvData.skills.length ? `
+                  <div>
+                    <div class="left-heading"><h4>Skills</h4></div>
+                    <div class="left-hr"></div>
+                    <div class="skills-grid">
+                      ${this.cvData.skills.map((s:any)=>`<div class="skill-tag">${s}</div>`).join('')}
+                    </div>
+                  </div>
+                ` : ''}
+              </div>
+            </aside>
+
+            <main class="riga-right">
+              ${this.cvData.professionalSummary ? `<div><div class="section-title">Profile</div><p style="color:#4b5563">${this.cvData.professionalSummary}</p></div>` : ''}
+
+              ${this.cvData.experiences && this.cvData.experiences.length ? `
+                <div>
+                  <div class="section-title">Work Experience</div>
+                  ${this.cvData.experiences.map((e:any)=>`
+                    <div class="job"><h3>${e.jobTitle}</h3><div class="company">${e.company} ${e.location ? ' • ' + e.location : ''}</div>${e.responsibilities && e.responsibilities.length ? `<p>${e.responsibilities.map((r:any)=>`• ${r}`).join('<br>')}</p>` : ''}</div>
+                  `).join('')}
+                </div>
+              ` : ''}
+
+              ${this.cvData.skills && this.cvData.skills.length ? `
+                <div>
+                  <div class="section-title">Skills & Tools</div>
+                  <div>
+                    ${this.cvData.skills.map((s:any)=>`
+                      <div class="skill-row"><div class="skill-name">${s}</div><div class="skill-meter"><div class="fill" style="width:70%"></div></div></div>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+
+              ${this.cvData.projects && this.cvData.projects.length ? `
+                <div>
+                  <div class="section-title">Projects</div>
+                  ${this.cvData.projects.map((p:any)=>`<div style="margin-bottom:10px;"><div style="font-weight:700">${p.name}</div><div style="color:#6b7280">${p.description || ''}</div></div>`).join('')}
+                </div>
+              ` : ''}
+            </main>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   private generateATSTemplate(): string {
-    return this.generateLimaTemplate();
+    const c = this.customization;
+    const pi = this.cvData.personalInfo || {} as any;
+
+    return `
+      <div class="cv-ats-container" style="${this.applyContainerStyles()} background: ${c.backgroundColor};">
+        <style>
+          ${this.getGoogleFontImport(c.fontFamily)}
+          .cv-ats-container { font-family: ${this.getFontStack(c.fontFamily)}; color: ${c.textColor}; }
+          .ats-page { width: 100%; min-height: 1100px; background: white; padding: 24px; box-sizing: border-box; }
+
+          .ats-header { text-align: center; margin-bottom: 8px; }
+          .ats-header h1 { margin: 0; font-size: ${c.headingFontSize * 1.6}px; font-weight:700; letter-spacing:2px; }
+          .ats-header .contact { color: #374151; font-size: ${c.fontSize - 1}px; margin-top:8px; }
+          .ats-links { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
+          .ats-link { background:#f1f5f9; color:#1f2937; padding:6px 10px; border-radius:6px; font-size:0.9rem; text-decoration:none; }
+
+          .ats-section { margin-top:18px; }
+          .ats-section .title { display:block; background:#eef6ff; color:#1f2937; padding:8px 12px; border-radius:6px; font-weight:700; text-align:center; letter-spacing:1px; }
+          .ats-body { padding:12px 6px; color:#374151; line-height:${c.lineHeight}; }
+
+          .ats-list { margin:8px 0 0 0; padding-left:16px; }
+          .ats-list li { margin-bottom:6px; }
+
+          .ats-subtitle { font-weight:700; color:#111827; }
+          .ats-meta { color:#6b7280; font-size:0.95rem; margin-top:4px; }
+
+          @media print, (max-width:720px) { .ats-header h1 { font-size: 26px; } }
+        </style>
+
+        <div class="ats-page">
+          <header class="ats-header">
+            <h1>${pi.fullName || this.cvData.personalInfo.fullName || 'Your Name'}</h1>
+            <div class="contact">${pi.phone || ''} ${pi.phone && pi.email ? ' | ' : ''} ${pi.email || ''} ${pi.location ? ' | ' + pi.location : ''}</div>
+            ${pi.links && pi.links.length ? `<div class="ats-links">${pi.links.map((l:any)=>`<a class="ats-link" href="${l}" target="_blank">${l}</a>`).join('')}</div>` : ''}
+          </header>
+
+          ${this.cvData.professionalSummary ? `
+            <section class="ats-section">
+              <div class="title">ABOUT ME</div>
+              <div class="ats-body">${this.cvData.professionalSummary}</div>
+            </section>
+          ` : ''}
+
+          ${this.cvData.experiences && this.cvData.experiences.length ? `
+            <section class="ats-section">
+              <div class="title">PROFESSIONAL EXPERIENCE</div>
+              <div class="ats-body">
+                ${this.cvData.experiences.map((e:any)=>`
+                  <div style="margin-bottom:10px;">
+                    <div class="ats-subtitle">${e.jobTitle} ${e.company ? ' | ' + e.company : ''} ${e.startDate ? '| ' + e.startDate : ''} ${e.endDate ? '- ' + e.endDate : ''}</div>
+                    ${e.responsibilities && e.responsibilities.length ? `<ul class="ats-list">${e.responsibilities.map((r:any)=>`<li>${r}</li>`).join('')}</ul>` : ''}
+                  </div>
+                `).join('')}
+              </div>
+            </section>
+          ` : ''}
+
+          ${this.cvData.education && this.cvData.education.length ? `
+            <section class="ats-section">
+              <div class="title">EDUCATION</div>
+              <div class="ats-body">
+                ${this.cvData.education.map((ed:any)=>`
+                  <div style="margin-bottom:10px;"><div class="ats-subtitle">${ed.degree} ${ed.institution ? '| ' + ed.institution : ''} ${ed.startDate ? '| ' + ed.startDate : ''} ${ed.endDate ? '- ' + ed.endDate : ''}</div>${ed.achievements && ed.achievements.length ? `<ul class="ats-list">${ed.achievements.map((a:any)=>`<li>${a}</li>`).join('')}</ul>` : ''}</div>
+                `).join('')}
+              </div>
+            </section>
+          ` : ''}
+
+          ${this.cvData.skills && this.cvData.skills.length ? `
+            <section class="ats-section">
+              <div class="title">SKILLS</div>
+              <div class="ats-body">
+                <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                  ${this.cvData.skills.map((s:any)=>`<div style="background:#f1f5f9;padding:6px 10px;border-radius:16px;font-size:0.92rem;">${s}</div>`).join('')}
+                </div>
+              </div>
+            </section>
+          ` : ''}
+
+          ${this.cvData.languages && this.cvData.languages.length ? `
+            <section class="ats-section">
+              <div class="title">LANGUAGE</div>
+              <div class="ats-body">${this.cvData.languages.map((l:any)=>typeof l === 'string' ? l : l.name).join(', ')}</div>
+            </section>
+          ` : ''}
+        </div>
+      </div>
+    `;
   }
 
   downloadPDF(): void {

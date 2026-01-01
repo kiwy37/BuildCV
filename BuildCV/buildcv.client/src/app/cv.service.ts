@@ -30,12 +30,17 @@ export class CvService {
         phone: '',
         location: '',
         linkedIn: '',
-        website: ''
+        website: '',
+        photoUrl: '',
+        title: '',
+        profession: '',
+        links: []
       },
       professionalSummary: '',
       experiences: [],
       education: [],
       skills: [],
+      hobbies: [],
       projects: [],
       certifications: [],
       languages: [],

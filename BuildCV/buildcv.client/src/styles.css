@@ -1030,16 +1030,6 @@ button:disabled {
   gap: 0.5rem;
 }
 
-.preview-container {
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 2rem;
-  background: var(--white);
-  min-height: 400px;
-  max-height: 600px;
-  overflow-y: auto;
-}
-
 .cv-preview {
   max-width: 800px;
   margin: 0 auto;

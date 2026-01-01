@@ -7,6 +7,7 @@ export interface CVData {
   projects: Project[];
   certifications: Certification[];
   languages: string[];
+  hobbies?: string[];
   references?: Reference[];
   selectedTheme?: string;
   photoUrl?: string; 
@@ -26,6 +27,10 @@ export interface PersonalInfo {
   location: string;
   linkedIn: string;
   website: string;
+  photoUrl?: string;
+  title?: string;
+  profession?: string;
+  links?: string[];
 }
 
 export interface Experience {

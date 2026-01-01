@@ -1,9 +1,12 @@
 .preview-container {
   display: flex;
-  height: calc(100vh - 120px);
-  position: relative;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: var(--background);
-  /* Prevent the outer container from scrolling; keep scroll inside panels */
   overflow: hidden;
   align-items: stretch;
 }
@@ -28,9 +31,13 @@
 }
 
 .customization-sidebar:not(.open) {
-  transform: translateX(-340px);
+  transform: translateX(-20px);
   opacity: 0;
   pointer-events: none;
+  width: 0;
+  flex: 0 0 0;
+  margin-right: 0;
+  padding: 0;
 }
 
 .sidebar-header {
@@ -53,6 +60,30 @@
   align-items: center;
   gap: 0.5rem;
   margin: 0;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-back-templates {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--white);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-back-templates:hover {
+  border-color: var(--primary-color);
+  color: var(--text-primary);
 }
 
 .btn-close {
@@ -275,11 +306,29 @@
   box-shadow: var(--shadow-sm);
 }
 
+.page-size-select {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.page-size-select label { font-size: 0.95rem; color: var(--text-secondary); }
+.page-size-select .font-select {
+  min-width: 88px;
+}
+.page-size-value {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
 .actions-right {
   display: flex;
   gap: 1rem;
   align-items: center;
 }
+
+.preview-top-actions { padding: 0.6rem 0.75rem; }
+.preview-top-actions .actions-right { align-items: center; }
+.zoom-label { font-size: 0.95rem; color: var(--text-secondary); }
 
 .preview-top-actions .zoom-controls {
   display: flex;
@@ -341,8 +390,8 @@
   align-items: center;
   justify-content: center;
   flex: 1 1 auto;
-  /* Contain the preview and prevent scrollbars; scaling will fit it to available height */
-  overflow: hidden;
+  /* Allow scrolling when the preview is scaled/zoomed so user can pan */
+  overflow: auto;
   -webkit-overflow-scrolling: touch;
   /* Prevent top actions from overlapping CV content when sticky */
   padding-top: 48px;
@@ -356,9 +405,8 @@
   transform: translateY(-50%);
   left: 320px;
   z-index: 12;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
   border: 2px solid var(--border-color);
   background: var(--white);
   display: flex;
@@ -368,7 +416,7 @@
   box-shadow: var(--shadow-sm);
   transition: left 0.2s ease, transform 0.2s ease, background 0.15s ease;
   color: var(--text-primary);
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 /* When sidebar closed move toggle to the left edge */
@@ -431,12 +479,35 @@ details.setting-group > .color-picker-wrapper {
   max-width: 850px;
   margin: 0 auto;
   transition: transform 0.12s ease;
-  transform-origin: top center;
+  transform-origin: center center;
   /* Make the preview a block so scale to height behaves predictably */
   display: block;
   width: auto;
   max-height: 100%;
   height: auto;
+}
+
+/* Aspect ratios for page sizes: width / height (allows switching ratio only) */
+.cv-preview.a4 {
+  aspect-ratio: 210 / 297;
+  width: 100%;
+  max-width: 850px;
+}
+.cv-preview.letter {
+  aspect-ratio: 8.5 / 11;
+  width: 100%;
+  max-width: 850px;
+}
+
+/* Center the preview when the customization sidebar is collapsed */
+.cv-preview-wrapper {
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-download .download-text {
+  margin-left: 0.5rem;
+  font-weight: 600;
 }
 
 .zoom-controls {

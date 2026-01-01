@@ -8,7 +8,12 @@
         <i class="icon-sliders"></i>
         Customize CV
       </h3>
-      <button class="btn-close" (click)="toggleCustomizationPanel()">‹</button>
+      <div class="sidebar-header-actions">
+        <button class="btn-back-templates btn-icon" (click)="backToThemeSelection()">
+          <i class="icon-arrow-left"></i>
+          <span>Back to templates</span>
+        </button>
+      </div>
     </div>
 
     <div class="sidebar-content">
@@ -264,27 +269,30 @@
   <div class="preview-main" [class.shifted]="showCustomizationPanel">
     <div class="preview-top-actions">
       <div class="page-size-select">
-        <label style="font-size:0.9rem;color:var(--text-secondary);margin-right:0.5rem;">Size:</label>
+        <label>Size:</label>
         <select [(ngModel)]="pageSize" (change)="onPageSizeChange()" class="font-select">
           <option value="A4">A4</option>
           <option value="Letter">Letter</option>
         </select>
+        <span class="page-size-value">{{ pageSize }}</span>
       </div>
 
       <div class="actions-right">
         <div class="zoom-controls">
-          <label style="font-size:0.95rem;color:var(--text-secondary);">Zoom: {{ (zoom * 100) | number:'1.0-0' }}%</label>
+          <label class="zoom-label">Zoom: {{ (zoom * 100) | number:'1.0-0' }}%</label>
           <input type="range" min="50" max="150" [value]="zoom * 100" (input)="setZoom($any($event.target).value)" class="slider-zoom">
         </div>
 
-        <button class="btn-primary btn-download-small" (click)="downloadPDF()">
+        <button class="btn-primary btn-download" (click)="downloadPDF()">
           <i class="icon-download"></i>
+          <span class="download-text">Download PDF</span>
         </button>
       </div>
     </div>
     <!-- CV Preview -->
     <div class="cv-preview-wrapper" #cvWrapper *ngIf="!isLoading">
-      <div class="cv-preview" #cvPreview [innerHTML]="previewHtml" [style.transform]="'scale(' + effectiveScale + ')'">
+      <div class="cv-preview" #cvPreview [innerHTML]="previewHtml" [style.transform]="'scale(' + effectiveScale + ')'
+        " [ngClass]="{ 'a4': pageSize === 'A4', 'letter': pageSize === 'Letter' }">
       </div>
     </div>
 

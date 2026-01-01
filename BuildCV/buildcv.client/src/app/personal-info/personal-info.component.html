@@ -5,6 +5,27 @@
       Personal Information
     </h2>
   </div>
+  <!-- Photo Upload Card -->
+  <div class="form-card photo-upload-card">
+    <div class="photo-upload-container">
+      <div class="photo-preview">
+        <div class="photo-frame" [class.has-photo]="personalInfoForm.get('photoUrl')?.value">
+          <img *ngIf="personalInfoForm.get('photoUrl')?.value" [src]="personalInfoForm.get('photoUrl')?.value" alt="Avatar">
+          <div *ngIf="!personalInfoForm.get('photoUrl')?.value" class="photo-placeholder">
+            <i class="icon-camera"></i>
+            <p>No photo</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-actions">
+        <input type="file" accept="image/*" (change)="onPhotoSelected($event)" id="photoInput" style="display:none">
+        <label for="photoInput" class="btn-upload-photo">Upload photo</label>
+        <button class="btn-remove-photo" type="button" (click)="removePhoto()" [disabled]="!personalInfoForm.get('photoUrl')?.value">Remove photo</button>
+        <div class="photo-hint">Recommended: square image, at least 300x300px.</div>
+      </div>
+    </div>
+  </div>
 
   <!-- Contact Details Card -->
   <div class="form-card">

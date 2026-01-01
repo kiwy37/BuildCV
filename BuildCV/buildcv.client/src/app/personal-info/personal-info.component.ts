@@ -30,7 +30,8 @@ export class PersonalInfoComponent implements OnInit {
       phone: [''],
       location: [''],
       linkedIn: [''],
-      website: ['']
+      website: [''],
+      photoUrl: ['']
     });
 
     this.professionalSummaryForm = this.fb.group({
@@ -60,6 +61,24 @@ export class PersonalInfoComponent implements OnInit {
     if (this.personalInfoForm.valid) {
       this.cvService.updatePersonalInfo(this.personalInfoForm.value);
     }
+  }
+
+  onPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      this.personalInfoForm.patchValue({ photoUrl: dataUrl });
+      this.savePersonalInfo();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removePhoto(): void {
+    this.personalInfoForm.patchValue({ photoUrl: '' });
+    this.savePersonalInfo();
   }
 
   saveProfessionalSummary(): void {

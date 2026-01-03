@@ -14,9 +14,9 @@
 .customization-sidebar {
   /* Left column inside the preview container */
   position: relative;
-  width: 300px;
-  flex: 0 0 300px;
-  max-width: 320px;
+  width: 400px;
+  flex: 0 0 400px;
+  max-width: 420px;
   height: auto;
   background: var(--white);
   box-shadow: var(--shadow-md);
@@ -52,6 +52,108 @@
   z-index: 10;
 }
 
+.sidebar-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.6rem 0.9rem;
+  background: var(--white);
+  flex-wrap: wrap;
+}
+
+.sidebar-header-actions .btn-back-templates {
+  flex: 1;
+}
+
+.sidebar-content .btn-back-templates {
+  width: 100%;
+  margin-top: auto;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.btn-export {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--primary-color);
+  background: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  flex: 1;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-weight: 600;
+  text-align: center;
+}
+
+.zoom-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--white);
+}
+
+.zoom-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Tabbed segmented control below header */
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.3rem;
+  align-items: center;
+  background: #f3f4f6;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.tab-btn {
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.15s ease;
+  font-size: 0.8rem;
+  flex: 1;
+}
+
+.tab-btn i { font-size: 0.95rem; opacity: 0.9; }
+
+.tab-btn:hover {
+  background: rgba(79, 70, 229, 0.08);
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  background: white;
+  color: var(--text-primary);
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.tab-content {
+  padding: 0.3rem 0 0.5rem 0;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+}
+
 .sidebar-header h3 {
   font-size: 1.25rem;
   font-weight: 700;
@@ -69,21 +171,21 @@
 }
 
 .btn-back-templates {
-  display: inline-flex;
+  display: flex;
   gap: 0.5rem;
   align-items: center;
-  padding: 0.35rem 0.6rem;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
   border-radius: 6px;
-  border: 1px solid var(--border-color);
-  background: var(--white);
-  color: var(--text-secondary);
+  border: 1px solid var(--primary-color);
+  background: var(--primary-color);
+  color: white;
   cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.btn-back-templates:hover {
-  border-color: var(--primary-color);
-  color: var(--text-primary);
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-weight: 600;
+  text-align: center;
 }
 
 .btn-close {
@@ -108,15 +210,30 @@
 }
 
 .sidebar-content {
-  padding: 0.9rem;
+  padding: 0.3rem 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.sidebar-content > div:nth-child(3) {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sidebar-content .btn-reset {
+  flex-shrink: 0;
 }
 
 .setting-group {
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.8rem;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -128,7 +245,7 @@
   font-size: 1rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -165,10 +282,51 @@
 }
 
 .setting-item {
-  margin-bottom: 0.9rem;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.color-item {
+  margin-bottom: 1.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.color-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.color-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.color-item label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  display: block;
+}
+
+.color-picker-compact {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.color-picker-compact .color-picker {
+  width: 36px;
+  height: 28px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
 }
 .setting-item label {
   font-size: 0.82rem;
@@ -249,19 +407,28 @@
 }
 
 .color-value {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-secondary);
   font-family: monospace;
+  white-space: nowrap;
+}
+
+.color-description {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin: 0.25rem 0 0 0;
+  font-weight: 400;
+  line-height: 1.3;
 }
 
 .btn-reset {
   width: 100%;
-  background: var(--background);
-  border: 2px solid var(--border-color);
-  color: var(--text-secondary);
-  padding: 0.875rem 1.5rem;
-  border-radius: var(--radius-md);
+  background: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  color: white;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -269,14 +436,16 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  margin-top: 1rem;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-family: inherit;
+  text-align: center;
 }
 
-.btn-reset:hover {
-  background: var(--error-color);
-  border-color: var(--error-color);
-  color: white;
+.sidebar-header-actions .btn-reset {
+  flex: 1;
 }
+
 
 .preview-main {
   flex: 1;
@@ -292,18 +461,7 @@
 }
 
 .preview-top-actions {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: center;
-  margin-bottom: 1rem;
-  position: sticky;
-  top: 0;
-  z-index: 60;
-  background: var(--white);
-  padding: 0.45rem 0.6rem;
-  box-shadow: var(--shadow-sm);
+  display: none;
 }
 
 .page-size-select {
@@ -403,7 +561,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: 320px;
+  left: 420px;
   z-index: 12;
   padding: 0.35rem 0.5rem;
   border-radius: 8px;
@@ -427,52 +585,21 @@
 
 /* When sidebar is open keep it near the panel edge */
 .customization-sidebar.open ~ .sidebar-toggle {
-  left: 320px;
+  left: 420px;
   transform: translateY(-50%);
 }
 
-/* Details/accordion styles */
-details.setting-group {
-  background: transparent;
-  padding: 0.4rem 0.25rem 0.25rem 0.25rem;
-  border-radius: 6px;
-}
-
-details.setting-group summary {
-  list-style: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.35rem 0.25rem;
-}
-
-details.setting-group summary::-webkit-details-marker {
-  display: none;
-}
-
-details.setting-group summary h4 {
+/* Accordion styles removed - sections always visible */
+.setting-group h4 {
   margin: 0;
   font-size: 1rem;
 }
 
-details.setting-group summary::after {
-  content: '›';
-  transition: transform 0.18s ease;
-  color: var(--text-secondary);
-}
-
-details.setting-group[open] summary::after {
-  transform: rotate(90deg);
-}
-
-/* Make controls occupy full width inside details body */
-details.setting-group > .font-selection,
-details.setting-group > .spacing-grid,
-details.setting-group > .setting-item,
-details.setting-group > .color-picker-wrapper {
-  margin-top: 0.7rem;
+.setting-group > .font-selection,
+.setting-group > .spacing-grid,
+.setting-group > .setting-item,
+.setting-group > .color-picker-wrapper {
+  margin-top: 0.3rem;
 }
 
 .cv-preview {
@@ -489,14 +616,12 @@ details.setting-group > .color-picker-wrapper {
 
 /* Aspect ratios for page sizes: width / height (allows switching ratio only) */
 .cv-preview.a4 {
-  aspect-ratio: 210 / 297;
-  width: 100%;
-  max-width: 850px;
+  width: 210mm;
+  max-width: 100%;
 }
 .cv-preview.letter {
-  aspect-ratio: 8.5 / 11;
-  width: 100%;
-  max-width: 850px;
+  width: 8.5in;
+  max-width: 100%;
 }
 
 /* Center the preview when the customization sidebar is collapsed */
@@ -517,7 +642,7 @@ details.setting-group > .color-picker-wrapper {
 }
 
 .slider-zoom {
-  width: 140px;
+  width: 100%;
 }
 
 .btn-download-small {

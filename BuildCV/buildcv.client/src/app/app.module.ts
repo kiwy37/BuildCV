@@ -15,6 +15,10 @@ import { AdditionalComponent } from './additional/additional.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChooseThemeComponent } from './choose-theme/choose-theme.component';
 import { CvUploadComponent } from './cv-upload/cv-upload.component';
+import { LimaTemplateComponent } from './preview/templates/lima-template.component';
+import { RotterdamTemplateComponent } from './preview/templates/rotterdam-template.component';
+import { RigaTemplateComponent } from './preview/templates/riga-template.component';
+import { ATSTemplateComponent } from './preview/templates/ats-template.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +32,11 @@ import { CvUploadComponent } from './cv-upload/cv-upload.component';
     AdditionalComponent,
     PreviewComponent,
     ChooseThemeComponent,
-    CvUploadComponent
+    CvUploadComponent,
+    LimaTemplateComponent,
+    RotterdamTemplateComponent,
+    RigaTemplateComponent,
+    ATSTemplateComponent
   ],
   imports: [
     BrowserModule,
@@ -37,7 +45,12 @@ import { CvUploadComponent } from './cv-upload/cv-upload.component';
     ReactiveFormsModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [
+    LimaTemplateComponent,
+    RotterdamTemplateComponent,
+    RigaTemplateComponent,
+    ATSTemplateComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

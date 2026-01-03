@@ -5,258 +5,228 @@
   <div class="customization-sidebar" [class.open]="showCustomizationPanel">
     <div class="sidebar-header">
       <h3>
-        <i class="icon-sliders"></i>
         Customize CV
       </h3>
-      <div class="sidebar-header-actions">
-        <button class="btn-back-templates btn-icon" (click)="backToThemeSelection()">
-          <i class="icon-arrow-left"></i>
-          <span>Back to templates</span>
-        </button>
-      </div>
+    </div>
+
+    <div class="sidebar-header-actions">
+      <button class="btn-reset" (click)="resetCustomization()">
+        Reset to Default
+      </button>
+      <button class="btn-export" (click)="downloadPDF()">
+        <i class="icon-download"></i>
+        <span>Export PDF</span>
+      </button>
+    </div>
+
+    <div class="zoom-section">
+      <label class="zoom-label">Zoom: {{ (zoom * 100) | number:'1.0-0' }}%</label>
+      <input type="range" min="50" max="150" [value]="zoom * 100" (input)="setZoom($any($event.target).value)" class="slider-zoom">
     </div>
 
     <div class="sidebar-content">
-      <!-- Font Family Selection -->
-      <details class="setting-group" open>
-        <summary>
-          <h4>🔤 Font Family</h4>
-        </summary>
-        <div class="font-selection">
-          <button 
-            *ngFor="let font of ['Roboto', 'Lato', 'Montserrat', 'Open Sans', 'Raleway', 'Caladea', 'Lora', 'Roboto Slab', 'Playfair Display', 'Merriweather']"
-            class="font-btn"
-            [ngClass]="{'active': customization.fontFamily === font}"
-            (click)="customization.fontFamily = font; onCustomizationChange()"
-            [style.fontFamily]="font">
-            {{ font }}
-          </button>
-        </div>
-      </details>
+      <!-- Tabs -->
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'colors'" (click)="selectTab('colors')">
+          <i class="icon-palette"></i>
+          Colors
+        </button>
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'text'" (click)="selectTab('text')">
+          <i class="icon-text"></i>
+          Text
+        </button>
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'spacing'" (click)="selectTab('spacing')">
+          <i class="icon-arrows-h"></i>
+          Spacing
+        </button>
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'borders'" (click)="selectTab('borders')">
+          <i class="icon-border"></i>
+          Borders
+        </button>
+      </div>
 
-      <!-- Typography Settings -->
-      <details class="setting-group">
-        <summary>
-          <h4>📝 Typography</h4>
-        </summary>
-        <div class="setting-item">
-          <label>Body Font Size: {{customization.fontSize}}px</label>
-          <input 
-            type="range" 
-            [(ngModel)]="customization.fontSize" 
-            (input)="onCustomizationChange()"
-            min="10" 
-            max="18" 
-            step="1"
-            class="slider">
-        </div>
+      <div style="padding: 0 0.5rem; flex: 1; overflow-y: auto;">
 
-        <div class="setting-item">
-          <label>Heading Font Size: {{customization.headingFontSize}}px</label>
-          <input 
-            type="range" 
-            [(ngModel)]="customization.headingFontSize" 
-            (input)="onCustomizationChange()"
-            min="18" 
-            max="32" 
-            step="1"
-            class="slider">
-        </div>
-
-        <div class="setting-item">
-          <label>Line Height: {{customization.lineHeight}}</label>
-          <input 
-            type="range" 
-            [(ngModel)]="customization.lineHeight" 
-            (input)="onCustomizationChange()"
-            min="1.2" 
-            max="2.0" 
-            step="0.1"
-            class="slider">
-        </div>
-
-        <div class="setting-item">
-          <label>Section Spacing: {{customization.sectionSpacing}}px</label>
-          <input 
-            type="range" 
-            [(ngModel)]="customization.sectionSpacing" 
-            (input)="onCustomizationChange()"
-            min="10" 
-            max="40" 
-            step="2"
-            class="slider">
-        </div>
-      </details>
-
-      <!-- Margins -->
-      <details class="setting-group">
-        <summary>
-          <h4>📏 Page Margins</h4>
-        </summary>
-        <div class="spacing-grid">
-          <div class="setting-item">
-            <label>Top: {{customization.marginTop}}px</label>
-            <input 
-              type="range" 
-              [(ngModel)]="customization.marginTop" 
-              (input)="onCustomizationChange()"
-              min="0" 
-              max="80" 
-              step="5"
-              class="slider">
+      <!-- Colors Tab -->
+      <div class="tab-content" *ngIf="activeTab === 'colors'">
+        <div class="setting-group">
+          <h4>Primary Colors</h4>
+          
+          <div class="color-item">
+            <div class="color-item-header">
+              <label>Primary Color</label>
+              <div class="color-picker-compact">
+                <input type="color" [(ngModel)]="customization.primaryColor" (input)="onCustomizationChange()" class="color-picker">
+                <span class="color-value">{{customization.primaryColor}}</span>
+              </div>
+            </div>
+            <p class="color-description">Used for names and important headings</p>
           </div>
 
-          <div class="setting-item">
-            <label>Bottom: {{customization.marginBottom}}px</label>
-            <input 
-              type="range" 
-              [(ngModel)]="customization.marginBottom" 
-              (input)="onCustomizationChange()"
-              min="0" 
-              max="80" 
-              step="5"
-              class="slider">
+          <div class="color-item">
+            <div class="color-item-header">
+              <label>Accent Color</label>
+              <div class="color-picker-compact">
+                <input type="color" [(ngModel)]="customization.secondaryColor" (input)="onCustomizationChange()" class="color-picker">
+                <span class="color-value">{{customization.secondaryColor}}</span>
+              </div>
+            </div>
+            <p class="color-description">For subtitles and icons</p>
           </div>
 
-          <div class="setting-item">
-            <label>Left: {{customization.marginLeft}}px</label>
-            <input 
-              type="range" 
-              [(ngModel)]="customization.marginLeft" 
-              (input)="onCustomizationChange()"
-              min="0" 
-              max="100" 
-              step="5"
-              class="slider">
+          <div class="color-item">
+            <div class="color-item-header">
+              <label>Text Color</label>
+              <div class="color-picker-compact">
+                <input type="color" [(ngModel)]="customization.textColor" (input)="onCustomizationChange()" class="color-picker">
+                <span class="color-value">{{customization.textColor}}</span>
+              </div>
+            </div>
+            <p class="color-description">Main text</p>
           </div>
 
-          <div class="setting-item">
-            <label>Right: {{customization.marginRight}}px</label>
-            <input 
-              type="range" 
-              [(ngModel)]="customization.marginRight" 
-              (input)="onCustomizationChange()"
-              min="0" 
-              max="100" 
-              step="5"
-              class="slider">
+          <div class="color-item">
+            <div class="color-item-header">
+              <label>Heading Color</label>
+              <div class="color-picker-compact">
+                <input type="color" [(ngModel)]="customization.headingColor" (input)="onCustomizationChange()" class="color-picker">
+                <span class="color-value">{{customization.headingColor}}</span>
+              </div>
+            </div>
+            <p class="color-description">Section headings</p>
           </div>
         </div>
-      </details>
 
-      <!-- Padding -->
-      <details class="setting-group">
-        <summary>
-          <h4>📦 Content Padding</h4>
-        </summary>
-        <div class="spacing-grid">
+        <div class="setting-group">
+          <h4>Background & Surfaces</h4>
+          
+          <div class="color-item">
+            <div class="color-item-header">
+              <label>Primary Background</label>
+              <div class="color-picker-compact">
+                <input type="color" [(ngModel)]="customization.backgroundColor" (input)="onCustomizationChange()" class="color-picker">
+                <span class="color-value">{{customization.backgroundColor}}</span>
+              </div>
+            </div>
+            <p class="color-description">CV background color</p>
+          </div>
+
+          <div class="color-item">
+            <div class="color-item-header">
+              <label>Section Background</label>
+              <div class="color-picker-compact">
+                <input type="color" [(ngModel)]="customization.sectionBgColor" (input)="onCustomizationChange()" class="color-picker">
+                <span class="color-value">{{customization.sectionBgColor}}</span>
+              </div>
+            </div>
+            <p class="color-description">Background for content blocks</p>
+          </div>
+
+          <div class="color-item">
+            <div class="color-item-header">
+              <label>Border Color</label>
+              <div class="color-picker-compact">
+                <input type="color" [(ngModel)]="customization.borderColor" (input)="onCustomizationChange()" class="color-picker">
+                <span class="color-value">{{customization.borderColor}}</span>
+              </div>
+            </div>
+            <p class="color-description">Separators and lines</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text Tab -->
+      <div class="tab-content" *ngIf="activeTab === 'text'">
+        <div class="setting-group">
+          <h4>Font Family</h4>
+          <div class="font-selection">
+            <button 
+              *ngFor="let font of ['Roboto', 'Lato', 'Montserrat', 'Open Sans', 'Raleway', 'Caladea', 'Lora', 'Roboto Slab', 'Playfair Display', 'Merriweather']"
+              class="font-btn"
+              [ngClass]="{'active': customization.fontFamily === font}"
+              (click)="customization.fontFamily = font; onCustomizationChange()"
+              [style.fontFamily]="font">
+              {{ font }}
+            </button>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <h4>Typography</h4>
           <div class="setting-item">
-            <label>Top: {{customization.paddingTop}}px</label>
-            <input 
-              type="range" 
-              [(ngModel)]="customization.paddingTop" 
-              (input)="onCustomizationChange()"
-              min="0" 
-              max="80" 
-              step="5"
-              class="slider">
+            <label>Text Size: {{customization.fontSize}}px</label>
+            <input type="range" [(ngModel)]="customization.fontSize" (input)="onCustomizationChange()" min="10" max="24" step="1" class="slider">
           </div>
 
           <div class="setting-item">
-            <label>Bottom: {{customization.paddingBottom}}px</label>
-            <input 
-              type="range" 
-              [(ngModel)]="customization.paddingBottom" 
-              (input)="onCustomizationChange()"
-              min="0" 
-              max="80" 
-              step="5"
-              class="slider">
+            <label>Heading Size: {{customization.headingFontSize}}px</label>
+            <input type="range" [(ngModel)]="customization.headingFontSize" (input)="onCustomizationChange()" min="14" max="40" step="1" class="slider">
           </div>
 
           <div class="setting-item">
-            <label>Left: {{customization.paddingLeft}}px</label>
-            <input 
-              type="range" 
-              [(ngModel)]="customization.paddingLeft" 
-              (input)="onCustomizationChange()"
-              min="0" 
-              max="100" 
-              step="5"
-              class="slider">
+            <label>Line Height: {{customization.lineHeight}}</label>
+            <input type="range" [(ngModel)]="customization.lineHeight" (input)="onCustomizationChange()" min="1.0" max="2.2" step="0.1" class="slider">
+          </div>
+        </div>
+      </div>
+
+      <!-- Spacing Tab -->
+      <div class="tab-content" *ngIf="activeTab === 'spacing'">
+        <div class="setting-group">
+          <h4>Margins & Spacing</h4>
+          <div class="setting-item">
+            <label>Section Spacing: {{customization.sectionSpacing}}px</label>
+            <input type="range" [(ngModel)]="customization.sectionSpacing" (input)="onCustomizationChange()" min="6" max="48" step="2" class="slider">
+          </div>
+
+          <div class="spacing-grid">
+            <div class="setting-item">
+              <label>Horizontal Margin: {{customization.marginLeft}}px</label>
+              <input type="range" [(ngModel)]="customization.marginLeft" (input)="onCustomizationChange()" min="0" max="100" step="2" class="slider">
+            </div>
+            <div class="setting-item">
+              <label>Vertical Margin (Top): {{customization.marginTop}}px</label>
+              <input type="range" [(ngModel)]="customization.marginTop" (input)="onCustomizationChange()" min="0" max="100" step="2" class="slider">
+            </div>
+            <div class="setting-item">
+              <label>Left Padding: {{customization.paddingLeft}}px</label>
+              <input type="range" [(ngModel)]="customization.paddingLeft" (input)="onCustomizationChange()" min="0" max="100" step="2" class="slider">
+            </div>
+            <div class="setting-item">
+              <label>Right Padding: {{customization.paddingRight}}px</label>
+              <input type="range" [(ngModel)]="customization.paddingRight" (input)="onCustomizationChange()" min="0" max="100" step="2" class="slider">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Borders / Background Tab -->
+      <div class="tab-content" *ngIf="activeTab === 'borders'">
+        <div class="setting-group">
+          <h4>Background & Borders</h4>
+          <div class="setting-item">
+            <label>Primary Background</label>
+            <div class="color-picker-wrapper">
+              <input type="color" [(ngModel)]="customization.backgroundColor" (input)="onCustomizationChange()" class="color-picker">
+              <span class="color-value">{{customization.backgroundColor}}</span>
+            </div>
           </div>
 
           <div class="setting-item">
-            <label>Right: {{customization.paddingRight}}px</label>
-            <input 
-              type="range" 
-              [(ngModel)]="customization.paddingRight" 
-              (input)="onCustomizationChange()"
-              min="0" 
-              max="100" 
-              step="5"
-              class="slider">
+            <label>Border Color</label>
+            <div class="color-picker-wrapper">
+              <input type="color" [(ngModel)]="customization.borderColor" (input)="onCustomizationChange()" class="color-picker">
+              <span class="color-value">{{customization.borderColor}}</span>
+            </div>
           </div>
         </div>
-      </details>
+      </div>
 
-      <!-- Colors -->
-      <details class="setting-group">
-        <summary>
-          <h4>🎨 Colors</h4>
-        </summary>
-        <div class="setting-item">
-          <label>Primary Color (Headings)</label>
-          <div class="color-picker-wrapper">
-            <input 
-              type="color" 
-              [(ngModel)]="customization.primaryColor" 
-              (input)="onCustomizationChange()"
-              class="color-picker">
-            <span class="color-value">{{customization.primaryColor}}</span>
-          </div>
-        </div>
+      </div>
 
-        <div class="setting-item">
-          <label>Secondary Color (Accents)</label>
-          <div class="color-picker-wrapper">
-            <input 
-              type="color" 
-              [(ngModel)]="customization.secondaryColor" 
-              (input)="onCustomizationChange()"
-              class="color-picker">
-            <span class="color-value">{{customization.secondaryColor}}</span>
-          </div>
-        </div>
-
-        <div class="setting-item">
-          <label>Text Color</label>
-          <div class="color-picker-wrapper">
-            <input 
-              type="color" 
-              [(ngModel)]="customization.textColor" 
-              (input)="onCustomizationChange()"
-              class="color-picker">
-            <span class="color-value">{{customization.textColor}}</span>
-          </div>
-        </div>
-
-        <div class="setting-item">
-          <label>Background Color</label>
-          <div class="color-picker-wrapper">
-            <input 
-              type="color" 
-              [(ngModel)]="customization.backgroundColor" 
-              (input)="onCustomizationChange()"
-              class="color-picker">
-            <span class="color-value">{{customization.backgroundColor}}</span>
-          </div>
-        </div>
-      </details>
-
-      <!-- Reset Button -->
-      <button class="btn-reset" (click)="resetCustomization()">
-        <i class="icon-refresh"></i> Reset to Default
+      <!-- Back to Templates Button -->
+      <button class="btn-back-templates" (click)="backToThemeSelection()">
+        Back to templates
       </button>
     </div>
   </div>
@@ -284,7 +254,6 @@
         </div>
 
         <button class="btn-primary btn-download" (click)="downloadPDF()">
-          <i class="icon-download"></i>
           <span class="download-text">Download PDF</span>
         </button>
       </div>

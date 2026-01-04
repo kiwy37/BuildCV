@@ -114,4 +114,12 @@
 .cv-builder-container {
   display: flex;
   flex-direction: column;
+  height: 100vh; /* folosit fix pentru layout predictibil */
+  margin-bottom: 0; /* removed bottom margin */
+}
+
+/* Remove vertical padding for the navigation buttons */
+.step-navigation-buttons {
+  padding-top: 10px;
+  padding-bottom: 10px;
 }

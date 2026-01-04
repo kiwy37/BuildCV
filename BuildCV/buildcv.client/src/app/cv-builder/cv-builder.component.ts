@@ -1,14 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CvService } from '../cv.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cv-builder',
   templateUrl: './cv-builder.component.html',
   styleUrls: ['./cv-builder.component.css']
 })
-export class CvBuilderComponent implements OnInit {
+export class CvBuilderComponent implements OnInit, OnDestroy {
   currentStep: number = 1;
   totalSteps: number = 9;
+
+  private stepSub?: Subscription;
+  private originalBodyOverflow: string | null = null;
 
   steps = [
     { number: 1, title: 'Upload CV', subtitle: 'Import from PDF/Word', icon: 'upload' },
@@ -25,9 +29,35 @@ export class CvBuilderComponent implements OnInit {
   constructor(private cvService: CvService) {}
 
   ngOnInit(): void {
-    this.cvService.currentStep$.subscribe(step => {
+    this.stepSub = this.cvService.currentStep$.subscribe(step => {
       this.currentStep = step;
+      this.updateBodyScrollLock();
     });
+    // Ensure initial lock state matches currentStep
+    this.updateBodyScrollLock();
+  }
+
+  ngOnDestroy(): void {
+    if (this.stepSub) {
+      this.stepSub.unsubscribe();
+    }
+    // restore body overflow if we changed it
+    if (typeof document !== 'undefined' && this.originalBodyOverflow !== null) {
+      document.body.style.overflow = this.originalBodyOverflow;
+      this.originalBodyOverflow = null;
+    }
+  }
+
+  private updateBodyScrollLock(): void {
+    if (typeof document === 'undefined') return;
+
+    // Stop locking body scroll for the Choose Theme step so the internal container can scroll.
+    if (this.originalBodyOverflow !== null) {
+      document.body.style.overflow = this.originalBodyOverflow;
+      this.originalBodyOverflow = null;
+    } else {
+      document.body.style.overflow = '';
+    }
   }
 
   goToStep(step: number): void {

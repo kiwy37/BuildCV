@@ -24,14 +24,4 @@
   >
     {{ showCustomizationPanel ? "‹" : "›" }}
   </button>
-
-  <!-- CV viewport (scrollable) -->
-  <div class="cv-viewport" *ngIf="!isLoading">
-    <div
-      class="cv-document"
-      #cvPreview
-      [innerHTML]="previewHtml"
-      [style.transform]="'scale(' + zoom + ')'"
-    ></div>
-  </div>
 </div>

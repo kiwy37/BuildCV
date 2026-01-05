@@ -36,6 +36,12 @@ body {
   line-height: 1.6;
 }
 
+/* Prevent global page scrolling; keep scroll only on specific components */
+html, body, app-root {
+  height: 100%;
+  overflow: hidden;
+}
+
 /* Icon Styles */
 i[class^="icon-"]::before {
   font-style: normal;
@@ -89,9 +95,11 @@ i[class^="icon-"]::before {
 
 /* CV Builder Container */
 .cv-builder-container {
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
   padding: 2rem;
+  box-sizing: border-box;
 }
 
 .cv-builder-header {
@@ -225,7 +233,7 @@ i[class^="icon-"]::before {
 .section-container {
   background: var(--white);
   border-radius: var(--radius-lg);
-  padding: 0 1rem 0 1rem;
+  padding: 0 1rem 1.25rem 1rem;
   box-shadow: var(--shadow-sm);
 }
 

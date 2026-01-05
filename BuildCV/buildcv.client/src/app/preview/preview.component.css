@@ -22,7 +22,6 @@
   box-shadow: var(--shadow-md);
   transition: transform 0.2s ease, opacity 0.2s ease;
   z-index: 5;
-  overflow-y: auto;
   border-radius: var(--radius-md);
   margin-right: 1.25rem;
   transform: translateX(0);
@@ -224,7 +223,14 @@
   flex-direction: column;
   gap: 0;
   flex: 1;
-  overflow-y: auto;
+}
+
+/* remove forced scrolling on this child so only .sidebar-scroll controls it */
+.sidebar-content > div:nth-child(3) {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
 }
 
 .sidebar-content .btn-reset {
@@ -232,8 +238,8 @@
 }
 
 .setting-group {
-  margin-bottom: 0.8rem;
-  padding-bottom: 0.8rem;
+  margin-bottom: 0.4rem; /* mai compact */
+  padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -242,12 +248,15 @@
 }
 
 .setting-group h4 {
+  margin-bottom: 0.35rem; /* micșorat spațiul sub titlu */
   font-size: 1rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-align: left;
+  width: 100%;
+  align-self: flex-start;
 }
 
 .font-selection {
@@ -289,271 +298,67 @@
 }
 
 .color-item {
-  margin-bottom: 1.2rem;
-  padding-bottom: 1rem;
+  margin-bottom: 0.6rem; /* reduce vertical spacing */
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border-color);
-}
-
-.color-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.color-item-header {
-  display: flex;
+  gap: 8px; /* tighten horizontal gap */
   align-items: center;
+  display: flex;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
 }
 
-.color-item label {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-primary);
+.color-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* smaller gap between label and description */
+  align-items: flex-start;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.color-item-left > label {
   margin: 0;
+  font-size: 0.80rem; /* slightly smaller */
+  font-weight: 700;
+  color: var(--text-primary);
   display: block;
+}
+
+.color-item-left > .color-description {
+  margin: 0;
+  font-size: 0.72rem; /* smaller helper text */
+  color: var(--text-secondary);
+  line-height: 1.2;
 }
 
 .color-picker-compact {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
+  flex-shrink: 0;
 }
 
+/* smaller color input */
 .color-picker-compact .color-picker {
-  width: 36px;
-  height: 28px;
+  width: 28px;
+  height: 22px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   cursor: pointer;
 }
-.setting-item label {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin: 0;
-  min-width: 90px;
-}
 
-.setting-item .slider {
-  flex: 1 1 auto;
-  margin-left: 1rem;
-}
-
-.slider {
-  width: 100%;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--border-color);
-  outline: none;
-  -webkit-appearance: none;
-  cursor: pointer;
-}
-
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 0 8px rgba(79, 70, 229, 0.1);
-}
-
-.slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s ease;
-}
-
-.slider::-moz-range-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 0 8px rgba(79, 70, 229, 0.1);
-}
-
-.spacing-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
-
-.color-picker-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem;
-  background: var(--background);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
-}
-
-.color-picker {
-  width: 30px;
-  height: 30px;
-  border: none;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-}
-
+/* smaller monospace value */
 .color-value {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--text-secondary);
   font-family: monospace;
   white-space: nowrap;
 }
 
-.color-description {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  margin: 0.25rem 0 0 0;
-  font-weight: 400;
-  line-height: 1.3;
-}
-
-.btn-reset {
-  width: 100%;
-  background: var(--primary-color);
-  border: 1px solid var(--primary-color);
-  color: white;
-  padding: 0.4rem 0.75rem;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-  font-size: 0.8rem;
-  font-family: inherit;
-  text-align: center;
-}
-
-.sidebar-header-actions .btn-reset {
-  flex: 1;
-}
-
-
-.preview-main {
-  flex: 1;
-  padding: 0.8rem 0.8rem 0.6rem 0.8rem;
-  transition: margin-left 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  /* Keep preview-main full height and prevent page scrolling; inner panels handle their own scrolling */
-  overflow: hidden;
-  height: 100%;
-  min-height: 0;
-}
-
-.preview-top-actions {
-  display: none;
-}
-
-.page-size-select {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.page-size-select label { font-size: 0.95rem; color: var(--text-secondary); }
-.page-size-select .font-select {
-  min-width: 88px;
-}
-.page-size-value {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-
-.actions-right {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.preview-top-actions { padding: 0.6rem 0.75rem; }
-.preview-top-actions .actions-right { align-items: center; }
-.zoom-label { font-size: 0.95rem; color: var(--text-secondary); }
-
-.preview-top-actions .zoom-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.preview-main.shifted {
-  /* no extra margin needed — left panel is part of flex layout */
-  margin-left: 0;
-}
-
-.preview-header {
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem 2rem;
-  margin-bottom: 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: var(--shadow-sm);
-}
-
-.preview-title h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 0.25rem 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.preview-title p {
-  color: var(--text-secondary);
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-.preview-actions {
-  display: flex;
-  gap: 1rem;
-}
-
-.btn-customize {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.cv-preview-wrapper {
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  padding: 1rem;
-  box-shadow: var(--shadow-md);
-  margin-bottom: 1rem;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1 1 auto;
-  /* Allow scrolling when the preview is scaled/zoomed so user can pan */
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  /* Prevent top actions from overlapping CV content when sticky */
-  padding-top: 48px;
-  height: calc(100% - 64px);
+/* tighten color-picker-wrapper when used in Borders tab */
+.color-picker-wrapper {
+  padding: 0.25rem;
 }
 
 /* Sidebar toggle button (visible when sidebar is closed) */
@@ -719,17 +524,2081 @@
   color: var(--text-secondary);
 }
 
-@media (max-width: 1024px) {
-  .customization-sidebar {
-    width: 100%;
-    left: -100%;
-  }
-  
-  .customization-sidebar.open {
-    left: 0;
-  }
-  
-  .preview-main.shifted {
-    margin-left: 0;
-  }
+/* Sidebar scroll: hide scrollbar by default, show only while scrolling */
+.sidebar-scroll {
+  padding: 0 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  /* hide for Firefox by default */
+  scrollbar-color: transparent transparent;
 }
+
+/* WebKit: hide track/thumb by default */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 6px;
+}
+
+/* When scrolling, reveal a subtle scrollbar (works for WebKit + Firefox) */
+.sidebar-scroll.is-scrolling {
+  scrollbar-color: rgba(0,0,0,0.22) transparent;
+}
+.sidebar-scroll.is-scrolling::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.22);
+}
+
+.font-select-row {
+  display: flex;
+  flex-direction: column; /* label above select */
+  gap: 0.35rem;
+  align-items: stretch;
+  padding: 0.35rem 0;
+}
+
+.font-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  align-self: flex-start;
+  margin-left: 2px;
+}
+
+/* Dropdown: full width, no radius, custom arrow */
+.font-select-sidebar {
+  width: 100%;
+  padding: 8px 36px 8px 12px; /* room for custom arrow on the right */
+  border-radius: 0; /* no radius as requested */
+  border: 1px solid var(--border-color);
+  background: var(--white);
+  font-size: 0.95rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+  cursor: pointer;
+  /* custom down-arrow (SVG) placed to the right */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8'><path fill='%23999' d='M7 8L0 0h14z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 12px) center;
+  background-size: 14px 8px;
+}
+
+/* hide IE/Edge native arrow */
+.font-select-sidebar::-ms-expand { display: none; }
+
+/* focus styling consistent with other controls */
+.font-select-sidebar:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(79,70,229,0.06);
+}
+
+.typography-control {
+  /* more compact vertically */
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;        /* was 0.45rem */
+  padding: 0.25rem 0; /* was 0.45rem 0 */
+  margin-bottom: 0.35rem; /* was 0.6rem */
+}
+
+.typography-label {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 0.92rem; /* slightly smaller */
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-bottom: 2px; /* was 4px */
+  line-height: 1;
+}
+
+.typography-value {
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-left: 8px;
+}
+
+.typography-subtitle {
+  font-size: 0.82rem;   /* slightly smaller */
+  color: var(--text-secondary);
+  margin: 1px 0 4px 0;  /* closer to label */
+  text-align: left;
+  align-self: flex-start;
+  line-height: 1.1;
+}
+
+/* tighten slider spacing inside compact controls */
+.typography-control .slider {
+  height: 4px;
+  margin-top: 0px; /* remove extra space above/below */
+  margin-bottom: 2px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 0.9rem;
+  border-bottom: 2px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  z-index: 10;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.6rem 0.9rem;
+  background: var(--white);
+  flex-wrap: wrap;
+}
+
+.sidebar-header-actions .btn-back-templates {
+  flex: 1;
+}
+
+.sidebar-content .btn-back-templates {
+  width: 100%;
+  margin-top: auto;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.btn-export {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--primary-color);
+  background: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  flex: 1;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-weight: 600;
+  text-align: center;
+}
+
+.zoom-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--white);
+}
+
+.zoom-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Tabbed segmented control below header */
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.3rem;
+  align-items: center;
+  background: #f3f4f6;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.tab-btn {
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.15s ease;
+  font-size: 0.8rem;
+  flex: 1;
+}
+
+.tab-btn i { font-size: 0.95rem; opacity: 0.9; }
+
+.tab-btn:hover {
+  background: rgba(79, 70, 229, 0.08);
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  background: white;
+  color: var(--text-primary);
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.tab-content {
+  padding: 0.3rem 0 0.5rem 0;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+}
+
+.sidebar-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-back-templates {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--primary-color);
+  background: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-weight: 600;
+  text-align: center;
+}
+
+.btn-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--background);
+  border: none;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close:hover {
+  background: var(--error-color);
+  color: white;
+  transform: rotate(90deg);
+}
+
+.sidebar-content {
+  padding: 0.3rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.sidebar-content > div:nth-child(3) {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+/* remove forced scrolling on this child so only .sidebar-scroll controls it */
+.sidebar-content > div:nth-child(3) {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+.sidebar-content .btn-reset {
+  flex-shrink: 0;
+}
+
+.setting-group {
+  margin-bottom: 0.4rem; /* mai compact */
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.setting-group:last-child {
+  border-bottom: none;
+}
+
+.setting-group h4 {
+  margin-bottom: 0.35rem; /* micșorat spațiul sub titlu */
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: left;
+  width: 100%;
+  align-self: flex-start;
+}
+
+.font-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.4rem;
+  justify-content: flex-end;
+}
+
+.font-btn {
+  padding: 0.35rem 0.6rem;
+  border: 1.5px solid var(--border-color);
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all 0.14s ease;
+}
+
+.font-btn:hover {
+  border-color: var(--primary-color);
+  background: #EEF2FF;
+}
+
+.font-btn.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.setting-item {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.color-item {
+  margin-bottom: 0.6rem; /* reduce vertical spacing */
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  gap: 8px; /* tighten horizontal gap */
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.color-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* smaller gap between label and description */
+  align-items: flex-start;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.color-item-left > label {
+  margin: 0;
+  font-size: 0.80rem; /* slightly smaller */
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+}
+
+.color-item-left > .color-description {
+  margin: 0;
+  font-size: 0.72rem; /* smaller helper text */
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+.color-picker-compact {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+/* smaller color input */
+.color-picker-compact .color-picker {
+  width: 28px;
+  height: 22px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* smaller monospace value */
+.color-value {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-family: monospace;
+  white-space: nowrap;
+}
+
+/* tighten color-picker-wrapper when used in Borders tab */
+.color-picker-wrapper {
+  padding: 0.25rem;
+}
+
+/* Sidebar toggle button (visible when sidebar is closed) */
+.sidebar-toggle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 420px;
+  z-index: 12;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: left 0.2s ease, transform 0.2s ease, background 0.15s ease;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+/* When sidebar closed move toggle to the left edge */
+.customization-sidebar:not(.open) ~ .sidebar-toggle {
+  left: 12px;
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* When sidebar is open keep it near the panel edge */
+.customization-sidebar.open ~ .sidebar-toggle {
+  left: 420px;
+  transform: translateY(-50%);
+}
+
+/* Accordion styles removed - sections always visible */
+.setting-group h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.setting-group > .font-selection,
+.setting-group > .spacing-grid,
+.setting-group > .setting-item,
+.setting-group > .color-picker-wrapper {
+  margin-top: 0.3rem;
+}
+
+.cv-preview {
+  max-width: 850px;
+  margin: 0 auto;
+  transition: transform 0.12s ease;
+  transform-origin: center center;
+  /* Make the preview a block so scale to height behaves predictably */
+  display: block;
+  width: auto;
+  max-height: 100%;
+  height: auto;
+}
+
+/* Aspect ratios for page sizes: width / height (allows switching ratio only) */
+.cv-preview.a4 {
+  width: 210mm;
+  max-width: 100%;
+}
+.cv-preview.letter {
+  width: 8.5in;
+  max-width: 100%;
+}
+
+/* Center the preview when the customization sidebar is collapsed */
+.cv-preview-wrapper {
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-download .download-text {
+  margin-left: 0.5rem;
+  font-weight: 600;
+}
+
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slider-zoom {
+  width: 100%;
+}
+
+.btn-download-small {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  min-width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.font-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.font-select {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--white);
+  font-size: 0.95rem;
+}
+
+.quick-edit-shortcuts {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-edit-shortcuts h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.shortcut-btn {
+  background: var(--background);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.shortcut-btn:hover {
+  border-color: var(--primary-color);
+  background: #EEF2FF;
+  transform: translateY(-2px);
+}
+
+.shortcut-btn i {
+  font-size: 1.5rem;
+}
+
+.shortcut-btn span {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Sidebar scroll: hide scrollbar by default, show only while scrolling */
+.sidebar-scroll {
+  padding: 0 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  /* hide for Firefox by default */
+  scrollbar-color: transparent transparent;
+}
+
+/* WebKit: hide track/thumb by default */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 6px;
+}
+
+/* When scrolling, reveal a subtle scrollbar (works for WebKit + Firefox) */
+.sidebar-scroll.is-scrolling {
+  scrollbar-color: rgba(0,0,0,0.22) transparent;
+}
+.sidebar-scroll.is-scrolling::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.22);
+}
+
+.font-select-row {
+  display: flex;
+  flex-direction: column; /* label above select */
+  gap: 0.35rem;
+  align-items: stretch;
+  padding: 0.35rem 0;
+}
+
+.font-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  align-self: flex-start;
+  margin-left: 2px;
+}
+
+/* Dropdown: full width, no radius, custom arrow */
+.font-select-sidebar {
+  width: 100%;
+  padding: 8px 36px 8px 12px; /* room for custom arrow on the right */
+  border-radius: 0; /* no radius as requested */
+  border: 1px solid var(--border-color);
+  background: var(--white);
+  font-size: 0.95rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+  cursor: pointer;
+  /* custom down-arrow (SVG) placed to the right */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8'><path fill='%23999' d='M7 8L0 0h14z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 12px) center;
+  background-size: 14px 8px;
+}
+
+/* hide IE/Edge native arrow */
+.font-select-sidebar::-ms-expand { display: none; }
+
+/* focus styling consistent with other controls */
+.font-select-sidebar:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(79,70,229,0.06);
+}
+
+.typography-control {
+  /* more compact vertically */
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;        /* was 0.45rem */
+  padding: 0.25rem 0; /* was 0.45rem 0 */
+  margin-bottom: 0.35rem; /* was 0.6rem */
+}
+
+.typography-label {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 0.92rem; /* slightly smaller */
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-bottom: 2px; /* was 4px */
+  line-height: 1;
+}
+
+.typography-value {
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-left: 8px;
+}
+
+.typography-subtitle {
+  font-size: 0.82rem;   /* slightly smaller */
+  color: var(--text-secondary);
+  margin: 1px 0 4px 0;  /* closer to label */
+  text-align: left;
+  align-self: flex-start;
+  line-height: 1.1;
+}
+
+/* tighten slider spacing inside compact controls */
+.typography-control .slider {
+  height: 4px;
+  margin-top: 0px; /* remove extra space above/below */
+  margin-bottom: 2px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 0.9rem;
+  border-bottom: 2px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  z-index: 10;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.6rem 0.9rem;
+  background: var(--white);
+  flex-wrap: wrap;
+}
+
+.sidebar-header-actions .btn-back-templates {
+  flex: 1;
+}
+
+.sidebar-content .btn-back-templates {
+  width: 100%;
+  margin-top: auto;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.btn-export {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--primary-color);
+  background: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  flex: 1;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-weight: 600;
+  text-align: center;
+}
+
+.zoom-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--white);
+}
+
+.zoom-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Tabbed segmented control below header */
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.3rem;
+  align-items: center;
+  background: #f3f4f6;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.tab-btn {
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.15s ease;
+  font-size: 0.8rem;
+  flex: 1;
+}
+
+.tab-btn i { font-size: 0.95rem; opacity: 0.9; }
+
+.tab-btn:hover {
+  background: rgba(79, 70, 229, 0.08);
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  background: white;
+  color: var(--text-primary);
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.tab-content {
+  padding: 0.3rem 0 0.5rem 0;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+}
+
+.sidebar-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-back-templates {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--primary-color);
+  background: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-weight: 600;
+  text-align: center;
+}
+
+.btn-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--background);
+  border: none;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close:hover {
+  background: var(--error-color);
+  color: white;
+  transform: rotate(90deg);
+}
+
+.sidebar-content {
+  padding: 0.3rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.sidebar-content > div:nth-child(3) {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+/* remove forced scrolling on this child so only .sidebar-scroll controls it */
+.sidebar-content > div:nth-child(3) {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+.sidebar-content .btn-reset {
+  flex-shrink: 0;
+}
+
+.setting-group {
+  margin-bottom: 0.4rem; /* mai compact */
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.setting-group:last-child {
+  border-bottom: none;
+}
+
+.setting-group h4 {
+  margin-bottom: 0.35rem; /* micșorat spațiul sub titlu */
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: left;
+  width: 100%;
+  align-self: flex-start;
+}
+
+.font-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.4rem;
+  justify-content: flex-end;
+}
+
+.font-btn {
+  padding: 0.35rem 0.6rem;
+  border: 1.5px solid var(--border-color);
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all 0.14s ease;
+}
+
+.font-btn:hover {
+  border-color: var(--primary-color);
+  background: #EEF2FF;
+}
+
+.font-btn.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.setting-item {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.color-item {
+  margin-bottom: 0.6rem; /* reduce vertical spacing */
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  gap: 8px; /* tighten horizontal gap */
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.color-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* smaller gap between label and description */
+  align-items: flex-start;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.color-item-left > label {
+  margin: 0;
+  font-size: 0.80rem; /* slightly smaller */
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+}
+
+.color-item-left > .color-description {
+  margin: 0;
+  font-size: 0.72rem; /* smaller helper text */
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+.color-picker-compact {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+/* smaller color input */
+.color-picker-compact .color-picker {
+  width: 28px;
+  height: 22px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* smaller monospace value */
+.color-value {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-family: monospace;
+  white-space: nowrap;
+}
+
+/* tighten color-picker-wrapper when used in Borders tab */
+.color-picker-wrapper {
+  padding: 0.25rem;
+}
+
+/* Sidebar toggle button (visible when sidebar is closed) */
+.sidebar-toggle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 420px;
+  z-index: 12;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: left 0.2s ease, transform 0.2s ease, background 0.15s ease;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+/* When sidebar closed move toggle to the left edge */
+.customization-sidebar:not(.open) ~ .sidebar-toggle {
+  left: 12px;
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* When sidebar is open keep it near the panel edge */
+.customization-sidebar.open ~ .sidebar-toggle {
+  left: 420px;
+  transform: translateY(-50%);
+}
+
+/* Accordion styles removed - sections always visible */
+.setting-group h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.setting-group > .font-selection,
+.setting-group > .spacing-grid,
+.setting-group > .setting-item,
+.setting-group > .color-picker-wrapper {
+  margin-top: 0.3rem;
+}
+
+.cv-preview {
+  max-width: 850px;
+  margin: 0 auto;
+  transition: transform 0.12s ease;
+  transform-origin: center center;
+  /* Make the preview a block so scale to height behaves predictably */
+  display: block;
+  width: auto;
+  max-height: 100%;
+  height: auto;
+}
+
+/* Aspect ratios for page sizes: width / height (allows switching ratio only) */
+.cv-preview.a4 {
+  width: 210mm;
+  max-width: 100%;
+}
+.cv-preview.letter {
+  width: 8.5in;
+  max-width: 100%;
+}
+
+/* Center the preview when the customization sidebar is collapsed */
+.cv-preview-wrapper {
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-download .download-text {
+  margin-left: 0.5rem;
+  font-weight: 600;
+}
+
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slider-zoom {
+  width: 100%;
+}
+
+.btn-download-small {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  min-width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.font-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.font-select {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--white);
+  font-size: 0.95rem;
+}
+
+.quick-edit-shortcuts {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-edit-shortcuts h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.shortcut-btn {
+  background: var(--background);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.shortcut-btn:hover {
+  border-color: var(--primary-color);
+  background: #EEF2FF;
+  transform: translateY(-2px);
+}
+
+.shortcut-btn i {
+  font-size: 1.5rem;
+}
+
+.shortcut-btn span {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Sidebar scroll: hide scrollbar by default, show only while scrolling */
+.sidebar-scroll {
+  padding: 0 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  /* hide for Firefox by default */
+  scrollbar-color: transparent transparent;
+}
+
+/* WebKit: hide track/thumb by default */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 6px;
+}
+
+/* When scrolling, reveal a subtle scrollbar (works for WebKit + Firefox) */
+.sidebar-scroll.is-scrolling {
+  scrollbar-color: rgba(0,0,0,0.22) transparent;
+}
+.sidebar-scroll.is-scrolling::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.22);
+}
+
+.font-select-row {
+  display: flex;
+  flex-direction: column; /* label above select */
+  gap: 0.35rem;
+  align-items: stretch;
+  padding: 0.35rem 0;
+}
+
+.font-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  align-self: flex-start;
+  margin-left: 2px;
+}
+
+/* Dropdown: full width, no radius, custom arrow */
+.font-select-sidebar {
+  width: 100%;
+  padding: 8px 36px 8px 12px; /* room for custom arrow on the right */
+  border-radius: 0; /* no radius as requested */
+  border: 1px solid var(--border-color);
+  background: var(--white);
+  font-size: 0.95rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+  cursor: pointer;
+  /* custom down-arrow (SVG) placed to the right */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8'><path fill='%23999' d='M7 8L0 0h14z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 12px) center;
+  background-size: 14px 8px;
+}
+
+/* hide IE/Edge native arrow */
+.font-select-sidebar::-ms-expand { display: none; }
+
+/* focus styling consistent with other controls */
+.font-select-sidebar:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(79,70,229,0.06);
+}
+
+.typography-control {
+  /* more compact vertically */
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;        /* was 0.45rem */
+  padding: 0.25rem 0; /* was 0.45rem 0 */
+  margin-bottom: 0.35rem; /* was 0.6rem */
+}
+
+.typography-label {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 0.92rem; /* slightly smaller */
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-bottom: 2px; /* was 4px */
+  line-height: 1;
+}
+
+.typography-value {
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-left: 8px;
+}
+
+.typography-subtitle {
+  font-size: 0.82rem;   /* slightly smaller */
+  color: var(--text-secondary);
+  margin: 1px 0 4px 0;  /* closer to label */
+  text-align: left;
+  align-self: flex-start;
+  line-height: 1.1;
+}
+
+/* tighten slider spacing inside compact controls */
+.typography-control .slider {
+  height: 4px;
+  margin-top: 0px; /* remove extra space above/below */
+  margin-bottom: 2px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 0.9rem;
+  border-bottom: 2px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  z-index: 10;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.6rem 0.9rem;
+  background: var(--white);
+  flex-wrap: wrap;
+}
+
+.sidebar-header-actions .btn-back-templates {
+  flex: 1;
+}
+
+.sidebar-content .btn-back-templates {
+  width: 100%;
+  margin-top: auto;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.btn-export {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--primary-color);
+  background: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  flex: 1;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-weight: 600;
+  text-align: center;
+}
+
+.zoom-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--white);
+}
+
+.zoom-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Tabbed segmented control below header */
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.3rem;
+  align-items: center;
+  background: #f3f4f6;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.tab-btn {
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.15s ease;
+  font-size: 0.8rem;
+  flex: 1;
+}
+
+.tab-btn i { font-size: 0.95rem; opacity: 0.9; }
+
+.tab-btn:hover {
+  background: rgba(79, 70, 229, 0.08);
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  background: white;
+  color: var(--text-primary);
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.tab-content {
+  padding: 0.3rem 0 0.5rem 0;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+}
+
+.sidebar-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-back-templates {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--primary-color);
+  background: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-weight: 600;
+  text-align: center;
+}
+
+.btn-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--background);
+  border: none;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close:hover {
+  background: var(--error-color);
+  color: white;
+  transform: rotate(90deg);
+}
+
+.sidebar-content {
+  padding: 0.3rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.sidebar-content > div:nth-child(3) {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+/* remove forced scrolling on this child so only .sidebar-scroll controls it */
+.sidebar-content > div:nth-child(3) {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+.sidebar-content .btn-reset {
+  flex-shrink: 0;
+}
+
+.setting-group {
+  margin-bottom: 0.4rem; /* mai compact */
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.setting-group:last-child {
+  border-bottom: none;
+}
+
+.setting-group h4 {
+  margin-bottom: 0.35rem; /* micșorat spațiul sub titlu */
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: left;
+  width: 100%;
+  align-self: flex-start;
+}
+
+.font-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.4rem;
+  justify-content: flex-end;
+}
+
+.font-btn {
+  padding: 0.35rem 0.6rem;
+  border: 1.5px solid var(--border-color);
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all 0.14s ease;
+}
+
+.font-btn:hover {
+  border-color: var(--primary-color);
+  background: #EEF2FF;
+}
+
+.font-btn.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.setting-item {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.color-item {
+  margin-bottom: 0.6rem; /* reduce vertical spacing */
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  gap: 8px; /* tighten horizontal gap */
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.color-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* smaller gap between label and description */
+  align-items: flex-start;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.color-item-left > label {
+  margin: 0;
+  font-size: 0.80rem; /* slightly smaller */
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+}
+
+.color-item-left > .color-description {
+  margin: 0;
+  font-size: 0.72rem; /* smaller helper text */
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+.color-picker-compact {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+/* smaller color input */
+.color-picker-compact .color-picker {
+  width: 28px;
+  height: 22px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* smaller monospace value */
+.color-value {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-family: monospace;
+  white-space: nowrap;
+}
+
+/* tighten color-picker-wrapper when used in Borders tab */
+.color-picker-wrapper {
+  padding: 0.25rem;
+}
+
+/* Sidebar toggle button (visible when sidebar is closed) */
+.sidebar-toggle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 420px;
+  z-index: 12;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: left 0.2s ease, transform 0.2s ease, background 0.15s ease;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+/* When sidebar closed move toggle to the left edge */
+.customization-sidebar:not(.open) ~ .sidebar-toggle {
+  left: 12px;
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* When sidebar is open keep it near the panel edge */
+.customization-sidebar.open ~ .sidebar-toggle {
+  left: 420px;
+  transform: translateY(-50%);
+}
+
+/* Accordion styles removed - sections always visible */
+.setting-group h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.setting-group > .font-selection,
+.setting-group > .spacing-grid,
+.setting-group > .setting-item,
+.setting-group > .color-picker-wrapper {
+  margin-top: 0.3rem;
+}
+
+.cv-preview {
+  max-width: 850px;
+  margin: 0 auto;
+  transition: transform 0.12s ease;
+  transform-origin: center center;
+  /* Make the preview a block so scale to height behaves predictably */
+  display: block;
+  width: auto;
+  max-height: 100%;
+  height: auto;
+}
+
+/* Aspect ratios for page sizes: width / height (allows switching ratio only) */
+.cv-preview.a4 {
+  width: 210mm;
+  max-width: 100%;
+}
+.cv-preview.letter {
+  width: 8.5in;
+  max-width: 100%;
+}
+
+/* Center the preview when the customization sidebar is collapsed */
+.cv-preview-wrapper {
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-download .download-text {
+  margin-left: 0.5rem;
+  font-weight: 600;
+}
+
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slider-zoom {
+  width: 100%;
+}
+
+.btn-download-small {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  min-width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.font-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.font-select {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--white);
+  font-size: 0.95rem;
+}
+
+.quick-edit-shortcuts {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-edit-shortcuts h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.shortcut-btn {
+  background: var(--background);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.shortcut-btn:hover {
+  border-color: var(--primary-color);
+  background: #EEF2FF;
+  transform: translateY(-2px);
+}
+
+.shortcut-btn i {
+  font-size: 1.5rem;
+}
+
+.shortcut-btn span {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Sidebar scroll: hide scrollbar by default, show only while scrolling */
+.sidebar-scroll {
+  padding: 0 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  /* hide for Firefox by default */
+  scrollbar-color: transparent transparent;
+}
+
+/* WebKit: hide track/thumb by default */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 6px;
+}
+
+/* When scrolling, reveal a subtle scrollbar (works for WebKit + Firefox) */
+.sidebar-scroll.is-scrolling {
+  scrollbar-color: rgba(0,0,0,0.22) transparent;
+}
+.sidebar-scroll.is-scrolling::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.22);
+}
+
+.font-select-row {
+  display: flex;
+  flex-direction: column; /* label above select */
+  gap: 0.35rem;
+  align-items: stretch;
+  padding: 0.35rem 0;
+}
+
+.font-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  align-self: flex-start;
+  margin-left: 2px;
+}
+
+/* Dropdown: full width, no radius, custom arrow */
+.font-select-sidebar {
+  width: 100%;
+  padding: 8px 36px 8px 12px; /* room for custom arrow on the right */
+  border-radius: 0; /* no radius as requested */
+  border: 1px solid var(--border-color);
+  background: var(--white);
+  font-size: 0.95rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+  cursor: pointer;
+  /* custom down-arrow (SVG) placed to the right */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8'><path fill='%23999' d='M7 8L0 0h14z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 12px) center;
+  background-size: 14px 8px;
+}
+
+/* hide IE/Edge native arrow */
+.font-select-sidebar::-ms-expand { display: none; }
+
+/* focus styling consistent with other controls */
+.font-select-sidebar:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(79,70,229,0.06);
+}
+
+.typography-control {
+  /* more compact vertically */
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;        /* was 0.45rem */
+  padding: 0.25rem 0; /* was 0.45rem 0 */
+  margin-bottom: 0.35rem; /* was 0.6rem */
+}
+
+.typography-label {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 0.92rem; /* slightly smaller */
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-bottom: 2px; /* was 4px */
+  line-height: 1;
+}
+
+.typography-value {
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-left: 8px;
+}
+
+.typography-subtitle {
+  font-size: 0.82rem;   /* slightly smaller */
+  color: var(--text-secondary);
+  margin: 1px 0 4px 0;  /* closer to label */
+  text-align: left;
+  align-self: flex-start;
+  line-height: 1.1;
+}
+
+/* tighten slider spacing inside compact controls */
+.typography-control .slider {
+  height: 4px;
+  margin-top: 0px; /* remove extra space above/below */
+  margin-bottom: 2px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 0.9rem;
+  border-bottom: 2px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  z-index: 10;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.6rem 0.9rem;
+  background: var(--white);
+  flex-wrap: wrap;
+}
+
+.sidebar-header-actions .btn-back-templates {
+  flex: 1;
+}
+
+.sidebar-content .btn-back-templates {
+  width: 100%;
+  margin-top: auto;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.btn-export {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--primary-color);
+  background: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  flex: 1;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-weight: 600;
+  text-align: center;
+}
+
+.zoom-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--white);
+}
+
+.zoom-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Tabbed segmented control below header */
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.3rem;
+  align-items: center;
+  background: #f3f4f6;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.tab-btn {
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.15s ease;
+  font-size: 0.8rem;
+  flex: 1;
+}
+
+.tab-btn i { font-size: 0.95rem; opacity: 0.9; }
+
+.tab-btn:hover {
+  background: rgba(79, 70, 229, 0.08);
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  background: white;
+  color: var(--text-primary);
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.tab-content {
+  padding: 0.3rem 0 0.5rem 0;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+}
+
+.sidebar-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-back-templates {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--primary-color);
+  background: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition

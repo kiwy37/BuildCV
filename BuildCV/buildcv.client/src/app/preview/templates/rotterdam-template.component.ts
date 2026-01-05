@@ -33,9 +33,11 @@ export class RotterdamTemplateComponent {
         .rt-profile-pic { width: 100px; height: 100px; border-radius: 50%; background: #ddd; flex-shrink: 0; overflow: hidden; }
         .rt-profile-pic img { width: 100%; height: 100%; object-fit: cover; }
         .rt-header-info { flex: 1; }
-        .rt-header h1 { font-family: 'Playfair Display', serif; font-size: ${c.headingFontSize * 1.6}px; margin: 0; line-height: 1.1; color: white; }
+        /* header name uses primary color (title only) */
+        .rt-header h1 { font-family: 'Playfair Display', serif; font-size: ${c.headingFontSize * 1.6}px; margin: 0; line-height: 1.1; color: ${c.primaryColor}; }
         .rt-header p { text-transform: uppercase; letter-spacing: 3px; font-size: 0.75rem; margin-top: 8px; opacity: 0.9; }
         .content-body { padding: 35px; flex: 1; overflow-y: auto; }
+        /* section titles use primary color */
         .section-title { 
             text-transform: uppercase; 
             font-size: 1rem; 
@@ -44,8 +46,9 @@ export class RotterdamTemplateComponent {
             padding-bottom: 8px; 
             margin: 20px 0 15px 0; 
             letter-spacing: 1px;
-            color: #333;
-        }
+            color: ${c.primaryColor};
+         }
+        /* sidebar title (labels) use primary color; sidebar values use textColor */
         .sidebar-title { 
             text-transform: uppercase; 
             font-size: 0.9rem; 
@@ -56,6 +59,7 @@ export class RotterdamTemplateComponent {
             font-weight: 700;
         }
         .contact-item { display: flex; align-items: flex-start; margin-bottom: 10px; font-size: 0.8rem; }
+        .sidebar-value { color: ${c.textColor}; } /* ensure sidebar content uses textColor */
         .icon-circle { 
             width: 22px; height: 22px; background: #333; color: white; 
             border-radius: 50%; display: flex; justify-content: center; 

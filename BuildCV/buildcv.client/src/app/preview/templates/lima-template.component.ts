@@ -48,12 +48,14 @@ export class LimaTemplateComponent {
           .lima-profile { display: flex; flex-direction: column; align-items: center; gap: 10px; }
           .lima-avatar { width: 130px; height: 130px; border-radius: 50%; overflow: hidden; background: #e5e7eb; border: 4px solid #ffffff; box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
           .lima-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-          .lima-name { color: #ffffff; margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; font-size: 20px; }
-          .lima-title { color: #cbd5e1; margin-top: 2px; font-size: 13px; }
+          /* Sidebar name uses primary color so it updates with customization */
+          .lima-name { color: ${c.primaryColor}; margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; font-size: 20px; }
+          .lima-title { color: ${c.textColor}; margin-top: 2px; font-size: 13px; }
 
           .sidebar-section { margin-top: 12px; }
-          .sidebar-section h4 { color: #f8fafc; margin: 0 0 8px 0; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom:8px; }
-          .sidebar-text { color: #d1d5db; font-size: ${c.fontSize - 1}px; line-height: ${c.lineHeight}; }
+          /* Use primaryColor for small section headings in sidebar, and textColor for content */
+          .sidebar-section h4 { color: ${c.primaryColor}; margin: 0 0 8px 0; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom:8px; }
+          .sidebar-text { color: ${c.textColor}; font-size: ${c.fontSize - 1}px; line-height: ${c.lineHeight}; }
 
           .contact-row { display:flex; flex-direction:column; gap:8px; margin-top:4px; }
           .contact-item { display:flex; gap:10px; align-items:center; color: #d1d5db; font-size: ${c.fontSize - 1}px; }
@@ -62,12 +64,14 @@ export class LimaTemplateComponent {
           .lima-main { width: 67%; padding: 48px 44px; box-sizing: border-box; display: flex; flex-direction: column; background: #ffffff; }
           .lm-header { display:flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
           .lm-title { color: ${c.textColor}; }
-          .lm-title h1 { margin: 0; font-size: ${c.headingFontSize * 1.4}px; letter-spacing: 1px; text-transform: uppercase; font-weight:800; }
+          /* Main name/title use primary color */
+          .lm-title h1 { color: ${c.primaryColor}; margin: 0; font-size: ${c.headingFontSize * 1.4}px; letter-spacing: 1px; text-transform: uppercase; font-weight:800; }
           .lm-title h2 { margin: 8px 0 0 0; color: ${c.primaryColor}; font-size: ${c.headingFontSize - 4}px; font-weight:700; text-transform: none; }
           .lm-contact { text-align: right; color: ${c.textColor}; opacity: 0.8; font-size: ${c.fontSize}px; }
 
           .lm-body { margin-top: 22px; display: flex; flex-direction: column; gap: 22px; }
-          .section-title { text-transform: uppercase; font-weight:700; letter-spacing: 1px; color: ${c.textColor}; margin-bottom:8px; padding-bottom:6px; border-bottom:2px solid ${c.primaryColor}; }
+          /* Section titles should use primary color */
+          .section-title { text-transform: uppercase; font-weight:700; letter-spacing: 1px; color: ${c.primaryColor}; margin-bottom:8px; padding-bottom:6px; border-bottom:2px solid ${c.primaryColor}; }
 
           /* Experience two-column layout with subtle divider */
           .experience-item { display: grid; grid-template-columns: 24% 1fr; gap: 18px; align-items: start; padding: 14px 0; border-top: 1px solid #f1f5f9; }
@@ -80,8 +84,8 @@ export class LimaTemplateComponent {
           /* Skills as progress bars */
           .skill-row { display:flex; flex-direction:column; gap:6px; }
           .skill-name { font-weight:700; color:#374151; font-size: ${c.fontSize - 1}px; }
-          .skill-bar { height:8px; background:#e6e6e6; border-radius:999px; overflow:hidden; }
-          .skill-fill { height:8px; background: ${c.primaryColor}; width:60%; }
+          /* keep skill fill color fixed (do not change with primaryColor) */
+          .skill-fill { height:8px; background: #b88c3a; width:60%; }
 
           .hobby-list { display:flex; gap:8px; flex-wrap:wrap; }
           .hobby { background:#f3f4f6; padding:6px 10px; border-radius:999px; font-size:0.85rem; color:#374151; }
@@ -127,7 +131,7 @@ export class LimaTemplateComponent {
                   ${this.cvData.skills.map((s:any)=>{
                     const name = typeof s === 'string' ? s : (s.name || s.skill || '');
                     const pct = typeof s === 'object' ? (s.levelPercent || s.level || 60) : 60;
-                    return `<div style="margin-bottom:10px;"><div class="skill-name">${name}</div><div class="skill-bar"><div class="skill-fill" style="width:${pct}%"></div></div></div>`;
+                    return `<div style="margin-bottom:10px;"><div class="skill-name">${name}</div><div class="skill-bar"><div class="skill-fill" style="width:${pct}%; background:#b88c3a;"></div></div></div>`;
                   }).join('')}
                 </div>
               </div>
@@ -140,7 +144,7 @@ export class LimaTemplateComponent {
                   ${this.cvData.languages.map((l:any)=>{
                     const label = typeof l === 'string' ? l : (l.name || '');
                     const pct = typeof l === 'object' ? (l.levelPercent || l.level || 60) : 60;
-                    return `<div style="margin-bottom:10px;"><div style="font-weight:700;color:#ffffff;opacity:0.95;font-size:${c.fontSize - 1}px">${label}</div><div style="height:8px;background:rgba(255,255,255,0.12);border-radius:999px;overflow:hidden"><div style="height:8px;background:${c.primaryColor};width:${pct}%"></div></div></div>`;
+                    return `<div style="margin-bottom:10px;"><div style="font-weight:700;color:#ffffff;opacity:0.95;font-size:${c.fontSize - 1}px">${label}</div><div style="height:8px;background:rgba(255,255,255,0.12);border-radius:999px;overflow:hidden"><div style="height:8px;background:#b88c3a;width:${pct}%"></div></div></div>`;
                   }).join('')}
                 </div>
               </div>
@@ -201,7 +205,7 @@ export class LimaTemplateComponent {
                     ${this.cvData.skills.map((s:any)=>{
                       const name = typeof s === 'string' ? s : (s.name || s.skill || '');
                       const pct = typeof s === 'object' ? (s.levelPercent || s.level || 60) : 60;
-                      return `<div style="margin-bottom:12px;"><div style="font-weight:700;color:${c.textColor};margin-bottom:6px">${name}</div><div style="height:8px;background:#e6e6e6;border-radius:999px;overflow:hidden"><div style="height:8px;background:${c.primaryColor};width:${pct}%"></div></div></div>`;
+                      return `<div style="margin-bottom:12px;"><div style="font-weight:700;color:${c.textColor};margin-bottom:6px">${name}</div><div style="height:8px;background:#e6e6e6;border-radius:999px;overflow:hidden"><div style="height:8px;background:#b88c3a;width:${pct}%"></div></div></div>`;
                     }).join('')}
                   </div>
                 </section>

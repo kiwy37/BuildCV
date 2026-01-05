@@ -25,13 +25,14 @@ export class ATSTemplateComponent {
           .ats-page { width: 100%; min-height: 1100px; padding: 24px; box-sizing: border-box; }
 
           .ats-header { text-align: center; margin-bottom: 8px; }
-          .ats-header h1 { margin: 0; font-size: ${c.headingFontSize * 1.6}px; font-weight:700; letter-spacing:2px; }
+          /* Name and section titles use primary color */
+          .ats-header h1 { margin: 0; font-size: ${c.headingFontSize * 1.6}px; font-weight:700; letter-spacing:2px; color: ${c.primaryColor}; }
           .ats-header .contact { color: #374151; font-size: ${c.fontSize - 1}px; margin-top:8px; }
           .ats-links { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
           .ats-link { background:#f1f5f9; color:#1f2937; padding:6px 10px; border-radius:6px; font-size:0.9rem; text-decoration:none; }
 
           .ats-section { margin-top:18px; }
-          .ats-section .title { display:block; background:#eef6ff; color:#1f2937; padding:8px 12px; border-radius:6px; font-weight:700; text-align:center; letter-spacing:1px; }
+          .ats-section .title { display:block; background:#eef6ff; color: ${c.primaryColor}; padding:8px 12px; border-radius:6px; font-weight:700; text-align:center; letter-spacing:1px; }
           .ats-body { padding:12px 6px; color:#374151; line-height:${c.lineHeight}; }
 
           .ats-list { margin:8px 0 0 0; padding-left:16px; }

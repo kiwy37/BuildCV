@@ -25,9 +25,10 @@ export class RigaTemplateComponent {
           .riga-page { width: 100%; min-height: 1100px; display: flex; flex-direction: column; }
 
           /* strong navy top band */
+          /* top band keeps background but name uses primary color */
           .riga-top { background: #1f2937; color: #fff; padding: 34px 24px 28px 24px; text-align: center; }
           .riga-top .small { color: #d6c39a; letter-spacing: 6px; font-size: 12px; margin-bottom: 6px; display:block; }
-          .riga-top h1 { margin: 6px 0 6px 0; font-size: ${c.headingFontSize * 2}px; letter-spacing: 6px; text-transform:uppercase; }
+          .riga-top h1 { margin: 6px 0 6px 0; font-size: ${c.headingFontSize * 2}px; letter-spacing: 6px; text-transform:uppercase; color: ${c.primaryColor}; }
           .riga-top h2 { margin: 0; font-size: ${c.fontSize + 2}px; color: #b88c3a; font-weight:700; letter-spacing: 2px; }
 
           .riga-body { display:flex; }
@@ -40,20 +41,24 @@ export class RigaTemplateComponent {
 
           .left-section { padding-top: 8px; }
           .left-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:22px; }
-          .left-heading h4 { margin:0; text-transform:uppercase; letter-spacing:1px; color:#374151; font-size:0.95rem; }
+          /* sidebar small headings use primary color (titles only) */
+          .left-heading h4 { margin:0; text-transform:uppercase; letter-spacing:1px; color: ${c.primaryColor}; font-size:0.95rem; }
           .left-hr { height:1px; background:#d1d5db; margin-top:12px; }
 
           .edu-item { margin:12px 0; }
-          .edu-item .degree { font-weight:700; color:#111827; }
+          /* degree/content should use textColor (not primary) */
+          .edu-item .degree { font-weight:700; color: ${c.textColor}; }
           .edu-item .meta { color:#8b8f95; font-size:0.9rem; margin-top:6px; }
 
           .lang-item { margin:10px 0; }
-          .lang-label { font-size:0.9rem; color:#374151; font-weight:600; margin-bottom:8px; }
+          /* language labels (content) use textColor */
+          .lang-label { font-size:0.9rem; color: ${c.textColor}; font-weight:600; margin-bottom:8px; }
           .lang-bar { height:8px; background:#e6e6e6; border-radius:999px; overflow:hidden; }
           .lang-fill { height:8px; background:#b88c3a; width:60%; }
 
           /* right column styling */
-          .section-title { text-transform:uppercase; font-weight:700; letter-spacing:1px; color:#374151; margin: 6px 0 12px 0; border-bottom:1px solid #e6e6e6; padding-bottom:8px; }
+          /* section headings use primary color */
+          .section-title { text-transform:uppercase; font-weight:700; letter-spacing:1px; color: ${c.primaryColor}; margin: 6px 0 12px 0; border-bottom:1px solid #e6e6e6; padding-bottom:8px; }
 
           .job { margin-bottom:18px; }
           .job h3 { margin: 0; font-size: ${c.fontSize * 1.05}px; color:#111827; }
@@ -62,9 +67,9 @@ export class RigaTemplateComponent {
 
           .skills-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:8px; }
           .skill-row { display:flex; align-items:center; gap:12px; }
-          .skill-name { width:40%; font-weight:600; color:#374151; }
+          .skill-name { width:40%; font-weight:600; color:${c.textColor}; }
           .skill-meter { flex:1; height:8px; background:#e6e6e6; border-radius:999px; overflow:hidden; }
-          .skill-meter .fill { height:8px; background:#b88c3a; width:70%; }
+          .skill-meter .fill { height:8px; background:#b88c3a; width:70%; } /* fixed fill color */
 
           /* small print tweak for contact row */
           .contact-row { display:flex; gap:18px; justify-content:center; color:#c9cdd2; margin-top:8px; }
@@ -204,7 +209,7 @@ export class RigaTemplateComponent {
       'Caladea': "https://fonts.googleapis.com/css2?family=Caladea&display=swap",
       'Lora': "https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap",
       'Roboto Slab': "https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;700&display=swap",
-      'Playfair Display': "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap",
+      'Playfair Display': "https://fonts.googleapis.com/css2?family=Playfair+Display&wght@400;700&display=swap",
       'Merriweather': "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap"
     };
     const url = map[fontFamily];

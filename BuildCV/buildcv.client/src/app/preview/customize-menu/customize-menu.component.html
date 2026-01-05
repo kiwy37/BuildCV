@@ -1,0 +1,219 @@
+<div class="customization-sidebar" [class.open]="show">
+  <div class="sidebar-header">
+    <h3>Customize CV</h3>
+    <div class="header-actions">
+      <button class="btn-text" (click)="doReset()">Reset</button>
+      <button class="btn-primary" (click)="doExport()">
+        <i class="icon-download"></i> Export PDF
+      </button>
+    </div>
+  </div>
+
+  <div class="zoom-block">
+    <div class="zoom-labels">
+      <label>Zoom</label>
+      <span>{{ zoomPercent }}%</span>
+    </div>
+    <input
+      type="range"
+      min="50"
+      max="150"
+      step="10"
+      [value]="zoomPercent"
+      (input)="onZoomInput($any($event.target).value)"
+      class="slider"
+      [style.background-size]="((zoomPercent - 50) * 100) / (150 - 50) + '% 100%'"
+    />
+  </div>
+
+  <div class="sidebar-content">
+    
+    <div class="tabs-container">
+      <button class="tab-pill" [class.active]="activeTab === 'colors'" (click)="selectTab('colors')">
+        <i class="icon-palette"></i> Colors
+      </button>
+      <button class="tab-pill" [class.active]="activeTab === 'text'" (click)="selectTab('text')">
+        <i class="icon-text"></i> Text
+      </button>
+      <button class="tab-pill" [class.active]="activeTab === 'spacing'" (click)="selectTab('spacing')">
+        <i class="icon-spacing"></i> Spacing
+      </button>
+      <button class="tab-pill" [class.active]="activeTab === 'borders'" (click)="selectTab('borders')">
+        <i class="icon-border"></i> Borders
+      </button>
+    </div>
+
+    <div *ngIf="activeTab === 'text'" class="tab-pane fade-in">
+      
+      <div class="control-group">
+        <label class="control-label">Font Family</label>
+        <div class="select-wrapper">
+          <select class="form-select" [(ngModel)]="customization.fontFamily" (change)="onCustomizationInput()" [style.fontFamily]="customization.fontFamily">
+            <option *ngFor="let font of fontOptions" [value]="font">{{font}}</option>
+          </select>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="control-group">
+        <div class="label-row">
+          <label class="control-label">Text Size</label>
+          <span class="value-tag">{{ customization.fontSize }}px</span>
+        </div>
+        <input
+          type="range"
+          min="10" max="24" step="1"
+          class="slider"
+          [(ngModel)]="customization.fontSize"
+          (input)="onCustomizationInput()"
+          [style.background-size]="(((customization.fontSize || 16) - 10) * 100) / (24 - 10) + '% 100%'"
+        />
+        <p class="control-desc">Main body text and paragraphs</p>
+      </div>
+
+      <div class="control-group">
+        <div class="label-row">
+          <label class="control-label">Heading Size</label>
+          <span class="value-tag">{{ customization.headingFontSize }}px</span>
+        </div>
+        <input
+          type="range"
+          min="14" max="40" step="1"
+          class="slider"
+          [(ngModel)]="customization.headingFontSize"
+          (input)="onCustomizationInput()"
+          [style.background-size]="(((customization.headingFontSize || 18) - 14) * 100) / (40 - 14) + '% 100%'"
+        />
+        <p class="control-desc">Section titles size</p>
+      </div>
+
+      <div class="control-group">
+        <div class="label-row">
+          <label class="control-label">Line Height</label>
+          <span class="value-tag">{{ customization.lineHeight }}</span>
+        </div>
+        <input
+          type="range"
+          min="1.0" max="2.2" step="0.1"
+          class="slider"
+          [(ngModel)]="customization.lineHeight"
+          (input)="onCustomizationInput()"
+          [style.background-size]="(((customization.lineHeight || 1.8) - 1.0) * 100) / (2.2 - 1.0) + '% 100%'"
+        />
+        <p class="control-desc">Vertical space between lines</p>
+      </div>
+    </div>
+
+    <div *ngIf="activeTab === 'colors'" class="tab-pane fade-in">
+      <div class="control-group">
+        <label class="section-header">Primary Colors</label>
+        
+        <div class="color-row">
+          <div class="color-info">
+            <label>Primary Color</label>
+            <p>Headings & Links</p>
+          </div>
+          <div class="color-input-wrapper">
+            <input type="color" [(ngModel)]="customization.primaryColor" (input)="onCustomizationInput()">
+            <div class="color-preview" [style.background]="customization.primaryColor"></div>
+          </div>
+        </div>
+
+        <div class="color-row">
+          <div class="color-info">
+            <label>Accent Color</label>
+            <p>Subtitles & Icons</p>
+          </div>
+          <div class="color-input-wrapper">
+            <input type="color" [(ngModel)]="customization.secondaryColor" (input)="onCustomizationInput()">
+            <div class="color-preview" [style.background]="customization.secondaryColor"></div>
+          </div>
+        </div>
+
+        <div class="color-row">
+          <div class="color-info">
+            <label>Text Color</label>
+            <p>Body text</p>
+          </div>
+          <div class="color-input-wrapper">
+            <input type="color" [(ngModel)]="customization.textColor" (input)="onCustomizationInput()">
+            <div class="color-preview" [style.background]="customization.textColor"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="section-header">Backgrounds</label>
+        <div class="color-row">
+          <div class="color-info">
+            <label>Page Background</label>
+          </div>
+          <div class="color-input-wrapper">
+            <input type="color" [(ngModel)]="customization.backgroundColor" (input)="onCustomizationInput()">
+            <div class="color-preview border" [style.background]="customization.backgroundColor"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="activeTab === 'spacing'" class="tab-pane fade-in">
+       <div class="control-group">
+          <div class="label-row">
+            <label class="control-label">Section Spacing</label>
+            <span class="value-tag">{{ customization.sectionSpacing }}px</span>
+          </div>
+          <input type="range" min="5" max="50" step="1" class="slider"
+            [(ngModel)]="customization.sectionSpacing" (input)="onCustomizationInput()"
+            [style.background-size]="(((customization.sectionSpacing || 20) - 5) * 100) / (50 - 5) + '% 100%'" />
+          <p class="control-desc">Space between CV sections</p>
+       </div>
+
+       <div class="control-group">
+          <div class="label-row">
+            <label class="control-label">Page Margins</label>
+            <span class="value-tag">{{ customization.marginTop }}px</span>
+          </div>
+          <input type="range" min="0" max="60" step="2" class="slider"
+            [(ngModel)]="customization.marginTop" (input)="onCustomizationInput()"
+            [style.background-size]="(((customization.marginTop || 20) - 0) * 100) / (60 - 0) + '% 100%'" />
+          <p class="control-desc">Top and bottom page margin</p>
+       </div>
+
+       <div class="control-group">
+          <div class="label-row">
+            <label class="control-label">Side Margins</label>
+            <span class="value-tag">{{ customization.marginLeft }}px</span>
+          </div>
+          <input type="range" min="0" max="60" step="2" class="slider"
+            [(ngModel)]="customization.marginLeft" (input)="onCustomizationInput()"
+            [style.background-size]="(((customization.marginLeft || 20) - 0) * 100) / (60 - 0) + '% 100%'" />
+          <p class="control-desc">Left and right gutters</p>
+       </div>
+    </div>
+
+    <div *ngIf="activeTab === 'borders'" class="tab-pane fade-in">
+      <div class="control-group">
+        <label class="control-label">Global Borders</label>
+        <p class="control-desc mb-3">Set the color for divider lines and shapes.</p>
+        
+        <div class="color-row">
+          <div class="color-info">
+            <label>Border Color</label>
+          </div>
+          <div class="color-input-wrapper">
+             <input type="color" [(ngModel)]="customization.borderColor" (input)="onCustomizationInput()">
+             <div class="color-preview border" [style.background]="customization.borderColor"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sidebar-footer">
+    <button class="btn-back" (click)="doBack()">
+      <span class="arrow">←</span> Back to Templates
+    </button>
+  </div>
+</div>

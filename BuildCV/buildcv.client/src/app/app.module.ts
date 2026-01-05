@@ -19,6 +19,7 @@ import { LimaTemplateComponent } from './preview/templates/lima-template.compone
 import { RotterdamTemplateComponent } from './preview/templates/rotterdam-template.component';
 import { RigaTemplateComponent } from './preview/templates/riga-template.component';
 import { ATSTemplateComponent } from './preview/templates/ats-template.component';
+import { CustomizeMenuComponent } from './preview/customize-menu/customize-menu.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { ATSTemplateComponent } from './preview/templates/ats-template.component
     LimaTemplateComponent,
     RotterdamTemplateComponent,
     RigaTemplateComponent,
-    ATSTemplateComponent
+    ATSTemplateComponent,
+    CustomizeMenuComponent
   ],
   imports: [
     BrowserModule,

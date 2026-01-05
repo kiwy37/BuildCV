@@ -17,7 +17,7 @@ export class CustomizeMenuComponent implements OnInit {
   @Output() exportPdf = new EventEmitter<void>();
   @Output() back = new EventEmitter<void>();
 
-  activeTab: 'colors' | 'text' | 'spacing' | 'borders' = 'colors';
+  activeTab: 'colors' | 'text' | 'spacing' = 'colors';
 
   // List of fonts for the dropdown
   fontOptions: string[] = [
@@ -77,7 +77,7 @@ export class CustomizeMenuComponent implements OnInit {
   doExport(): void { this.exportPdf.emit(); }
   doBack(): void { this.back.emit(); }
 
-  selectTab(tab: 'colors' | 'text' | 'spacing' | 'borders'): void {
+  selectTab(tab: 'colors' | 'text' | 'spacing'): void {
     this.activeTab = tab;
   }
 }

@@ -22,7 +22,7 @@ export class PreviewComponent implements OnInit {
   zoom: number = 1.0;
   effectiveScale: number = 1.0;
   pageSize: 'A4' | 'Letter' = 'A4';
-  activeTab: 'colors' | 'text' | 'spacing' | 'borders' = 'colors';
+  activeTab: 'colors' | 'text' | 'spacing' = 'colors';
 
   customization: CustomizationSettings = {
     fontSize: 14,
@@ -115,7 +115,7 @@ export class PreviewComponent implements OnInit {
     localStorage.removeItem('cvCustomization');
   }
 
-  selectTab(tab: 'colors' | 'text' | 'spacing' | 'borders'): void {
+  selectTab(tab: 'colors' | 'text' | 'spacing'): void {
     this.activeTab = tab;
   }
 

@@ -3,11 +3,7 @@
 
 /* Sidebar scroll: hide scrollbar by default, show only while scrolling */
 .sidebar-scroll {
-  padding: 0 0.5rem;
   flex: 1;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  /* hide for Firefox by default */
   scrollbar-color: transparent transparent;
 }
 
@@ -119,4 +115,112 @@
   height: 4px;
   margin-top: 0px; /* remove extra space above/below */
   margin-bottom: 2px;
+}
+
+/* Layout: left sidebar + main centered area */
+.preview-container {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  gap: 16px;
+  --sidebar-width: 380px; /* updated to match customize-menu width */
+  position: relative;
+  flex-direction: row; /* enforce row (sidebar left, main right) */
+  direction: ltr;
+}
+
+/* When collapsed, shrink sidebar to zero */
+.preview-container.sidebar-collapsed {
+  --sidebar-width: 0px;
+}
+
+/* Explicit ordering to avoid accidental right-side placement */
+.sidebar { order: 0; }
+.sidebar-toggle { order: 1; }
+.main-content { order: 2; }
+
+/* Ensure sidebar is positioned relative and stretches */
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: calc(var(--sidebar-width));
+  transition: width 220ms ease, min-width 220ms ease, opacity 180ms ease;
+  overflow: hidden;
+  display: block;
+  position: relative;
+  align-self: stretch;
+}
+
+/* Override any positioning applied inside the customize menu so it sits inside .sidebar on the left */
+.sidebar > app-customize-menu {
+  position: relative !important;
+  right: auto !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+/* Main content takes remaining space and centers CV */
+.main-content {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  min-height: 0; /* allows inner scrolling if needed */
+}
+
+/* Centering wrapper for CV preview */
+.cv-preview-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* CV element behavior */
+.cv-preview {
+  transform-origin: top left;
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+/* Toggle button positioned between sidebar and main */
+.sidebar-toggle {
+  position: absolute;
+  left: calc(var(--sidebar-width) - 18px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 12;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+  transition: left 220ms ease, opacity 180ms ease;
+}
+
+/* When collapsed, move toggle to left edge */
+.preview-container.sidebar-collapsed .sidebar-toggle {
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Keep loading state centered inside main-content */
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
 }

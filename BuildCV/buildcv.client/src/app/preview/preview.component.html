@@ -1,19 +1,19 @@
-<!-- Header removed per request. Zoom and download moved above the CV preview. -->
+<div class="preview-container" [class.sidebar-collapsed]="!showCustomizationPanel">
+  <!-- Sidebar (left) -->
+  <div class="sidebar">
+    <app-customize-menu
+      [customization]="customization"
+      [show]="showCustomizationPanel"
+      [zoomPercent]="zoom * 100"
+      (customizationChange)="onCustomizationChange()"
+      (zoomChange)="setZoom($event)"
+      (reset)="resetCustomization()"
+      (exportPdf)="downloadPDF()"
+      (back)="backToThemeSelection()"
+    ></app-customize-menu>
+  </div>
 
-<div class="preview-container">
-  <!-- Left: customization panel -->
-  <app-customize-menu
-    [customization]="customization"
-    [show]="showCustomizationPanel"
-    [zoomPercent]="zoom * 100"
-    (customizationChange)="onCustomizationChange()"
-    (zoomChange)="setZoom($event)"
-    (reset)="resetCustomization()"
-    (exportPdf)="downloadPDF()"
-    (back)="backToThemeSelection()"
-  ></app-customize-menu>
-
-  <!-- Sidebar toggle (visible even when sidebar is closed) -->
+  <!-- Sidebar toggle (positioned between sidebar and content) -->
   <button
     class="sidebar-toggle"
     (click)="toggleCustomizationPanel()"
@@ -22,22 +22,22 @@
     {{ showCustomizationPanel ? "‹" : "›" }}
   </button>
 
-  <!-- CV Preview -->
-  <div class="cv-preview-wrapper" #cvWrapper *ngIf="!isLoading">
-    <div
-      class="cv-preview"
-      #cvPreview
-      [innerHTML]="previewHtml"
-      [style.transform]="'scale(' + effectiveScale + ')'"
-      [ngClass]="{ a4: pageSize === 'A4', letter: pageSize === 'Letter' }"
-    ></div>
-  </div>
+  <!-- Main content: CV Preview centered in remaining space -->
+  <div class="main-content">
+    <div class="cv-preview-wrapper" #cvWrapper *ngIf="!isLoading">
+      <div
+        class="cv-preview"
+        #cvPreview
+        [innerHTML]="previewHtml"
+        [style.transform]="'scale(' + effectiveScale + ')'"
+        [ngClass]="{ a4: pageSize === 'A4', letter: pageSize === 'Letter' }"
+      ></div>
+    </div>
 
-  <!-- Loading State -->
-  <div class="loading-state" *ngIf="isLoading">
-    <div class="spinner"></div>
-    <p>Generating preview...</p>
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Generating preview...</p>
+    </div>
   </div>
-
-  <!-- Quick Edit Shortcuts removed as requested -->
 </div>

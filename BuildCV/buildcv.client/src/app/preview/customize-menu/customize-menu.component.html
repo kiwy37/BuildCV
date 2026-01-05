@@ -1,8 +1,9 @@
 <div class="customization-sidebar" [class.open]="show">
   <div class="sidebar-header">
-    <h3>Customize CV</h3>
     <div class="header-actions">
-      <button class="btn-text" (click)="doReset()">Reset</button>
+      <button class="btn-primary" (click)="doReset()">
+        Reset
+      </button>
       <button class="btn-primary" (click)="doExport()">
         <i class="icon-download"></i> Export PDF
       </button>
@@ -38,12 +39,9 @@
       <button class="tab-pill" [class.active]="activeTab === 'spacing'" (click)="selectTab('spacing')">
         <i class="icon-spacing"></i> Spacing
       </button>
-      <button class="tab-pill" [class.active]="activeTab === 'borders'" (click)="selectTab('borders')">
-        <i class="icon-border"></i> Borders
-      </button>
     </div>
 
-    <div *ngIf="activeTab === 'text'" class="tab-pane fade-in">
+    <div *ngIf="activeTab === 'text'" class="tab-pane fade-in tab-pane-scroll">
       
       <div class="control-group">
         <label class="control-label">Font Family</label>
@@ -91,7 +89,7 @@
       <div class="control-group">
         <div class="label-row">
           <label class="control-label">Line Height</label>
-          <span class="value-tag">{{ customization.lineHeight }}</span>
+          <span class="value-tag">{{ (customization.lineHeight || 1.6) | number:'1.1-2' }}em</span>
         </div>
         <input
           type="range"
@@ -99,9 +97,9 @@
           class="slider"
           [(ngModel)]="customization.lineHeight"
           (input)="onCustomizationInput()"
-          [style.background-size]="(((customization.lineHeight || 1.8) - 1.0) * 100) / (2.2 - 1.0) + '% 100%'"
+          [style.background-size]="(((customization.lineHeight || 1.6) - 1.0) * 100) / (2.2 - 1.0) + '% 100%'"
         />
-        <p class="control-desc">Vertical space between lines</p>
+        <p class="control-desc">Vertical space between lines (em)</p>
       </div>
     </div>
 
@@ -190,23 +188,6 @@
             [style.background-size]="(((customization.marginLeft || 20) - 0) * 100) / (60 - 0) + '% 100%'" />
           <p class="control-desc">Left and right gutters</p>
        </div>
-    </div>
-
-    <div *ngIf="activeTab === 'borders'" class="tab-pane fade-in">
-      <div class="control-group">
-        <label class="control-label">Global Borders</label>
-        <p class="control-desc mb-3">Set the color for divider lines and shapes.</p>
-        
-        <div class="color-row">
-          <div class="color-info">
-            <label>Border Color</label>
-          </div>
-          <div class="color-input-wrapper">
-             <input type="color" [(ngModel)]="customization.borderColor" (input)="onCustomizationInput()">
-             <div class="color-preview border" [style.background]="customization.borderColor"></div>
-          </div>
-        </div>
-      </div>
     </div>
 
   </div>

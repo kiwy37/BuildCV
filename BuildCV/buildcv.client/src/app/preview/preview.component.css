@@ -1,196 +1,36 @@
-/* Moved customization panel styles to customize-menu.component.css to avoid duplication
-   and ensure the menu component owns its styles. */
-
-/* Sidebar scroll: hide scrollbar by default, show only while scrolling */
-.sidebar-scroll {
-  flex: 1;
-  scrollbar-color: transparent transparent;
-}
-
-/* WebKit: hide track/thumb by default */
-.sidebar-scroll::-webkit-scrollbar {
-  width: 8px;
-}
-.sidebar-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-.sidebar-scroll::-webkit-scrollbar-thumb {
-  background: transparent;
-  border-radius: 6px;
-}
-
-/* When scrolling, reveal a subtle scrollbar (works for WebKit + Firefox) */
-.sidebar-scroll.is-scrolling {
-  scrollbar-color: rgba(0,0,0,0.22) transparent;
-}
-.sidebar-scroll.is-scrolling::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.22);
-}
-
-.font-select-row {
-  display: flex;
-  flex-direction: column; /* label above select */
-  gap: 0.35rem;
-  align-items: stretch;
-  padding: 0.35rem 0;
-}
-
-.font-label {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  font-weight: 600;
-  align-self: flex-start;
-  margin-left: 2px;
-}
-
-/* Dropdown: full width, no radius, custom arrow */
-.font-select-sidebar {
-  width: 100%;
-  padding: 8px 36px 8px 12px; /* room for custom arrow on the right */
-  border-radius: 0; /* no radius as requested */
-  border: 1px solid var(--border-color);
-  background: var(--white);
-  font-size: 0.95rem;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  box-shadow: 0 1px 2px rgba(15,23,42,0.04);
-  cursor: pointer;
-  /* custom down-arrow (SVG) placed to the right */
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8'><path fill='%23999' d='M7 8L0 0h14z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: calc(100% - 12px) center;
-  background-size: 14px 8px;
-}
-
-/* hide IE/Edge native arrow */
-.font-select-sidebar::-ms-expand { display: none; }
-
-/* focus styling consistent with other controls */
-.font-select-sidebar:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px rgba(79,70,229,0.06);
-}
-
-.typography-control {
-  /* more compact vertically */
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;        /* was 0.45rem */
-  padding: 0.25rem 0; /* was 0.45rem 0 */
-  margin-bottom: 0.35rem; /* was 0.6rem */
-}
-
-.typography-label {
-  font-weight: 700;
-  color: var(--text-primary);
-  font-size: 0.92rem; /* slightly smaller */
-  display: flex;
-  align-items: baseline;
-  justify-content: flex-start;
-  gap: 8px;
-  margin-bottom: 2px; /* was 4px */
-  line-height: 1;
-}
-
-.typography-value {
-  font-weight: 700;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  margin-left: 8px;
-}
-
-.typography-subtitle {
-  font-size: 0.82rem;   /* slightly smaller */
-  color: var(--text-secondary);
-  margin: 1px 0 4px 0;  /* closer to label */
-  text-align: left;
-  align-self: flex-start;
-  line-height: 1.1;
-}
-
-/* tighten slider spacing inside compact controls */
-.typography-control .slider {
-  height: 4px;
-  margin-top: 0px; /* remove extra space above/below */
-  margin-bottom: 2px;
-}
-
-/* Layout: left sidebar + main centered area */
 .preview-container {
   display: flex;
-  align-items: stretch;
-  height: 100%;
-  gap: 16px;
-  --sidebar-width: 380px; /* updated to match customize-menu width */
-  position: relative;
-  flex-direction: row; /* enforce row (sidebar left, main right) */
-  direction: ltr;
+  height: 100vh;
+  align-items: center; /* ❌ PROBLEMA */
 }
 
-/* When collapsed, shrink sidebar to zero */
+
+/* Sidebar */
+:root {
+  --sidebar-width: 380px;
+}
+
+.preview-container {
+  --sidebar-width: 380px;
+}
+
 .preview-container.sidebar-collapsed {
   --sidebar-width: 0px;
 }
 
-/* Explicit ordering to avoid accidental right-side placement */
-.sidebar { order: 0; }
-.sidebar-toggle { order: 1; }
-.main-content { order: 2; }
-
-/* Ensure sidebar is positioned relative and stretches */
 .sidebar {
   width: var(--sidebar-width);
-  min-width: calc(var(--sidebar-width));
-  transition: width 220ms ease, min-width 220ms ease, opacity 180ms ease;
+  min-width: var(--sidebar-width);
+  max-width: var(--sidebar-width);
+  height: 100%;
   overflow: hidden;
-  display: block;
-  position: relative;
-  align-self: stretch;
+  flex-shrink: 0;
+  transition: width 220ms, min-width 220ms, max-width 220ms;
+  background: #fff;
+  z-index: 2;
 }
 
-/* Override any positioning applied inside the customize menu so it sits inside .sidebar on the left */
-.sidebar > app-customize-menu {
-  position: relative !important;
-  right: auto !important;
-  left: 0 !important;
-  top: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  box-sizing: border-box;
-  margin: 0 !important;
-  transform: none !important;
-}
-
-/* Main content takes remaining space and centers CV */
-.main-content {
-  flex: 1 1 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  position: relative;
-  min-height: 0; /* allows inner scrolling if needed */
-}
-
-/* Centering wrapper for CV preview */
-.cv-preview-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 100%;
-}
-
-/* CV element behavior */
-.cv-preview {
-  transform-origin: top left;
-  max-width: 850px;
-  margin: 0 auto;
-}
-
-/* Toggle button positioned between sidebar and main */
+/* Toggle */
 .sidebar-toggle {
   position: absolute;
   left: calc(var(--sidebar-width) - 18px);
@@ -200,27 +40,35 @@
   width: 36px;
   height: 36px;
   border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--white);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 1px 2px rgba(15,23,42,0.04);
-  transition: left 220ms ease, opacity 180ms ease;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
 }
 
-/* When collapsed, move toggle to left edge */
 .preview-container.sidebar-collapsed .sidebar-toggle {
   left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
-/* Keep loading state centered inside main-content */
+.cv-viewport {
+  flex: 1;
+  overflow: auto;
+  background: #f3f4f6;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0;
+}
+
+
+/* CV document */
+.cv-document {
+  transform-origin: top center;
+}
+
+/* Loading */
 .loading-state {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-  width: 100%;
 }

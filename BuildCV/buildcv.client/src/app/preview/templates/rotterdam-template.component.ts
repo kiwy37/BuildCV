@@ -4,7 +4,7 @@ import { CustomizationSettings } from './lima-template.component';
 
 @Component({
   selector: 'app-rotterdam-template',
-  template: ''
+  template: '',
 })
 export class RotterdamTemplateComponent {
   @Input() cvData!: CVData;
@@ -17,11 +17,24 @@ export class RotterdamTemplateComponent {
     const headerBg = '#3a3a3a';
 
     return `
-    <div class="cv-rotterdam-container" style="font-family: ${this.getFontStack(c.fontFamily)}; color: ${c.textColor}; font-size: ${c.fontSize}px; line-height: ${c.lineHeight}; text-align: left;">
+    <div class="cv-rotterdam-container" style="font-family: ${this.getFontStack(
+      c.fontFamily
+    )}; color: ${c.textColor}; font-size: ${c.fontSize}px; line-height: ${
+      c.lineHeight
+    }; text-align: left;">
       <style>
-        @page { size: A4; margin: 0; }
-        .cv-page { width: 210mm; height: 297mm; box-sizing: border-box; }
-        @media print { .cv-page { page-break-after: always; } .cv-page:last-child { page-break-after: auto; } }
+@page {
+  size: A4;
+  margin: 0;
+}
+
+.cv-page {
+  width: 210mm;cv-page
+  min-height: 297mm;
+  box-sizing: border-box;
+  background: white;
+}
+@media print { .cv-page { page-break-after: always; } .cv-page:last-child { page-break-after: auto; } }
       </style>
       <div class="cv-page">
       <style>
@@ -34,7 +47,9 @@ export class RotterdamTemplateComponent {
         .rt-profile-pic img { width: 100%; height: 100%; object-fit: cover; }
         .rt-header-info { flex: 1; }
         /* header name uses primary color (title only) */
-        .rt-header h1 { font-family: 'Playfair Display', serif; font-size: ${c.headingFontSize * 1.6}px; margin: 0; line-height: 1.1; color: ${c.primaryColor}; }
+        .rt-header h1 { font-family: 'Playfair Display', serif; font-size: ${
+          c.headingFontSize * 1.6
+        }px; margin: 0; line-height: 1.1; color: ${c.primaryColor}; }
         .rt-header p { text-transform: uppercase; letter-spacing: 3px; font-size: 0.75rem; margin-top: 8px; opacity: 0.9; }
         .content-body { padding: 35px; flex: 1; overflow-y: auto; }
         /* section titles use primary color */
@@ -59,7 +74,9 @@ export class RotterdamTemplateComponent {
             font-weight: 700;
         }
         .contact-item { display: flex; align-items: flex-start; margin-bottom: 10px; font-size: 0.8rem; }
-        .sidebar-value { color: ${c.textColor}; } /* ensure sidebar content uses textColor */
+        .sidebar-value { color: ${
+          c.textColor
+        }; } /* ensure sidebar content uses textColor */
         .icon-circle { 
             width: 22px; height: 22px; background: #333; color: white; 
             border-radius: 50%; display: flex; justify-content: center; 
@@ -92,61 +109,101 @@ export class RotterdamTemplateComponent {
             <div class="icon-circle">📍</div> 
             <div style="word-break: break-word;">${pi.location || ''}</div>
           </div>
-          ${pi.website ? `
+          ${
+            pi.website
+              ? `
           <div class="contact-item">
             <div class="icon-circle">🔗</div> 
             <div style="word-break: break-word;"><a href="${pi.website}" style="color: #333; text-decoration: none;">${pi.website}</a></div>
           </div>
-          ` : ''}
-          ${pi.linkedIn ? `
+          `
+              : ''
+          }
+          ${
+            pi.linkedIn
+              ? `
           <div class="contact-item">
             <div class="icon-circle">💼</div> 
             <div style="word-break: break-word;"><a href="${pi.linkedIn}" style="color: #333; text-decoration: none;">LinkedIn</a></div>
           </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
 
-        ${this.cvData.personalInfo.fullName ? `
+        ${
+          this.cvData.personalInfo.fullName
+            ? `
         <div class="sidebar-title">Personal Details</div>
         <div class="sidebar-item">
           <div class="sidebar-label">Name</div>
           <div class="sidebar-value">${pi.fullName}</div>
         </div>
-        ` : ''}
+        `
+            : ''
+        }
 
-        ${(this.cvData.references || []).length > 0 ? `
+        ${
+          (this.cvData.references || []).length > 0
+            ? `
         <div class="sidebar-title">References</div>
-        ${(this.cvData.references || []).map(ref => `
+        ${(this.cvData.references || [])
+          .map(
+            (ref) => `
           <div class="sidebar-item">
             <div class="sidebar-label">${ref.name}</div>
             <div class="sidebar-value">${ref.position}</div>
-            <div class="sidebar-value">${ref.phone}${ref.email ? ' | ' + ref.email : ''}</div>
+            <div class="sidebar-value">${ref.phone}${
+              ref.email ? ' | ' + ref.email : ''
+            }</div>
           </div>
-        `).join('')}
-        ` : ''}
+        `
+          )
+          .join('')}
+        `
+            : ''
+        }
 
-        ${this.cvData.languages && this.cvData.languages.length > 0 ? `
+        ${
+          this.cvData.languages && this.cvData.languages.length > 0
+            ? `
         <div class="sidebar-title">Languages</div>
-        ${this.cvData.languages.map(lang => `
+        ${this.cvData.languages
+          .map(
+            (lang) => `
           <div class="sidebar-value" style="margin-bottom: 8px;">${lang}</div>
-        `).join('')}
-        ` : ''}
+        `
+          )
+          .join('')}
+        `
+            : ''
+        }
 
-        ${this.cvData.skills && this.cvData.skills.length > 0 ? `
+        ${
+          this.cvData.skills && this.cvData.skills.length > 0
+            ? `
         <div class="sidebar-title">Skills</div>
         <div class="skills-list">
-          ${this.cvData.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+          ${this.cvData.skills
+            .map((skill) => `<span class="skill-tag">${skill}</span>`)
+            .join('')}
         </div>
-        ` : ''}
+        `
+            : ''
+        }
       </div>
 
       <div class="main-content">
         <div class="rt-header">
-          ${pi.photoUrl ? `
+          ${
+            pi.photoUrl
+              ? `
           <div class="rt-profile-pic">
             <img src="${pi.photoUrl}" alt="Profile">
           </div>
-          ` : ''}
+          `
+              : ''
+          }
           <div class="rt-header-info">
             <h1>${pi.fullName || 'Your Name'}</h1>
             <p>Professional Profile</p>
@@ -154,70 +211,134 @@ export class RotterdamTemplateComponent {
         </div>
 
         <div class="content-body">
-          ${this.cvData.professionalSummary ? `
+          ${
+            this.cvData.professionalSummary
+              ? `
           <div class="section-title">About Me</div>
           <p style="color: #555; line-height: 1.6; margin: 0 0 15px 0;">${this.cvData.professionalSummary}</p>
-          ` : ''}
+          `
+              : ''
+          }
 
-          ${this.cvData.experiences && this.cvData.experiences.length > 0 ? `
+          ${
+            this.cvData.experiences && this.cvData.experiences.length > 0
+              ? `
           <div class="section-title">Work Experience</div>
-          ${this.cvData.experiences.map(exp => `
+          ${this.cvData.experiences
+            .map(
+              (exp) => `
             <div style="margin-bottom: 18px;">
               <div class="job-title">${exp.jobTitle}</div>
-              <div class="job-company">${exp.company}${exp.location ? ' / ' + exp.location : ''}</div>
-              <div class="job-period">${exp.startDate} - ${exp.isCurrent ? 'Present' : exp.endDate}</div>
-              ${exp.responsibilities && exp.responsibilities.length > 0 ? `
+              <div class="job-company">${exp.company}${
+                exp.location ? ' / ' + exp.location : ''
+              }</div>
+              <div class="job-period">${exp.startDate} - ${
+                exp.isCurrent ? 'Present' : exp.endDate
+              }</div>
+              ${
+                exp.responsibilities && exp.responsibilities.length > 0
+                  ? `
               <ul>
-                ${exp.responsibilities.map(r => `<li>${r}</li>`).join('')}
+                ${exp.responsibilities.map((r) => `<li>${r}</li>`).join('')}
               </ul>
-              ` : ''}
+              `
+                  : ''
+              }
             </div>
-          `).join('')}
-          ` : ''}
+          `
+            )
+            .join('')}
+          `
+              : ''
+          }
 
-          ${this.cvData.education && this.cvData.education.length > 0 ? `
+          ${
+            this.cvData.education && this.cvData.education.length > 0
+              ? `
           <div class="section-title">Education</div>
-          ${this.cvData.education.map(edu => `
+          ${this.cvData.education
+            .map(
+              (edu) => `
             <div style="margin-bottom: 15px;">
               <div class="job-title">${edu.degree}</div>
-              <div class="job-company">${edu.institution}${edu.location ? ' / ' + edu.location : ''}</div>
-              <div class="job-period">${edu.startDate} - ${edu.endDate}${edu.gpa ? ' | GPA: ' + edu.gpa : ''}</div>
-              ${edu.achievements && edu.achievements.length > 0 ? `
+              <div class="job-company">${edu.institution}${
+                edu.location ? ' / ' + edu.location : ''
+              }</div>
+              <div class="job-period">${edu.startDate} - ${edu.endDate}${
+                edu.gpa ? ' | GPA: ' + edu.gpa : ''
+              }</div>
+              ${
+                edu.achievements && edu.achievements.length > 0
+                  ? `
               <ul>
-                ${edu.achievements.map(a => `<li>${a}</li>`).join('')}
+                ${edu.achievements.map((a) => `<li>${a}</li>`).join('')}
               </ul>
-              ` : ''}
+              `
+                  : ''
+              }
             </div>
-          `).join('')}
-          ` : ''}
+          `
+            )
+            .join('')}
+          `
+              : ''
+          }
 
-          ${this.cvData.projects && this.cvData.projects.length > 0 ? `
+          ${
+            this.cvData.projects && this.cvData.projects.length > 0
+              ? `
           <div class="section-title">Projects</div>
-          ${this.cvData.projects.map(proj => `
+          ${this.cvData.projects
+            .map(
+              (proj) => `
             <div style="margin-bottom: 15px;">
               <div class="job-title">${proj.name}</div>
-              <p style="color: #555; margin: 6px 0; font-size: 0.95rem;">${proj.description}</p>
-              ${proj.technologies && proj.technologies.length > 0 ? `
+              <p style="color: #555; margin: 6px 0; font-size: 0.95rem;">${
+                proj.description
+              }</p>
+              ${
+                proj.technologies && proj.technologies.length > 0
+                  ? `
               <div style="color: #666; font-size: 0.85rem;">
                 <strong>Technologies:</strong> ${proj.technologies.join(', ')}
               </div>
-              ` : ''}
-              ${proj.link ? `
+              `
+                  : ''
+              }
+              ${
+                proj.link
+                  ? `
               <div style="margin-top: 6px;"><a href="${proj.link}" target="_blank" style="color: #333; text-decoration: none; font-size: 0.85rem;">View Project →</a></div>
-              ` : ''}
+              `
+                  : ''
+              }
             </div>
-          `).join('')}
-          ` : ''}
+          `
+            )
+            .join('')}
+          `
+              : ''
+          }
 
-          ${this.cvData.certifications && this.cvData.certifications.length > 0 ? `
+          ${
+            this.cvData.certifications && this.cvData.certifications.length > 0
+              ? `
           <div class="section-title">Certifications & Awards</div>
-          ${this.cvData.certifications.map(cert => `
+          ${this.cvData.certifications
+            .map(
+              (cert) => `
             <div style="margin-bottom: 12px;">
               <div class="job-title">${cert.name}</div>
-              <div class="job-meta">${cert.issuer}${cert.date ? ' | ' + cert.date : ''}${cert.credentialId ? ' | ID: ' + cert.credentialId : ''}</div>
+              <div class="job-meta">${cert.issuer}${
+                cert.date ? ' | ' + cert.date : ''
+              }${cert.credentialId ? ' | ID: ' + cert.credentialId : ''}</div>
             </div>
-          `).join('')}
-          ` : ''}
+          `
+            )
+            .join('')}
+          `
+              : ''
+          }
         </div>
       </div>
     </div>
@@ -226,32 +347,39 @@ export class RotterdamTemplateComponent {
 
   private getFontStack(fontFamily: string): string {
     const fonts: { [key: string]: string } = {
-      'Roboto': "'Roboto', sans-serif",
-      'Lato': "'Lato', sans-serif",
-      'Montserrat': "'Montserrat', sans-serif",
+      Roboto: "'Roboto', sans-serif",
+      Lato: "'Lato', sans-serif",
+      Montserrat: "'Montserrat', sans-serif",
       'Open Sans': "'Open Sans', sans-serif",
-      'Raleway': "'Raleway', sans-serif",
-      'Caladea': "'Caladea', serif",
-      'Lora': "'Lora', serif",
+      Raleway: "'Raleway', sans-serif",
+      Caladea: "'Caladea', serif",
+      Lora: "'Lora', serif",
       'Roboto Slab': "'Roboto Slab', serif",
       'Playfair Display': "'Playfair Display', serif",
-      'Merriweather': "'Merriweather', serif"
+      Merriweather: "'Merriweather', serif",
     };
     return fonts[fontFamily] || fonts['Roboto'];
   }
 
   private getGoogleFontImport(fontFamily: string): string {
     const map: { [key: string]: string } = {
-      'Roboto': "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap",
-      'Lato': "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",
-      'Montserrat': "https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap",
-      'Open Sans': "https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap",
-      'Raleway': "https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;700&display=swap",
-      'Caladea': "https://fonts.googleapis.com/css2?family=Caladea&display=swap",
-      'Lora': "https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap",
-      'Roboto Slab': "https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;700&display=swap",
-      'Playfair Display': "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap",
-      'Merriweather': "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap"
+      Roboto:
+        'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap',
+      Lato: 'https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap',
+      Montserrat:
+        'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap',
+      'Open Sans':
+        'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap',
+      Raleway:
+        'https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;700&display=swap',
+      Caladea: 'https://fonts.googleapis.com/css2?family=Caladea&display=swap',
+      Lora: 'https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap',
+      'Roboto Slab':
+        'https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;700&display=swap',
+      'Playfair Display':
+        'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap',
+      Merriweather:
+        'https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap',
     };
     const url = map[fontFamily];
     return url ? `@import url('${url}');` : '';

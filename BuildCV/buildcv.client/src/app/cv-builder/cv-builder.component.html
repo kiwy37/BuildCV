@@ -1,4 +1,4 @@
-<div class="cv-builder-container">
+<div class="cv-builder-container" [class.no-scroll]="currentStep === 9">
     <!-- Step Navigation (hidden on final step) -->
     <ng-container *ngIf="currentStep !== totalSteps">
       <div class="step-navigation">
@@ -35,8 +35,8 @@
     <app-preview *ngIf="currentStep === 9"></app-preview>
   </div>
 
-  <!-- Navigation Buttons -->
-  <div class="step-navigation-buttons">
+  <!-- Navigation Buttons: ascunde pe pagina de preview -->
+  <div class="step-navigation-buttons" *ngIf="currentStep !== 9">
     <button
       class="btn-back"
       (click)="previousStep()"

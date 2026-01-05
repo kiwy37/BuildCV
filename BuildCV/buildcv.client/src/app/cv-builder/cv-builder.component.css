@@ -120,6 +120,10 @@
   margin: 0; /* ocupă tot orizontalul */
 }
 
+.cv-builder-container.no-scroll {
+  overflow: hidden !important;
+}
+
 /* Remove vertical padding for the navigation buttons */
 .step-navigation-buttons {
   padding-top: 10px;

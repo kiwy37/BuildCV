@@ -1,5 +1,8 @@
-<div class="preview-container" [class.sidebar-collapsed]="!showCustomizationPanel">
-  <!-- Sidebar (left) -->
+<div
+  class="preview-container"
+  [class.sidebar-collapsed]="!showCustomizationPanel"
+>
+  <!-- Sidebar -->
   <div class="sidebar">
     <app-customize-menu
       [customization]="customization"
@@ -13,7 +16,7 @@
     ></app-customize-menu>
   </div>
 
-  <!-- Sidebar toggle (positioned between sidebar and content) -->
+  <!-- Toggle -->
   <button
     class="sidebar-toggle"
     (click)="toggleCustomizationPanel()"
@@ -22,22 +25,13 @@
     {{ showCustomizationPanel ? "‹" : "›" }}
   </button>
 
-  <!-- Main content: CV Preview centered in remaining space -->
-  <div class="main-content">
-    <div class="cv-preview-wrapper" #cvWrapper *ngIf="!isLoading">
-      <div
-        class="cv-preview"
-        #cvPreview
-        [innerHTML]="previewHtml"
-        [style.transform]="'scale(' + effectiveScale + ')'"
-        [ngClass]="{ a4: pageSize === 'A4', letter: pageSize === 'Letter' }"
-      ></div>
-    </div>
-
-    <!-- Loading State -->
-    <div class="loading-state" *ngIf="isLoading">
-      <div class="spinner"></div>
-      <p>Generating preview...</p>
-    </div>
+  <!-- CV viewport (scrollable) -->
+  <div class="cv-viewport" *ngIf="!isLoading">
+    <div
+      class="cv-document"
+      #cvPreview
+      [innerHTML]="previewHtml"
+      [style.transform]="'scale(' + zoom + ')'"
+    ></div>
   </div>
 </div>

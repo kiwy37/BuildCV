@@ -1,5 +1,5 @@
 // preview.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CvService } from '../cv.service';
 import { CVData } from '../cv-data.model';
 import { CustomizationSettings } from './templates/lima-template/lima-template.component';
@@ -10,6 +10,7 @@ import { CustomizationSettings } from './templates/lima-template/lima-template.c
   styleUrls: ['./preview.component.css']
 })
 export class PreviewComponent implements OnInit {
+  @ViewChild('pagedSource', { static: false }) pagedSource!: ElementRef;
   cvData!: CVData;
   selectedTheme = 'lima';
   isLoading = false;
@@ -73,7 +74,59 @@ export class PreviewComponent implements OnInit {
   }
 
   downloadPDF(): void {
-    window.print();
+    this.isLoading = true;
+    // Revert to original signature: don't send customization to backend as it causes 500/Corruption
+    this.cvService.exportToPdf(this.cvData, this.selectedTheme).subscribe({
+      next: (blob) => {
+        // Strict check: if it's not PDF (e.g. JSON error or HTML 500 page), fail gracefully
+        if (blob.type !== 'application/pdf') {
+          const reader = new FileReader();
+          reader.onload = () => {
+             // Try to parse as JSON error
+             try {
+                const msg = JSON.parse(reader.result as string);
+                alert('Export failed: ' + (msg.message || msg.error || 'Server returned invalid data format.'));
+             } catch(e) {
+                // If not JSON, it's likely an HTML error page from the server
+                console.error('Non-PDF response:', reader.result);
+                alert('Export failed. Server returned an error page instead of PDF.');
+             }
+             this.isLoading = false;
+          };
+          reader.readAsText(blob);
+          return;
+        }
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `CV-${(this.cvData.personalInfo.fullName || 'Export').replace(/\s+/g, '_')}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('PDF Export failed', err);
+        this.isLoading = false;
+        
+        if (err.error instanceof Blob) {
+           const reader = new FileReader();
+           reader.onload = () => {
+             try {
+               const msg = JSON.parse(reader.result as string);
+               alert('Server error: ' + (msg.message || msg.error || 'Unknown server error'));
+             } catch {
+               alert('Server returned an error.');
+             }
+           };
+           reader.readAsText(err.error);
+        } else {
+           alert('Could not download PDF. Server might be offline or encountering an issue.');
+        }
+      }
+    });
   }
 
   backToThemeSelection(): void {

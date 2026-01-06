@@ -58,7 +58,8 @@ html, body, app-root {
   /* Hide app chrome (sidebar + toggle) so PDF contains only the CV */
   .sidebar,
   app-customize-menu,
-  .sidebar-toggle {
+  .sidebar-toggle,
+  .paged-source {
     display: none !important;
   }
 
@@ -95,6 +96,14 @@ html, body, app-root {
   .cv-page {
     margin: 0 !important;
     box-shadow: none !important;
+  }
+
+  /* Paged.js generated pages */
+  .paged-output .pagedjs_pages {
+    gap: 0 !important;
+  }
+  .paged-output .pagedjs_page {
+    margin: 0 auto !important;
   }
 }
 

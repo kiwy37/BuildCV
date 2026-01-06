@@ -26,34 +26,36 @@
   <!-- CV Preview Area -->
   <div class="cv-preview-area">
     <div class="cv-preview-wrapper" [ngStyle]="getPreviewStyles()">
-      
-      <!-- Lima Template -->
-      <app-lima-template
-        *ngIf="selectedTheme === 'lima'"
-        [cvData]="cvData"
-        [customization]="customization"
-      ></app-lima-template>
 
-      <!-- Riga Template -->
-      <app-riga-template
-        *ngIf="selectedTheme === 'riga'"
-        [cvData]="cvData"
-        [customization]="customization"
-      ></app-riga-template>
+      <!-- Offscreen source (Angular renders here; Paged.js paginates it) -->
+      <div #pagedSource class="paged-source" aria-hidden="true">
+        <app-lima-template
+          *ngIf="selectedTheme === 'lima'"
+          [cvData]="cvData"
+          [customization]="customization"
+        ></app-lima-template>
 
-      <!-- Rotterdam Template -->
-      <app-rotterdam-template
-        *ngIf="selectedTheme === 'rotterdam'"
-        [cvData]="cvData"
-        [customization]="customization"
-      ></app-rotterdam-template>
+        <app-riga-template
+          *ngIf="selectedTheme === 'riga'"
+          [cvData]="cvData"
+          [customization]="customization"
+        ></app-riga-template>
 
-      <!-- ATS Template -->
-      <app-ats-template
-        *ngIf="selectedTheme === 'ats'"
-        [cvData]="cvData"
-        [customization]="customization"
-      ></app-ats-template>
+        <app-rotterdam-template
+          *ngIf="selectedTheme === 'rotterdam'"
+          [cvData]="cvData"
+          [customization]="customization"
+        ></app-rotterdam-template>
+
+        <app-ats-template
+          *ngIf="selectedTheme === 'ats'"
+          [cvData]="cvData"
+          [customization]="customization"
+        ></app-ats-template>
+      </div>
+
+      <!-- Visible paginated output -->
+      <div #pagedOutput class="paged-output"></div>
 
     </div>
   </div>

@@ -8,8 +8,10 @@
 .cv-page {
   width: 210mm;
   min-height: 297mm;
+  max-height: 297mm; /* Added: prevent overflow */
   box-sizing: border-box;
   background: white;
+  overflow: hidden; /* Added: hide overflow */
 }
 
 @media print {
@@ -25,6 +27,8 @@
   display: flex;
   width: 100%;
   min-height: 1100px;
+  max-height: 1100px; /* Added: match A4 height in pixels */
+  overflow: hidden; /* Added: prevent overflow */
 }
 
 /* Sidebar Styles */
@@ -37,6 +41,14 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+  overflow-y: auto; /* Added: scrollable if content is too long */
+  max-height: 1100px; /* Added: limit height */
+}
+
+/* Hide scrollbar but keep functionality */
+.lima-sidebar::-webkit-scrollbar {
+  width: 0;
+  display: none;
 }
 
 .lima-profile {
@@ -44,6 +56,7 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0; /* Added: don't shrink profile */
 }
 
 .lima-avatar {
@@ -75,11 +88,15 @@
   text-transform: uppercase;
   letter-spacing: 1.5px;
   font-size: 20px;
+  word-break: break-word; /* Added: break long names */
+  text-align: center;
 }
 
 .lima-title {
   margin-top: 2px;
   font-size: 13px;
+  word-break: break-word; /* Added */
+  text-align: center;
 }
 
 .sidebar-section {
@@ -98,6 +115,8 @@
 
 .sidebar-text {
   line-height: 1.6;
+  word-wrap: break-word; /* Added */
+  overflow-wrap: break-word; /* Added */
 }
 
 .contact-row {
@@ -112,11 +131,13 @@
   gap: 10px;
   align-items: center;
   color: #d1d5db;
+  word-break: break-word; /* Added */
 }
 
 .contact-item a {
   color: inherit;
   text-decoration: none;
+  word-break: break-all; /* Added: break long URLs */
 }
 
 .contact-icon {
@@ -136,6 +157,7 @@
   font-weight: 700;
   color: #374151;
   margin-bottom: 6px;
+  word-break: break-word; /* Added */
 }
 
 .skill-bar {
@@ -164,6 +186,7 @@
   color: #ffffff;
   opacity: 0.95;
   margin-bottom: 8px;
+  word-break: break-word; /* Added */
 }
 
 .language-bar {
@@ -186,6 +209,14 @@
   display: flex;
   flex-direction: column;
   background: #ffffff;
+  overflow-y: auto; /* Added: scrollable if content is too long */
+  max-height: 1100px; /* Added: limit height */
+}
+
+/* Hide scrollbar but keep functionality */
+.lima-main::-webkit-scrollbar {
+  width: 0;
+  display: none;
 }
 
 .lm-header {
@@ -193,6 +224,7 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 20px;
+  flex-shrink: 0; /* Added: don't shrink header */
 }
 
 .lm-title h1 {
@@ -200,17 +232,20 @@
   letter-spacing: 1px;
   text-transform: uppercase;
   font-weight: 800;
+  word-break: break-word; /* Added */
 }
 
 .lm-title h2 {
   margin: 8px 0 0 0;
   font-weight: 700;
   text-transform: none;
+  word-break: break-word; /* Added */
 }
 
 .lm-contact {
   text-align: right;
   opacity: 0.8;
+  word-break: break-word; /* Added */
 }
 
 .lm-body {
@@ -241,25 +276,35 @@
 
 .exp-left {
   opacity: 0.75;
+  word-break: break-word; /* Added */
 }
 
 .exp-company {
   font-weight: 700;
+  word-break: break-word; /* Added */
 }
 
 .exp-date {
   margin-top: 6px;
   opacity: 0.8;
+  word-break: break-word; /* Added */
 }
 
 .exp-right h3 {
   margin: 0;
   font-weight: 700;
+  word-break: break-word; /* Added */
 }
 
 .exp-right ul {
   margin: 8px 0 0 0;
   padding-left: 18px;
+}
+
+.exp-right ul li {
+  word-wrap: break-word; /* Added */
+  overflow-wrap: break-word; /* Added */
+  margin-bottom: 4px;
 }
 
 /* Education Section */
@@ -271,10 +316,12 @@
 
 .edu-institution {
   font-weight: 700;
+  word-break: break-word; /* Added */
 }
 
 .edu-meta {
   opacity: 0.8;
+  word-break: break-word; /* Added */
 }
 
 /* Main Skills Section */
@@ -285,6 +332,7 @@
 .main-skill-name {
   font-weight: 700;
   margin-bottom: 6px;
+  word-break: break-word; /* Added */
 }
 
 .main-skill-bar {
@@ -312,4 +360,17 @@
   border-radius: 999px;
   font-size: 0.85rem;
   color: #374151;
+  word-break: break-word; /* Added */
+}
+
+/* Print optimization */
+@media print {
+  .lima-sidebar,
+  .lima-main {
+    overflow: visible !important;
+  }
+  
+  .cv-page {
+    overflow: visible !important;
+  }
 }

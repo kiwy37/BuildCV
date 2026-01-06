@@ -124,8 +124,67 @@
   overflow: hidden !important;
 }
 
-/* Remove vertical padding for the navigation buttons */
+/* Navigation Buttons */
 .step-navigation-buttons {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 2rem;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-back,
+.btn-next {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.btn-back {
+  background: var(--white);
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.btn-back:hover:not(:disabled) {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.btn-next {
+  background: var(--primary-color);
+  color: var(--white);
+  position: relative;
+}
+
+.btn-next:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-next:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.step-indicator {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .step-navigation {
+    flex-wrap: wrap;
+  }
+
+  .step-navigation-buttons {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }

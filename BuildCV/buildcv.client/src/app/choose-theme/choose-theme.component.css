@@ -6,6 +6,39 @@
   flex-shrink: 0;
 }
 
+/* Base section styles (previously global) */
+.section-container {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 0 1rem 1.25rem 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.section-header {
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-header h2 {
+  font-size: 1.75rem;
+  color: var(--primary-color);
+  margin-bottom: 0;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-header h2 i {
+  font-size: 1.5rem;
+}
+
+.section-header p {
+  display: none;
+}
+
 /* Let the section size to its content and only scroll when necessary */
 .section-container {
   display: flex;

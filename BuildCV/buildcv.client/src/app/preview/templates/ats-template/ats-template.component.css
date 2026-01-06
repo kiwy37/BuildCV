@@ -8,41 +8,56 @@
 .cv-page {
   width: 210mm;
   min-height: 297mm;
-  box-sizing: border-box;
+  margin: 24px auto;
   background: white;
+  box-shadow: 0 0 0 1px #e5e7eb, 0 10px 30px rgba(0,0,0,.12);
+}
+
+.ats-page {
+  width: 100%;
+  padding: 24px;
+  box-sizing: border-box;
 }
 
 @media print {
   .cv-page {
     page-break-after: always;
   }
+
   .cv-page:last-child {
     page-break-after: auto;
   }
 }
 
-.ats-page {
-  width: 100%;
-  min-height: 1100px;
-  padding: 24px;
-  box-sizing: border-box;
+.ats-section {
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
+
+.experience-item,
+.education-item {
+  break-inside: avoid;
+}
+
 
 /* Header */
 .ats-header {
   text-align: center;
   margin-bottom: 8px;
+  flex-shrink: 0; /* Added */
 }
 
 .ats-header h1 {
   margin: 0;
   font-weight: 700;
   letter-spacing: 2px;
+  word-break: break-word; /* Added */
 }
 
 .ats-header .contact {
   color: #374151;
   margin-top: 8px;
+  word-break: break-word; /* Added */
 }
 
 .ats-links {
@@ -60,6 +75,8 @@
   border-radius: 6px;
   font-size: 0.9rem;
   text-decoration: none;
+  word-break: break-all; /* Added: break long URLs */
+  max-width: 100%; /* Added */
 }
 
 .ats-link:hover {
@@ -84,6 +101,8 @@
 .ats-body {
   padding: 12px 6px;
   color: #374151;
+  word-wrap: break-word; /* Added */
+  overflow-wrap: break-word; /* Added */
 }
 
 /* Lists */
@@ -94,6 +113,8 @@
 
 .ats-list li {
   margin-bottom: 6px;
+  word-wrap: break-word; /* Added */
+  overflow-wrap: break-word; /* Added */
 }
 
 /* Experience & Education Items */
@@ -105,12 +126,14 @@
 .ats-subtitle {
   font-weight: 700;
   color: #111827;
+  word-break: break-word; /* Added */
 }
 
 .ats-meta {
   color: #6b7280;
   font-size: 0.95rem;
   margin-top: 4px;
+  word-break: break-word; /* Added */
 }
 
 /* Skills Container */
@@ -126,11 +149,5 @@
   padding: 6px 10px;
   border-radius: 16px;
   font-size: 0.92rem;
-}
-
-/* Responsive */
-@media print, (max-width: 720px) {
-  .ats-header h1 {
-    font-size: 26px;
-  }
+  word-break: break-word; /* Added */
 }

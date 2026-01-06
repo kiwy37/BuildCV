@@ -8,10 +8,9 @@
 .cv-page {
   width: 210mm;
   min-height: 297mm;
-  max-height: 297mm; /* Added: prevent overflow */
   box-sizing: border-box;
   background: white;
-  overflow: hidden; /* Added: hide overflow */
+  overflow: visible;
 }
 
 @media print {
@@ -26,14 +25,16 @@
 .lima-wrap {
   display: flex;
   width: 100%;
-  min-height: 1100px;
-  max-height: 1100px; /* Added: match A4 height in pixels */
-  overflow: hidden; /* Added: prevent overflow */
+  min-height: 297mm;
+  overflow: visible;
+  align-items: stretch; /* added: force children to stretch to same height */
 }
 
 /* Sidebar Styles */
 .lima-sidebar {
-  width: 33%;
+  /* replaced fixed width with flex so it participates properly in layout */
+  flex: 0 0 33%;
+  max-width: 33%;
   background: #1a2a3a;
   color: #ffffff;
   padding: 40px 28px;
@@ -41,8 +42,7 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  overflow-y: auto; /* Added: scrollable if content is too long */
-  max-height: 1100px; /* Added: limit height */
+  overflow: visible;
 }
 
 /* Hide scrollbar but keep functionality */
@@ -203,14 +203,15 @@
 
 /* Main Content Styles */
 .lima-main {
-  width: 67%;
+  /* use flex so it fills remaining space and matches height of sidebar */
+  flex: 1 1 67%;
+  min-height: inherit; /* ensure it at least matches .lima-wrap min-height */
   padding: 48px 44px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   background: #ffffff;
-  overflow-y: auto; /* Added: scrollable if content is too long */
-  max-height: 1100px; /* Added: limit height */
+  overflow: visible;
 }
 
 /* Hide scrollbar but keep functionality */
@@ -253,6 +254,19 @@
   display: flex;
   flex-direction: column;
   gap: 22px;
+}
+
+/* Pagination helpers (print + long content) */
+section {
+  /* break-inside: avoid; - Removed */
+  position: relative;
+}
+
+.experience-item,
+.education-grid > div,
+.sidebar-section {
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .section-title {

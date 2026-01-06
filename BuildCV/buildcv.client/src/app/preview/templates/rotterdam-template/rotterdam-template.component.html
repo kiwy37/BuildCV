@@ -1,12 +1,12 @@
 <!-- rotterdam-template.component.html -->
-<div class="cv-rotterdam-container" [ngStyle]="getContainerStyles()">
+<div class="cv-rotterdam-container">
   <style>
     @import url('{{getGoogleFontUrl()}}');
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
   </style>
 
   <div class="cv-page">
-    <div class="rotterdam-layout">
+    <div class="rotterdam-layout" [ngStyle]="getContainerStyles()">
       <!-- Sidebar -->
       <div class="sidebar">
         <!-- Contact Info -->

@@ -31,13 +31,7 @@ export class ATSTemplateComponent {
   getContainerStyles(): any {
     const c = this.customization;
     return {
-      'padding-top': `${c.paddingTop + c.marginTop}px`,
-      'padding-right': `${c.paddingRight + c.marginRight}px`,
-      'padding-bottom': `${c.paddingBottom + c.marginBottom}px`,
-      'padding-left': `${c.paddingLeft + c.marginLeft}px`,
-      'max-width': '794px',
-      'margin-left': 'auto',
-      'margin-right': 'auto',
+      'box-sizing': 'border-box',
       'font-family': this.getFontFamily(),
       color: c.textColor,
     };

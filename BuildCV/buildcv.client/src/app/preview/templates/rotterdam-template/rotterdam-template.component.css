@@ -23,7 +23,7 @@
 
 .rotterdam-layout {
   display: flex;
-  min-height: 100vh;
+  min-height: 297mm;
 }
 
 /* Sidebar */
@@ -32,7 +32,7 @@
   background-color: #d9ccc4;
   padding: 40px 25px;
   box-sizing: border-box;
-  overflow-y: auto;
+  overflow: visible;
 }
 
 /* Contact Info */
@@ -165,7 +165,7 @@
 .content-body {
   padding: 35px;
   flex: 1;
-  overflow-y: auto;
+  overflow: visible;
 }
 
 .section-title {
@@ -190,6 +190,17 @@
 .project-block,
 .cert-block {
   margin-bottom: 18px;
+}
+
+/* Pagination helpers (print + long content) */
+.experience-block,
+.education-block,
+.project-block,
+.cert-block,
+.sidebar-item,
+.contact-item {
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .job-title {

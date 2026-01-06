@@ -1,11 +1,11 @@
 <!-- ats-template.component.html -->
-<div class="cv-ats-container" [ngStyle]="getContainerStyles()">
+<div class="cv-ats-container">
   <style>
     @import url('{{getGoogleFontUrl()}}');
   </style>
 
   <div class="cv-page">
-    <div class="ats-page">
+    <div class="ats-page" [ngStyle]="getContainerStyles()">
       <!-- Header -->
       <header class="ats-header">
         <h1 [ngStyle]="getHeaderNameStyles()">

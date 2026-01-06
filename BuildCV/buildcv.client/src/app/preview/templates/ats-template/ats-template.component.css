@@ -8,7 +8,7 @@
 .cv-page {
   width: 210mm;
   min-height: 297mm;
-  margin: 24px auto;
+  margin: 0;
   background: white;
   box-shadow: 0 0 0 1px #e5e7eb, 0 10px 30px rgba(0,0,0,.12);
 }
@@ -30,13 +30,14 @@
 }
 
 .ats-section {
-  break-inside: avoid;
-  page-break-inside: avoid;
+  /* break-inside: avoid; - Removed to allow long sections to break across pages */
+  position: relative;
 }
 
 .experience-item,
 .education-item {
   break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 

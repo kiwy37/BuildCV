@@ -75,7 +75,7 @@
   padding: 0;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .cv-preview-wrapper {
@@ -85,6 +85,7 @@
   overflow: visible;
   transition: transform 0.2s ease;
   width: 210mm;
-  height: 100vh;
-  max-height: 100vh;
+  height: auto;
+  max-height: none;
+  min-height: 297mm;
 }

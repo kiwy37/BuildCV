@@ -267,7 +267,7 @@
 }
 
 /* Responsive */
-@media print, (max-width: 720px) {
+@media (max-width: 720px) {
   .riga-body {
     flex-direction: column;
   }
@@ -283,5 +283,17 @@
   
   .riga-avatar {
     margin-top: -56px;
+  }
+}
+
+/* Print helpers */
+@media print {
+  .job, 
+  .edu-item, 
+  .project-item, 
+  .lang-item, 
+  .section-title {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 }

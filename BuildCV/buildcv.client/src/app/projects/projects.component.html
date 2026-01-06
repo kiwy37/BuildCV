@@ -94,7 +94,7 @@
                   placeholder="Type a technology (e.g., React, Node.js)"
                   class="tech-input">
                 <button type="button" class="btn-add-tech" (click)="addTechnology(i)" 
-                        [disabled]="!currentTechnologies[i]?.trim()">
+                  [disabled]="!currentTechnologies[i].trim()">
                   <i class="icon-plus"></i> Add
                 </button>
               </div>

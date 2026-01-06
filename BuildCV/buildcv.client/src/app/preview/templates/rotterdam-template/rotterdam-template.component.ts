@@ -32,11 +32,9 @@ export class RotterdamTemplateComponent {
   getContainerStyles(): any {
     const c = this.customization;
     return {
+      'box-sizing': 'border-box',
       'font-family': this.getFontFamily(),
       color: c.textColor,
-      'font-size': `${c.fontSize}px`,
-      'line-height': c.lineHeight,
-      'text-align': 'left',
     };
   }
 

@@ -1,7 +1,5 @@
-<div
-  class="preview-container"
-  [class.sidebar-collapsed]="!showCustomizationPanel"
->
+<!-- preview.component.html -->
+<div class="preview-container" [class.sidebar-collapsed]="!showCustomizationPanel">
   <!-- Sidebar -->
   <div class="sidebar">
     <app-customize-menu
@@ -16,7 +14,7 @@
     ></app-customize-menu>
   </div>
 
-  <!-- Toggle -->
+  <!-- Toggle Button -->
   <button
     class="sidebar-toggle"
     (click)="toggleCustomizationPanel()"
@@ -24,4 +22,39 @@
   >
     {{ showCustomizationPanel ? "‹" : "›" }}
   </button>
+
+  <!-- CV Preview Area -->
+  <div class="cv-preview-area">
+    <div class="cv-preview-wrapper" [ngStyle]="getPreviewStyles()">
+      
+      <!-- Lima Template -->
+      <app-lima-template
+        *ngIf="selectedTheme === 'lima'"
+        [cvData]="cvData"
+        [customization]="customization"
+      ></app-lima-template>
+
+      <!-- Riga Template -->
+      <app-riga-template
+        *ngIf="selectedTheme === 'riga'"
+        [cvData]="cvData"
+        [customization]="customization"
+      ></app-riga-template>
+
+      <!-- Rotterdam Template -->
+      <app-rotterdam-template
+        *ngIf="selectedTheme === 'rotterdam'"
+        [cvData]="cvData"
+        [customization]="customization"
+      ></app-rotterdam-template>
+
+      <!-- ATS Template -->
+      <app-ats-template
+        *ngIf="selectedTheme === 'ats'"
+        [cvData]="cvData"
+        [customization]="customization"
+      ></app-ats-template>
+
+    </div>
+  </div>
 </div>

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { CustomizationSettings } from '../templates/lima-template.component';
+import { CustomizationSettings } from '../templates/lima-template/lima-template.component';
 
 @Component({
   selector: 'app-customize-menu',

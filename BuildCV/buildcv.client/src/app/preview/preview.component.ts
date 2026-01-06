@@ -1,12 +1,8 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+// preview.component.ts
+import { Component, OnInit } from '@angular/core';
 import { CvService } from '../cv.service';
 import { CVData } from '../cv-data.model';
-import { CustomizationSettings } from './templates/lima-template.component';
-import { LimaTemplateComponent } from './templates/lima-template.component';
-import { RigaTemplateComponent } from './templates/riga-template.component';
-import { RotterdamTemplateComponent } from './templates/rotterdam-template.component';
-import { ATSTemplateComponent } from './templates/ats-template.component';
+import { CustomizationSettings } from './templates/lima-template/lima-template.component';
 
 @Component({
   selector: 'app-preview',
@@ -16,7 +12,6 @@ import { ATSTemplateComponent } from './templates/ats-template.component';
 export class PreviewComponent implements OnInit {
   cvData!: CVData;
   selectedTheme = 'lima';
-  previewHtml: SafeHtml = '';
   isLoading = false;
   showCustomizationPanel = true;
 
@@ -45,16 +40,7 @@ export class PreviewComponent implements OnInit {
     fontFamily: 'Roboto'
   };
 
-  @ViewChild('cvPreview') cvPreview?: ElementRef<HTMLDivElement>;
-
-  constructor(
-    private cvService: CvService,
-    private sanitizer: DomSanitizer,
-    private lima: LimaTemplateComponent,
-    private riga: RigaTemplateComponent,
-    private rotterdam: RotterdamTemplateComponent,
-    private ats: ATSTemplateComponent
-  ) {}
+  constructor(private cvService: CvService) {}
 
   ngOnInit(): void {
     this.cvData = this.cvService.getCVData();
@@ -64,8 +50,6 @@ export class PreviewComponent implements OnInit {
     if (saved) {
       this.customization = JSON.parse(saved);
     }
-
-    this.generatePreview();
   }
 
   toggleCustomizationPanel(): void {
@@ -80,7 +64,6 @@ export class PreviewComponent implements OnInit {
   }
 
   onCustomizationChange(): void {
-    this.generatePreview(false);
     localStorage.setItem('cvCustomization', JSON.stringify(this.customization));
   }
 
@@ -89,63 +72,19 @@ export class PreviewComponent implements OnInit {
     this.ngOnInit();
   }
 
-  generatePreview(showLoading = true): void {
-    if (showLoading) this.isLoading = true;
-
-    setTimeout(() => {
-      let html = '';
-
-      this.lima.cvData = this.cvData;
-      this.lima.customization = this.customization;
-      this.riga.cvData = this.cvData;
-      this.riga.customization = this.customization;
-      this.rotterdam.cvData = this.cvData;
-      this.rotterdam.customization = this.customization;
-      this.ats.cvData = this.cvData;
-      this.ats.customization = this.customization;
-
-      switch (this.selectedTheme) {
-        case 'riga':
-          html = this.riga.generateTemplate();
-          break;
-        case 'rotterdam':
-          html = this.rotterdam.generateTemplate();
-          break;
-        case 'ats':
-          html = this.ats.generateTemplate();
-          break;
-        default:
-          html = this.lima.generateTemplate();
-      }
-
-      this.previewHtml = this.sanitizer.bypassSecurityTrustHtml(html);
-      this.isLoading = false;
-    }, 200);
-  }
-
   downloadPDF(): void {
-    const win = window.open('', '_blank');
-    if (!win) return;
-
-    win.document.write(`
-      <html>
-        <head>
-          <style>
-            @page { size: A4; margin: 0; }
-            body { margin: 0; }
-          </style>
-        </head>
-        <body>${this.cvPreview?.nativeElement.innerHTML}</body>
-        <script>
-          window.onload = () => { window.print(); setTimeout(() => window.close(), 500); };
-        </script>
-      </html>
-    `);
-
-    win.document.close();
+    window.print();
   }
 
   backToThemeSelection(): void {
     this.cvService.setCurrentStep(8);
+  }
+
+  getPreviewStyles(): any {
+    return {
+      'transform': `scale(${this.zoom})`,
+      'transform-origin': 'top center',
+      'transition': 'transform 0.2s ease'
+    };
   }
 }

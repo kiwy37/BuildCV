@@ -1,1 +1,151 @@
-<p>lima-template works!</p>
+<!-- lima-template.component.html -->
+<div class="cv-lima-container" [ngStyle]="getContainerStyles()">
+  <style>
+    @import url('{{getGoogleFontUrl()}}');
+  </style>
+
+  <div class="cv-page">
+    <div class="lima-wrap">
+      <!-- Sidebar -->
+      <aside class="lima-sidebar">
+        <!-- Profile Section -->
+        <div class="lima-profile">
+          <div class="lima-avatar">
+            <img *ngIf="personalInfo.photoUrl" [src]="personalInfo.photoUrl" alt="avatar">
+            <div *ngIf="!personalInfo.photoUrl" class="avatar-placeholder"></div>
+          </div>
+          <div class="lima-name">{{fullNameUppercase}}</div>
+          <div class="lima-title">{{personalInfo.title || personalInfo.profession || ''}}</div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="sidebar-section" *ngIf="hasContactInfo">
+          <h4>Contact</h4>
+          <div class="contact-row">
+            <div class="contact-item" *ngIf="personalInfo.phone">
+              <span class="contact-icon">📞</span>
+              <span class="sidebar-text">{{personalInfo.phone}}</span>
+            </div>
+            <div class="contact-item" *ngIf="personalInfo.email">
+              <span class="contact-icon">✉️</span>
+              <span class="sidebar-text">{{personalInfo.email}}</span>
+            </div>
+            <div class="contact-item" *ngIf="personalInfo.location">
+              <span class="contact-icon">📍</span>
+              <span class="sidebar-text">{{personalInfo.location}}</span>
+            </div>
+            <div class="contact-item" *ngIf="personalInfo.linkedIn">
+              <span class="contact-icon">🔗</span>
+              <a class="sidebar-text" [href]="personalInfo.linkedIn" target="_blank">LinkedIn</a>
+            </div>
+            <div class="contact-item" *ngIf="personalInfo.website">
+              <span class="contact-icon">🔗</span>
+              <a class="sidebar-text" [href]="personalInfo.website" target="_blank">Website</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- About Section -->
+        <div class="sidebar-section" *ngIf="cvData.professionalSummary">
+          <h4>About</h4>
+          <div class="sidebar-text">{{cvData.professionalSummary}}</div>
+        </div>
+
+        <!-- Skills Section -->
+        <div class="sidebar-section" *ngIf="cvData.skills && cvData.skills.length">
+          <h4>Skills</h4>
+          <div>
+            <div *ngFor="let skill of cvData.skills" class="skill-item">
+              <div class="skill-name">{{getSkillName(skill)}}</div>
+              <div class="skill-bar">
+                <div class="skill-fill" [style.width.%]="getSkillLevel(skill)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Languages Section -->
+        <div class="sidebar-section languages-section" *ngIf="cvData.languages && cvData.languages.length">
+          <h4>Languages</h4>
+          <div>
+            <div *ngFor="let lang of cvData.languages" class="language-item">
+              <div class="language-name">{{getLanguageName(lang)}}</div>
+              <div class="language-bar">
+                <div class="language-fill" [style.width.%]="getLanguageLevel(lang)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="lima-main">
+        <!-- Header -->
+        <div class="lm-header">
+          <div class="lm-title">
+            <h1>{{personalInfo.fullName || 'Your Name'}}</h1>
+            <h2>{{personalInfo.title || ''}}</h2>
+          </div>
+          <div class="lm-contact">
+            <div>{{personalInfo.location || ''}}</div>
+            <div>{{personalInfo.email || ''}}</div>
+            <div>{{personalInfo.phone || ''}}</div>
+          </div>
+        </div>
+
+        <!-- Body Content -->
+        <div class="lm-body">
+          <!-- Work Experience -->
+          <section *ngIf="cvData.experiences && cvData.experiences.length">
+            <div class="section-title">Work Experience</div>
+            <div *ngFor="let exp of cvData.experiences" class="experience-item">
+              <div class="exp-left">
+                <div class="exp-company">{{exp.company}}</div>
+                <div>{{exp.location || ''}}</div>
+                <div class="exp-date">{{exp.startDate}} - {{exp.isCurrent ? 'Present' : exp.endDate}}</div>
+              </div>
+              <div class="exp-right">
+                <h3>{{exp.jobTitle}}</h3>
+                <ul *ngIf="exp.responsibilities && exp.responsibilities.length">
+                  <li *ngFor="let resp of exp.responsibilities">{{resp}}</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- Education -->
+          <section *ngIf="cvData.education && cvData.education.length">
+            <div class="section-title">Education</div>
+            <div class="education-grid">
+              <div *ngFor="let edu of cvData.education">
+                <div class="edu-institution">{{edu.institution}}</div>
+                <div class="edu-meta">{{edu.degree}} • {{edu.startDate}} - {{edu.endDate}}</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Skills (Main) -->
+          <section *ngIf="cvData.skills && cvData.skills.length">
+            <div class="section-title">Skills</div>
+            <div>
+              <div *ngFor="let skill of cvData.skills" class="main-skill-item">
+                <div class="main-skill-name">{{getSkillName(skill)}}</div>
+                <div class="main-skill-bar">
+                  <div class="main-skill-fill" [style.width.%]="getSkillLevel(skill)"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Hobbies -->
+          <section *ngIf="cvData.hobbies && cvData.hobbies.length">
+            <div class="section-title">Hobbies</div>
+            <div class="hobby-list">
+              <div *ngFor="let hobby of cvData.hobbies" class="hobby">{{hobby}}</div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,158 @@
-<p>rotterdam-template works!</p>
+<!-- rotterdam-template.component.html -->
+<div class="cv-rotterdam-container" [ngStyle]="getContainerStyles()">
+  <style>
+    @import url('{{getGoogleFontUrl()}}');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+  </style>
+
+  <div class="cv-page">
+    <div class="rotterdam-layout">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Contact Info -->
+        <div class="contact-info">
+          <div class="contact-item" *ngIf="personalInfo.phone">
+            <div class="icon-circle">☎</div>
+            <div>{{personalInfo.phone}}</div>
+          </div>
+          <div class="contact-item" *ngIf="personalInfo.email">
+            <div class="icon-circle">✉</div>
+            <div>{{personalInfo.email}}</div>
+          </div>
+          <div class="contact-item" *ngIf="personalInfo.location">
+            <div class="icon-circle">📍</div>
+            <div>{{personalInfo.location}}</div>
+          </div>
+          <div class="contact-item" *ngIf="personalInfo.website">
+            <div class="icon-circle">🔗</div>
+            <div><a [href]="personalInfo.website">{{personalInfo.website}}</a></div>
+          </div>
+          <div class="contact-item" *ngIf="personalInfo.linkedIn">
+            <div class="icon-circle">💼</div>
+            <div><a [href]="personalInfo.linkedIn">LinkedIn</a></div>
+          </div>
+        </div>
+
+        <!-- Personal Details -->
+        <div *ngIf="personalInfo.fullName">
+          <div class="sidebar-title" [ngStyle]="getSidebarTitleStyles()">Personal Details</div>
+          <div class="sidebar-item">
+            <div class="sidebar-label">Name</div>
+            <div class="sidebar-value">{{personalInfo.fullName}}</div>
+          </div>
+        </div>
+
+        <!-- References -->
+        <div *ngIf="cvData.references && cvData.references.length">
+          <div class="sidebar-title" [ngStyle]="getSidebarTitleStyles()">References</div>
+          <div *ngFor="let ref of cvData.references" class="sidebar-item">
+            <div class="sidebar-label">{{ref.name}}</div>
+            <div class="sidebar-value">{{ref.position}}</div>
+            <div class="sidebar-value">{{ref.phone}}<span *ngIf="ref.email"> | {{ref.email}}</span></div>
+          </div>
+        </div>
+
+        <!-- Languages -->
+        <div *ngIf="cvData.languages && cvData.languages.length">
+          <div class="sidebar-title" [ngStyle]="getSidebarTitleStyles()">Languages</div>
+          <div *ngFor="let lang of cvData.languages" class="sidebar-value language-item">
+            {{getLanguageName(lang)}}
+          </div>
+        </div>
+
+        <!-- Skills -->
+        <div *ngIf="cvData.skills && cvData.skills.length">
+          <div class="sidebar-title" [ngStyle]="getSidebarTitleStyles()">Skills</div>
+          <div class="skills-list">
+            <span *ngFor="let skill of cvData.skills" class="skill-tag">
+              {{getSkillName(skill)}}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Header -->
+        <div class="rt-header">
+          <div class="rt-profile-pic" *ngIf="personalInfo.photoUrl">
+            <img [src]="personalInfo.photoUrl" alt="Profile">
+          </div>
+          <div class="rt-header-info">
+            <h1 [ngStyle]="getHeaderNameStyles()">{{personalInfo.fullName || 'Your Name'}}</h1>
+            <p>Professional Profile</p>
+          </div>
+        </div>
+
+        <!-- Body Content -->
+        <div class="content-body">
+          <!-- About Me -->
+          <div *ngIf="cvData.professionalSummary">
+            <div class="section-title" [ngStyle]="getSectionTitleStyles()">About Me</div>
+            <p class="summary-text">{{cvData.professionalSummary}}</p>
+          </div>
+
+          <!-- Work Experience -->
+          <div *ngIf="cvData.experiences && cvData.experiences.length">
+            <div class="section-title" [ngStyle]="getSectionTitleStyles()">Work Experience</div>
+            <div *ngFor="let exp of cvData.experiences" class="experience-block">
+              <div class="job-title">{{exp.jobTitle}}</div>
+              <div class="job-company">
+                {{exp.company}}<span *ngIf="exp.location"> / {{exp.location}}</span>
+              </div>
+              <div class="job-period">
+                {{exp.startDate}} - {{exp.isCurrent ? 'Present' : exp.endDate}}
+              </div>
+              <ul *ngIf="exp.responsibilities && exp.responsibilities.length">
+                <li *ngFor="let resp of exp.responsibilities">{{resp}}</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Education -->
+          <div *ngIf="cvData.education && cvData.education.length">
+            <div class="section-title" [ngStyle]="getSectionTitleStyles()">Education</div>
+            <div *ngFor="let edu of cvData.education" class="education-block">
+              <div class="job-title">{{edu.degree}}</div>
+              <div class="job-company">
+                {{edu.institution}}<span *ngIf="edu.location"> / {{edu.location}}</span>
+              </div>
+              <div class="job-period">
+                {{edu.startDate}} - {{edu.endDate}}<span *ngIf="edu.gpa"> | GPA: {{edu.gpa}}</span>
+              </div>
+              <ul *ngIf="edu.achievements && edu.achievements.length">
+                <li *ngFor="let achievement of edu.achievements">{{achievement}}</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Projects -->
+          <div *ngIf="cvData.projects && cvData.projects.length">
+            <div class="section-title" [ngStyle]="getSectionTitleStyles()">Projects</div>
+            <div *ngFor="let proj of cvData.projects" class="project-block">
+              <div class="job-title">{{proj.name}}</div>
+              <p class="project-description">{{proj.description}}</p>
+              <div *ngIf="proj.technologies && proj.technologies.length" class="technologies">
+                <strong>Technologies:</strong> {{proj.technologies.join(', ')}}
+              </div>
+              <div *ngIf="proj.link" class="project-link">
+                <a [href]="proj.link" target="_blank">View Project →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Certifications -->
+          <div *ngIf="cvData.certifications && cvData.certifications.length">
+            <div class="section-title" [ngStyle]="getSectionTitleStyles()">Certifications & Awards</div>
+            <div *ngFor="let cert of cvData.certifications" class="cert-block">
+              <div class="job-title">{{cert.name}}</div>
+              <div class="job-meta">
+                {{cert.issuer}}<span *ngIf="cert.date"> | {{cert.date}}</span><span *ngIf="cert.credentialId"> | ID: {{cert.credentialId}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

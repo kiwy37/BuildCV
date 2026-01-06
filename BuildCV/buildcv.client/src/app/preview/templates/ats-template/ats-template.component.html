@@ -1,1 +1,95 @@
-<p>ats-template works!</p>
+<!-- ats-template.component.html -->
+<div class="cv-ats-container" [ngStyle]="getContainerStyles()">
+  <style>
+    @import url('{{getGoogleFontUrl()}}');
+  </style>
+
+  <div class="cv-page">
+    <div class="ats-page">
+      <!-- Header -->
+      <header class="ats-header">
+        <h1 [ngStyle]="getHeaderNameStyles()">
+          {{personalInfo.fullName || 'Your Name'}}
+        </h1>
+        <div class="contact">
+          {{personalInfo.phone || ''}}
+          <span *ngIf="personalInfo.phone && personalInfo.email"> | </span>
+          {{personalInfo.email || ''}}
+          <span *ngIf="personalInfo.location"> | {{personalInfo.location}}</span>
+        </div>
+        <div class="ats-links" *ngIf="personalInfo.links && personalInfo.links.length">
+          <a *ngFor="let link of personalInfo.links" 
+             class="ats-link" 
+             [href]="link" 
+             target="_blank">
+            {{link}}
+          </a>
+        </div>
+      </header>
+
+      <!-- About Me / Professional Summary -->
+      <section class="ats-section" *ngIf="cvData.professionalSummary">
+        <div class="title" [ngStyle]="getSectionTitleStyles()">ABOUT ME</div>
+        <div class="ats-body">{{cvData.professionalSummary}}</div>
+      </section>
+
+      <!-- Professional Experience -->
+      <section class="ats-section" *ngIf="cvData.experiences && cvData.experiences.length">
+        <div class="title" [ngStyle]="getSectionTitleStyles()">PROFESSIONAL EXPERIENCE</div>
+        <div class="ats-body">
+          <div *ngFor="let exp of cvData.experiences" class="experience-item">
+            <div class="ats-subtitle">
+              {{exp.jobTitle}}
+              <span *ngIf="exp.company"> | {{exp.company}}</span>
+              <span *ngIf="exp.startDate"> | {{exp.startDate}}</span>
+              <span *ngIf="exp.endDate"> - {{exp.endDate}}</span>
+            </div>
+            <ul class="ats-list" *ngIf="exp.responsibilities && exp.responsibilities.length">
+              <li *ngFor="let resp of exp.responsibilities">{{resp}}</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Education -->
+      <section class="ats-section" *ngIf="cvData.education && cvData.education.length">
+        <div class="title" [ngStyle]="getSectionTitleStyles()">EDUCATION</div>
+        <div class="ats-body">
+          <div *ngFor="let edu of cvData.education" class="education-item">
+            <div class="ats-subtitle">
+              {{edu.degree}}
+              <span *ngIf="edu.institution"> | {{edu.institution}}</span>
+              <span *ngIf="edu.startDate"> | {{edu.startDate}}</span>
+              <span *ngIf="edu.endDate"> - {{edu.endDate}}</span>
+            </div>
+            <ul class="ats-list" *ngIf="edu.achievements && edu.achievements.length">
+              <li *ngFor="let achievement of edu.achievements">{{achievement}}</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Skills -->
+      <section class="ats-section" *ngIf="cvData.skills && cvData.skills.length">
+        <div class="title" [ngStyle]="getSectionTitleStyles()">SKILLS</div>
+        <div class="ats-body">
+          <div class="skills-container">
+            <div *ngFor="let skill of cvData.skills" class="skill-badge">
+              {{getSkillName(skill)}}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Languages -->
+      <section class="ats-section" *ngIf="cvData.languages && cvData.languages.length">
+        <div class="title" [ngStyle]="getSectionTitleStyles()">LANGUAGE</div>
+        <div class="ats-body">
+          <span *ngFor="let lang of cvData.languages; let last = last">
+            {{getLanguageName(lang)}}<span *ngIf="!last">, </span>
+          </span>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

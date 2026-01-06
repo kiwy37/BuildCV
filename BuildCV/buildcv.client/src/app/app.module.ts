@@ -1,6 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,13 +16,11 @@ import { AdditionalComponent } from './additional/additional.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChooseThemeComponent } from './choose-theme/choose-theme.component';
 import { CvUploadComponent } from './cv-upload/cv-upload.component';
-import { LimaTemplateComponent } from './preview/templates/lima-template.component';
-import { RotterdamTemplateComponent } from './preview/templates/rotterdam-template.component';
-import { RigaTemplateComponent } from './preview/templates/riga-template.component';
-import { ATSTemplateComponent } from './preview/templates/ats-template.component';
+import { LimaTemplateComponent } from './preview/templates/lima-template/lima-template.component';
+import { RotterdamTemplateComponent } from './preview/templates/rotterdam-template/rotterdam-template.component';
+import { RigaTemplateComponent } from './preview/templates/riga-template/riga-template.component';
+import { ATSTemplateComponent } from './preview/templates/ats-template/ats-template.component';
 import { CustomizeMenuComponent } from './preview/customize-menu/customize-menu.component';
-import { LimaTemplateComponentComponent } from './preview/templates/lima-template-component/lima-template-component.component';
-import { AtsTemplateComponent } from './preview/templates/ats-template/ats-template.component';
 
 @NgModule({
   declarations: [
@@ -36,26 +35,21 @@ import { AtsTemplateComponent } from './preview/templates/ats-template/ats-templ
     PreviewComponent,
     ChooseThemeComponent,
     CvUploadComponent,
-    LimaTemplateComponent,
-    RotterdamTemplateComponent,
-    RigaTemplateComponent,
-    ATSTemplateComponent,
     CustomizeMenuComponent,
-    LimaTemplateComponentComponent,
-    AtsTemplateComponent
+    LimaTemplateComponent,
+    RigaTemplateComponent,
+    RotterdamTemplateComponent
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ATSTemplateComponent
   ],
   providers: [
-    LimaTemplateComponent,
-    RotterdamTemplateComponent,
-    RigaTemplateComponent,
-    ATSTemplateComponent
   ],
   bootstrap: [AppComponent]
 })

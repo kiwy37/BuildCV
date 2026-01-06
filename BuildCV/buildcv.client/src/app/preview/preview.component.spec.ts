@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { CustomizeMenuComponent } from './customize-menu/customize-menu.component';
 
 import { PreviewComponent } from './preview.component';
@@ -9,7 +10,8 @@ describe('PreviewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PreviewComponent, CustomizeMenuComponent]
+      declarations: [PreviewComponent, CustomizeMenuComponent],
+      schemas: [NO_ERRORS_SCHEMA] // <-- ignore unknown template elements (template components)
     })
     .compileComponents();
 

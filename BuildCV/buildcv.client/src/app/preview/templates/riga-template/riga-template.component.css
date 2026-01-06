@@ -1,0 +1,287 @@
+/* riga-template.component.css */
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+.cv-page {
+  width: 210mm;
+  min-height: 297mm;
+  box-sizing: border-box;
+  background: white;
+}
+
+@media print {
+  .cv-page {
+    page-break-after: always;
+  }
+  .cv-page:last-child {
+    page-break-after: auto;
+  }
+}
+
+.riga-page {
+  width: 100%;
+  min-height: 1100px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top Band */
+.riga-top {
+  background: #1f2937;
+  color: #fff;
+  padding: 34px 24px 28px 24px;
+  text-align: center;
+}
+
+.riga-top .small {
+  color: #d6c39a;
+  letter-spacing: 6px;
+  font-size: 12px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.riga-top h1 {
+  margin: 6px 0;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+}
+
+.riga-top h2 {
+  margin: 0;
+  color: #b88c3a;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.contact-row {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  color: #c9cdd2;
+  margin-top: 8px;
+}
+
+/* Body Layout */
+.riga-body {
+  display: flex;
+}
+
+.riga-left {
+  width: 34%;
+  background: #f4f4f6;
+  padding: 24px 28px 40px 28px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.riga-right {
+  width: 66%;
+  padding: 28px 44px 40px 44px;
+  box-sizing: border-box;
+}
+
+/* Avatar */
+.riga-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: -70px auto 14px auto;
+  border: 6px solid #fff;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.12);
+  background: #e6e7ea;
+}
+
+.riga-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Left Section */
+.left-section {
+  padding-top: 8px;
+}
+
+.profile-name {
+  text-align: center;
+  font-weight: 700;
+  color: #111827;
+}
+
+.profile-title {
+  text-align: center;
+  color: #8b8f95;
+  margin-bottom: 8px;
+}
+
+.left-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.left-heading h4 {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.95rem;
+}
+
+.left-hr {
+  height: 1px;
+  background: #d1d5db;
+  margin-top: 12px;
+}
+
+/* Education */
+.edu-item {
+  margin: 12px 0;
+}
+
+.edu-item .degree {
+  font-weight: 700;
+}
+
+.edu-item .meta {
+  color: #8b8f95;
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+
+/* Languages */
+.lang-item {
+  margin: 10px 0;
+}
+
+.lang-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.lang-bar {
+  height: 8px;
+  background: #e6e6e6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.lang-fill {
+  height: 8px;
+  background: #b88c3a;
+  width: 60%;
+}
+
+/* Skills Grid */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.skill-tag {
+  background: #e5e7eb;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* Right Column */
+.section-title {
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 6px 0 12px 0;
+  border-bottom: 1px solid #e6e6e6;
+  padding-bottom: 8px;
+}
+
+.job {
+  margin-bottom: 18px;
+}
+
+.job h3 {
+  margin: 0;
+  color: #111827;
+}
+
+.job .company {
+  color: #b88c3a;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.job p {
+  margin: 8px 0 0 0;
+  color: #4b5563;
+}
+
+/* Skills Row */
+.skill-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.skill-name {
+  width: 40%;
+  font-weight: 600;
+}
+
+.skill-meter {
+  flex: 1;
+  height: 8px;
+  background: #e6e6e6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.skill-meter .fill {
+  height: 8px;
+  background: #b88c3a;
+  width: 70%;
+}
+
+/* Projects */
+.project-item {
+  margin-bottom: 10px;
+}
+
+.project-name {
+  font-weight: 700;
+}
+
+.project-desc {
+  color: #6b7280;
+}
+
+/* Responsive */
+@media print, (max-width: 720px) {
+  .riga-body {
+    flex-direction: column;
+  }
+  
+  .riga-left,
+  .riga-right {
+    width: 100%;
+  }
+  
+  .riga-top h1 {
+    font-size: 26px;
+  }
+  
+  .riga-avatar {
+    margin-top: -56px;
+  }
+}

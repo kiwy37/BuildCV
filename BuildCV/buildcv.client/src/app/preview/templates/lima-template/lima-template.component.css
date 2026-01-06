@@ -1,0 +1,315 @@
+/* lima-template.component.css */
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+.cv-page {
+  width: 210mm;
+  min-height: 297mm;
+  box-sizing: border-box;
+  background: white;
+}
+
+@media print {
+  .cv-page {
+    page-break-after: always;
+  }
+  .cv-page:last-child {
+    page-break-after: auto;
+  }
+}
+
+.lima-wrap {
+  display: flex;
+  width: 100%;
+  min-height: 1100px;
+}
+
+/* Sidebar Styles */
+.lima-sidebar {
+  width: 33%;
+  background: #1a2a3a;
+  color: #ffffff;
+  padding: 40px 28px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.lima-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.lima-avatar {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e5e7eb;
+  border: 4px solid #ffffff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.lima-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #2c3e50, #3b5566);
+}
+
+.lima-name {
+  margin: 0;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 20px;
+}
+
+.lima-title {
+  margin-top: 2px;
+  font-size: 13px;
+}
+
+.sidebar-section {
+  margin-top: 12px;
+}
+
+.sidebar-section h4 {
+  margin: 0 0 8px 0;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 8px;
+}
+
+.sidebar-text {
+  line-height: 1.6;
+}
+
+.contact-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.contact-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: #d1d5db;
+}
+
+.contact-item a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.contact-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  flex-shrink: 0;
+  opacity: 0.95;
+}
+
+/* Skills in Sidebar */
+.skill-item {
+  margin-bottom: 10px;
+}
+
+.skill-name {
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.skill-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.skill-fill {
+  height: 8px;
+  background: #b88c3a;
+}
+
+/* Languages Section */
+.languages-section {
+  margin-top: auto;
+}
+
+.language-item {
+  margin-bottom: 10px;
+}
+
+.language-name {
+  font-weight: 700;
+  color: #ffffff;
+  opacity: 0.95;
+  margin-bottom: 8px;
+}
+
+.language-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.language-fill {
+  height: 8px;
+  background: #b88c3a;
+}
+
+/* Main Content Styles */
+.lima-main {
+  width: 67%;
+  padding: 48px 44px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.lm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.lm-title h1 {
+  margin: 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.lm-title h2 {
+  margin: 8px 0 0 0;
+  font-weight: 700;
+  text-transform: none;
+}
+
+.lm-contact {
+  text-align: right;
+  opacity: 0.8;
+}
+
+.lm-body {
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.section-title {
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid currentColor;
+}
+
+/* Experience Section */
+.experience-item {
+  display: grid;
+  grid-template-columns: 24% 1fr;
+  gap: 18px;
+  align-items: start;
+  padding: 14px 0;
+  border-top: 1px solid #f1f5f9;
+}
+
+.exp-left {
+  opacity: 0.75;
+}
+
+.exp-company {
+  font-weight: 700;
+}
+
+.exp-date {
+  margin-top: 6px;
+  opacity: 0.8;
+}
+
+.exp-right h3 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.exp-right ul {
+  margin: 8px 0 0 0;
+  padding-left: 18px;
+}
+
+/* Education Section */
+.education-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.edu-institution {
+  font-weight: 700;
+}
+
+.edu-meta {
+  opacity: 0.8;
+}
+
+/* Main Skills Section */
+.main-skill-item {
+  margin-bottom: 12px;
+}
+
+.main-skill-name {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.main-skill-bar {
+  height: 8px;
+  background: #e6e6e6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.main-skill-fill {
+  height: 8px;
+  background: #b88c3a;
+}
+
+/* Hobbies Section */
+.hobby-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hobby {
+  background: #f3f4f6;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: #374151;
+}

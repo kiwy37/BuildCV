@@ -2,7 +2,8 @@
 
 @page {
   size: A4;
-  margin: 0;
+  /* Use page-margin variable (fallback 0mm) so printed pages get consistent margins */
+  margin: var(--page-margin, 0mm);
 }
 
 .cv-page {
@@ -42,7 +43,8 @@
 
 .ats-page {
   width: 100%;
-  padding: 24px;
+  /* Use CSS variables set by the generated template (fallback to 24px) */
+  padding: var(--page-padding-top,24px) var(--page-padding-right,24px) var(--page-padding-bottom,24px) var(--page-padding-left,24px);
   box-sizing: border-box;
 }
 
@@ -86,6 +88,13 @@
   color: #374151;
   margin-top: 8px;
   word-break: break-word; /* Added */
+}
+
+.ats-headline {
+  margin-top: 6px;
+  color: #111827;
+  font-weight: 600;
+  word-break: break-word;
 }
 
 .ats-links {
@@ -149,6 +158,14 @@
 .experience-item,
 .education-item {
   margin-bottom: 10px;
+}
+
+.project-item,
+.certification-item,
+.reference-item {
+  margin-bottom: 10px;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .ats-subtitle {

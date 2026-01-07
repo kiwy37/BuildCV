@@ -11,17 +11,16 @@
         <h1 [ngStyle]="getHeaderNameStyles()">
           {{personalInfo.fullName || 'Your Name'}}
         </h1>
+        <div class="ats-headline" *ngIf="headline">{{ headline }}</div>
         <div class="contact">
           {{personalInfo.phone || ''}}
           <span *ngIf="personalInfo.phone && personalInfo.email"> | </span>
           {{personalInfo.email || ''}}
           <span *ngIf="personalInfo.location"> | {{personalInfo.location}}</span>
         </div>
-        <div class="ats-links" *ngIf="personalInfo.links && personalInfo.links.length">
-          <a *ngFor="let link of personalInfo.links" 
-             class="ats-link" 
-             [href]="link" 
-             target="_blank">
+
+        <div class="ats-links" *ngIf="allLinks.length">
+          <a *ngFor="let link of allLinks" class="ats-link" [href]="link" target="_blank">
             {{link}}
           </a>
         </div>
@@ -41,8 +40,10 @@
             <div class="ats-subtitle">
               {{exp.jobTitle}}
               <span *ngIf="exp.company"> | {{exp.company}}</span>
-              <span *ngIf="exp.startDate"> | {{exp.startDate}}</span>
-              <span *ngIf="exp.endDate"> - {{exp.endDate}}</span>
+              <span *ngIf="exp.location"> | {{exp.location}}</span>
+            </div>
+            <div class="ats-meta" *ngIf="formatDateRange(exp.startDate, exp.endDate, exp.isCurrent)">
+              {{ formatDateRange(exp.startDate, exp.endDate, exp.isCurrent) }}
             </div>
             <ul class="ats-list" *ngIf="exp.responsibilities && exp.responsibilities.length">
               <li *ngFor="let resp of exp.responsibilities">{{resp}}</li>
@@ -59,12 +60,32 @@
             <div class="ats-subtitle">
               {{edu.degree}}
               <span *ngIf="edu.institution"> | {{edu.institution}}</span>
-              <span *ngIf="edu.startDate"> | {{edu.startDate}}</span>
-              <span *ngIf="edu.endDate"> - {{edu.endDate}}</span>
+              <span *ngIf="edu.location"> | {{edu.location}}</span>
             </div>
+            <div class="ats-meta" *ngIf="formatDateRange(edu.startDate, edu.endDate, edu.isCurrent)">
+              {{ formatDateRange(edu.startDate, edu.endDate, edu.isCurrent) }}
+            </div>
+            <div class="ats-meta" *ngIf="edu.gpa">GPA: {{edu.gpa}}</div>
             <ul class="ats-list" *ngIf="edu.achievements && edu.achievements.length">
               <li *ngFor="let achievement of edu.achievements">{{achievement}}</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects -->
+      <section class="ats-section" *ngIf="cvData.projects && cvData.projects.length">
+        <div class="title" [ngStyle]="getSectionTitleStyles()">PROJECTS</div>
+        <div class="ats-body">
+          <div *ngFor="let project of cvData.projects" class="project-item">
+            <div class="ats-subtitle">
+              {{project.name}}
+              <span *ngIf="project.link"> | {{project.link}}</span>
+            </div>
+            <div class="ats-meta" *ngIf="project.technologies && project.technologies.length">
+              Technologies: {{project.technologies.join(', ')}}
+            </div>
+            <div class="ats-meta" *ngIf="project.description">{{project.description}}</div>
           </div>
         </div>
       </section>
@@ -73,22 +94,57 @@
       <section class="ats-section" *ngIf="cvData.skills && cvData.skills.length">
         <div class="title" [ngStyle]="getSectionTitleStyles()">SKILLS</div>
         <div class="ats-body">
-          <div class="skills-container">
-            <div *ngFor="let skill of cvData.skills" class="skill-badge">
-              {{getSkillName(skill)}}
-              <span *ngIf="skill.level"> ({{skill.level}}/5)</span>
+          <span *ngFor="let skill of cvData.skills; let last = last">
+            {{getSkillName(skill)}}<span *ngIf="skill.level"> ({{skill.level}}/5)</span><span *ngIf="!last">, </span>
+          </span>
+        </div>
+      </section>
+
+      <!-- Certifications -->
+      <section class="ats-section" *ngIf="cvData.certifications && cvData.certifications.length">
+        <div class="title" [ngStyle]="getSectionTitleStyles()">CERTIFICATIONS</div>
+        <div class="ats-body">
+          <div *ngFor="let cert of cvData.certifications" class="certification-item">
+            <div class="ats-subtitle">
+              {{cert.name}}
+              <span *ngIf="cert.issuer"> | {{cert.issuer}}</span>
             </div>
+            <div class="ats-meta" *ngIf="cert.date">Date: {{cert.date}}</div>
+            <div class="ats-meta" *ngIf="cert.credentialId">Credential ID: {{cert.credentialId}}</div>
           </div>
         </div>
       </section>
 
       <!-- Languages -->
       <section class="ats-section" *ngIf="cvData.languages && cvData.languages.length">
-        <div class="title" [ngStyle]="getSectionTitleStyles()">LANGUAGE</div>
+        <div class="title" [ngStyle]="getSectionTitleStyles()">LANGUAGES</div>
         <div class="ats-body">
           <span *ngFor="let lang of cvData.languages; let last = last">
             {{getLanguageName(lang)}}<span *ngIf="lang.level"> ({{lang.level}}/5)</span><span *ngIf="!last">, </span>
           </span>
+        </div>
+      </section>
+
+      <!-- Hobbies -->
+      <section class="ats-section" *ngIf="cvData.hobbies && cvData.hobbies.length">
+        <div class="title" [ngStyle]="getSectionTitleStyles()">HOBBIES</div>
+        <div class="ats-body">
+          {{ cvData.hobbies.join(', ') }}
+        </div>
+      </section>
+
+      <!-- References -->
+      <section class="ats-section" *ngIf="cvData.references && cvData.references.length">
+        <div class="title" [ngStyle]="getSectionTitleStyles()">REFERENCES</div>
+        <div class="ats-body">
+          <div *ngFor="let ref of cvData.references" class="reference-item">
+            <div class="ats-subtitle">
+              {{ref.name}}
+              <span *ngIf="ref.position"> | {{ref.position}}</span>
+            </div>
+            <div class="ats-meta" *ngIf="ref.phone">Phone: {{ref.phone}}</div>
+            <div class="ats-meta" *ngIf="ref.email">Email: {{ref.email}}</div>
+          </div>
         </div>
       </section>
     </div>

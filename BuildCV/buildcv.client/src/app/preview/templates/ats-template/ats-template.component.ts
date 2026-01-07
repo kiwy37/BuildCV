@@ -19,6 +19,44 @@ export class ATSTemplateComponent {
     return this.cvData?.personalInfo || {};
   }
 
+  get headline(): string {
+    const pi: any = this.personalInfo;
+    const parts = [pi.title, pi.profession]
+      .map((v: any) => (typeof v === 'string' ? v.trim() : ''))
+      .filter((v: string) => v.length > 0);
+    return parts.join(' • ');
+  }
+
+  get allLinks(): string[] {
+    const pi: any = this.personalInfo;
+    const raw: string[] = [];
+
+    const add = (value: any) => {
+      if (typeof value !== 'string') return;
+      const trimmed = value.trim();
+      if (!trimmed) return;
+      raw.push(trimmed);
+    };
+
+    add(pi.website);
+    add(pi.linkedIn);
+
+    if (Array.isArray(pi.links)) {
+      pi.links.forEach(add);
+    }
+
+    return Array.from(new Set(raw));
+  }
+
+  formatDateRange(start?: string, end?: string, isCurrent?: boolean): string {
+    const startValue = (start || '').trim();
+    const endValue = (end || '').trim();
+    if (!startValue && !endValue && !isCurrent) return '';
+    if (startValue && (isCurrent || !endValue)) return `${startValue} – Present`;
+    if (startValue && endValue) return `${startValue} – ${endValue}`;
+    return startValue || endValue;
+  }
+
   getSkillName(skill: any): string {
     if (typeof skill === 'string') return skill;
     return skill.name || skill.skill || '';
@@ -34,6 +72,13 @@ export class ATSTemplateComponent {
       'box-sizing': 'border-box',
       'font-family': this.getFontFamily(),
       color: c.textColor,
+      'font-size': `${c.fontSize}px`,
+      'line-height': `${c.lineHeight}`,
+      /* Apply page margins as padding so DOM preview matches generated PDF spacing */
+      'padding-top': `${c.marginTop ?? 0}px`,
+      'padding-bottom': `${c.marginTop ?? 0}px`,
+      'padding-left': `${c.marginLeft ?? 0}px`,
+      'padding-right': `${c.marginLeft ?? 0}px`,
     };
   }
 
@@ -48,14 +93,20 @@ export class ATSTemplateComponent {
   }
 
   getSectionTitleStyles(): any {
+    const c = this.customization;
+    const titleFontSize = Math.max(12, Math.round(c.headingFontSize * 0.55));
+
     return {
-      background: '#eef6ff',
-      color: this.customization.primaryColor,
-      padding: '8px 12px',
-      'border-radius': '6px',
-      'font-weight': '700',
-      'text-align': 'center',
-      'letter-spacing': '1px',
+      background: c.sectionBgColor || 'transparent',
+      color: c.primaryColor,
+      padding: c.sectionBgColor ? '6px 10px' : '0 0 6px 0',
+      'border-radius': c.sectionBgColor ? '6px' : '0',
+      'font-weight': '800',
+      'text-align': 'left',
+      'letter-spacing': '0.08em',
+      'text-transform': 'uppercase',
+      'font-size': `${titleFontSize}px`,
+      'border-bottom': c.sectionBgColor ? `1px solid ${c.borderColor || '#e5e7eb'}` : `2px solid ${c.primaryColor}`,
     };
   }
 

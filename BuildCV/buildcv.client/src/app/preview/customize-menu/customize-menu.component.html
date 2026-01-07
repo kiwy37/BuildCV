@@ -10,23 +10,6 @@
     </div>
   </div>
 
-  <div class="zoom-block">
-    <div class="zoom-labels">
-      <label>Zoom</label>
-      <span>{{ zoomPercent }}%</span>
-    </div>
-    <input
-      type="range"
-      min="50"
-      max="150"
-      step="10"
-      [value]="zoomPercent"
-      (input)="onZoomInput($any($event.target).value)"
-      class="slider"
-      [style.background-size]="((zoomPercent - 50) * 100) / (150 - 50) + '% 100%'"
-    />
-  </div>
-
   <div class="sidebar-content">
     
     <div class="tabs-container">
@@ -65,7 +48,7 @@
           class="slider"
           [(ngModel)]="customization.fontSize"
           (input)="onCustomizationInput()"
-          [style.background-size]="(((customization.fontSize || 16) - 10) * 100) / (24 - 10) + '% 100%'"
+          [style.background-size]="(((($any(customization.fontSize) ?? 16) - 10) * 100) / (24 - 10)) + '% 100%'"
         />
         <p class="control-desc">Main body text and paragraphs</p>
       </div>
@@ -81,7 +64,7 @@
           class="slider"
           [(ngModel)]="customization.headingFontSize"
           (input)="onCustomizationInput()"
-          [style.background-size]="(((customization.headingFontSize || 18) - 14) * 100) / (40 - 14) + '% 100%'"
+          [style.background-size]="(((($any(customization.headingFontSize) ?? 18) - 14) * 100) / (40 - 14)) + '% 100%'"
         />
         <p class="control-desc">Section titles size</p>
       </div>
@@ -97,7 +80,7 @@
           class="slider"
           [(ngModel)]="customization.lineHeight"
           (input)="onCustomizationInput()"
-          [style.background-size]="(((customization.lineHeight || 1.6) - 1.0) * 100) / (2.2 - 1.0) + '% 100%'"
+          [style.background-size]="(((($any(customization.lineHeight) ?? 1.6) - 1.0) * 100) / (2.2 - 1.0)) + '% 100%'"
         />
         <p class="control-desc">Vertical space between lines (em)</p>
       </div>
@@ -163,7 +146,7 @@
           </div>
           <input type="range" min="5" max="50" step="1" class="slider"
             [(ngModel)]="customization.sectionSpacing" (input)="onCustomizationInput()"
-            [style.background-size]="(((customization.sectionSpacing || 20) - 5) * 100) / (50 - 5) + '% 100%'" />
+            [style.background-size]="(((($any(customization.sectionSpacing) ?? 20) - 5) * 100) / (50 - 5)) + '% 100%'" />
           <p class="control-desc">Space between CV sections</p>
        </div>
 
@@ -174,7 +157,7 @@
           </div>
           <input type="range" min="0" max="60" step="2" class="slider"
             [(ngModel)]="customization.marginTop" (input)="onCustomizationInput()"
-            [style.background-size]="(((customization.marginTop || 20) - 0) * 100) / (60 - 0) + '% 100%'" />
+            [style.background-size]="(((($any(customization.marginTop) ?? 20) - 0) * 100) / (60 - 0)) + '% 100%'" />
           <p class="control-desc">Top and bottom page margin</p>
        </div>
 
@@ -185,7 +168,7 @@
           </div>
           <input type="range" min="0" max="60" step="2" class="slider"
             [(ngModel)]="customization.marginLeft" (input)="onCustomizationInput()"
-            [style.background-size]="(((customization.marginLeft || 20) - 0) * 100) / (60 - 0) + '% 100%'" />
+            [style.background-size]="(((($any(customization.marginLeft) ?? 20) - 0) * 100) / (60 - 0)) + '% 100%'" />
           <p class="control-desc">Left and right gutters</p>
        </div>
     </div>

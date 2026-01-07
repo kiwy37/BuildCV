@@ -28,6 +28,8 @@ export class CustomizeMenuComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.customization) {
+      // In normal flow the parent provides the object.
+      // If not provided, create one.
       this.customization = {};
     }
     this.applyDefaults();
@@ -52,8 +54,11 @@ export class CustomizeMenuComponent implements OnInit {
       sectionBgColor: '#ffffff',
       fontFamily: 'Lora'
     };
-    // Merge defaults with existing customization
-    this.customization = { ...(defaults as any), ...(this.customization as any) };
+
+    // Merge defaults with existing customization WITHOUT replacing the reference.
+    // Replacing the object breaks the parent binding, so changes wouldn't reflect in the CV.
+    const merged = { ...(defaults as any), ...(this.customization as any) };
+    Object.assign(this.customization as any, merged);
   }
 
   onCustomizationInput(): void {

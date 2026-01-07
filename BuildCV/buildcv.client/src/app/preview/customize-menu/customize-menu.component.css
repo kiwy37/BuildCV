@@ -12,7 +12,7 @@
   --accent-hover: #1d4ed8;
   
   --slider-track: #e2e8f0; /* Empty track */
-  --slider-fill: #334155;  /* Dark Slate fill (like image) */
+  --slider-fill: var(--accent);  /* Use accent color for slider fill */
   
   --border: #e2e8f0;
   --radius: 8px;

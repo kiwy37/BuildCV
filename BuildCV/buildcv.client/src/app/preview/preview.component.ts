@@ -4,7 +4,7 @@ import { CvService } from '../cv.service';
 import { CVData } from '../cv-data.model';
 import { CustomizationSettings } from './templates/lima-template/lima-template.component';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
@@ -51,6 +51,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   // Debounce subject for PDF regeneration
   private regeneratePdfSubject = new Subject<void>();
+  private destroy$ = new Subject<void>();
 
   constructor(private cvService: CvService, private sanitizer: DomSanitizer) {}
 
@@ -67,11 +68,22 @@ export class PreviewComponent implements OnInit, OnDestroy {
     // Setup debounced PDF regeneration
     this.regeneratePdfSubject
       .pipe(
-        debounceTime(500),
-        distinctUntilChanged()
+        debounceTime(500)
       )
       .subscribe(() => {
         this.generatePdfPreview();
+      });
+
+    // React to CV data changes so preview stays in sync
+    this.cvService.cvData$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => {
+        this.cvData = data;
+        const themeFromData = (data as any).selectedTheme || 'lima';
+        if (themeFromData !== this.selectedTheme) {
+          this.selectedTheme = themeFromData;
+        }
+        this.regeneratePdfSubject.next();
       });
 
     // Initial PDF generation
@@ -83,6 +95,8 @@ export class PreviewComponent implements OnInit, OnDestroy {
       URL.revokeObjectURL(this.pdfBlobUrlRaw);
       this.pdfBlobUrlRaw = null;
     }
+    this.destroy$.next();
+    this.destroy$.complete();
     this.regeneratePdfSubject.complete();
   }
 
@@ -107,8 +121,12 @@ export class PreviewComponent implements OnInit, OnDestroy {
       this.isPdfLoading = true;
       this.pdfGenerationError = null;
 
-      // Get HTML content from template
-      const htmlContent = this.getTemplateHtml();
+      const topMargin = this.pxToMmString(this.customization.marginTop);
+      const sideMargin = this.pxToMmString(this.customization.marginLeft);
+
+      // Get HTML content from template (do NOT include inner page padding for PDF generation
+      // because Puppeteer already applies the page margins; including both caused double spacing)
+      const htmlContent = this.getTemplateHtml(false);
 
       // Send to backend for PDF generation
       const response = await fetch('/api/pdf/generate', {
@@ -123,10 +141,10 @@ export class PreviewComponent implements OnInit, OnDestroy {
             printBackground: true,
             scale: 1.0,
             margin: {
-              top: '0',
-              right: '0',
-              bottom: '0',
-              left: '0'
+              top: topMargin,
+              right: sideMargin,
+              bottom: topMargin,
+              left: sideMargin
             }
           }
         })
@@ -161,7 +179,11 @@ export class PreviewComponent implements OnInit, OnDestroy {
       this.isGeneratingPdf = true;
       this.pdfGenerationError = null;
 
-      const htmlContent = this.getTemplateHtml();
+      const topMargin = this.pxToMmString(this.customization.marginTop);
+      const sideMargin = this.pxToMmString(this.customization.marginLeft);
+
+      // Also do not include inner padding when exporting (Puppeteer handles margins)
+      const htmlContent = this.getTemplateHtml(false);
       
       // Use high-quality endpoint for export
       const response = await fetch('/api/pdf/generate-high-quality', {
@@ -176,10 +198,10 @@ export class PreviewComponent implements OnInit, OnDestroy {
             printBackground: true,
             scale: 1.5, // Higher quality for export
             margin: {
-              top: '0',
-              right: '0',
-              bottom: '0',
-              left: '0'
+              top: topMargin,
+              right: sideMargin,
+              bottom: topMargin,
+              left: sideMargin
             }
           }
         })
@@ -212,7 +234,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
     this.isPdfLoading = false;
   }
 
-  private getTemplateHtml(): string {
+  private getTemplateHtml(includeInnerPadding: boolean = true): string {
     // Create a temporary container
     const tempContainer = document.createElement('div');
     
@@ -234,7 +256,6 @@ export class PreviewComponent implements OnInit, OnDestroy {
     
     @page {
       size: A4;
-      margin: 0;
     }
     
     body {
@@ -245,7 +266,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
       print-color-adjust: exact;
     }
     
-    ${this.getTemplateStyles()}
+    ${this.getTemplateStyles(includeInnerPadding)}
   </style>
 </head>
 <body>
@@ -272,7 +293,12 @@ export class PreviewComponent implements OnInit, OnDestroy {
     return `<link href="${fontUrl}" rel="stylesheet">`;
   }
 
-  private getTemplateStyles(): string {
+  private getTemplateStyles(includeInnerPadding: boolean = true): string {
+    // Ensure a minimum sensible section spacing
+    const sectionSpacingVal = Math.max(8, (this.customization.sectionSpacing ?? 16));
+    // compute page margins in mm so we can set @page margins that apply to all printed pages
+    const topMarginMm = this.pxToMmString(this.customization.marginTop);
+    const sideMarginMm = this.pxToMmString(this.customization.marginLeft);
     const base = `
       :root {
         --primary-color: ${this.customization.primaryColor};
@@ -282,6 +308,13 @@ export class PreviewComponent implements OnInit, OnDestroy {
         --border-color: ${this.customization.borderColor || '#dcdfe4'};
         --heading-color: ${this.customization.headingColor || this.customization.primaryColor};
         --section-bg: ${this.customization.sectionBgColor || '#f9fafb'};
+        --section-spacing: ${sectionSpacingVal}px;
+        --page-padding-top: ${includeInnerPadding ? (this.customization.marginTop ?? 0) : 0}px;
+        --page-padding-bottom: ${includeInnerPadding ? (this.customization.marginTop ?? 0) : 0}px;
+        --page-padding-left: ${includeInnerPadding ? (this.customization.marginLeft ?? 0) : 0}px;
+        --page-padding-right: ${includeInnerPadding ? (this.customization.marginLeft ?? 0) : 0}px;
+        /* page margin used by @page so margins apply on every PDF page */
+        --page-margin: ${topMarginMm} ${sideMarginMm} ${topMarginMm} ${sideMarginMm};
       }
       html, body {
         width: 100%;
@@ -296,21 +329,29 @@ export class PreviewComponent implements OnInit, OnDestroy {
         justify-content: center;
         background: var(--background-color);
       }
+      /* Apply page padding so "page margins" controls have visible effect */
+      .cv-page {
+        box-sizing: border-box;
+        padding: var(--page-padding-top) var(--page-padding-right) var(--page-padding-bottom) var(--page-padding-left);
+      }
+      /* Default section spacing hook */
+      .section-spacing {
+        margin-top: var(--section-spacing);
+      }
     `;
-
-    switch (this.selectedTheme) {
-      case 'lima':
-        return base + this.getLimaStyles();
-      case 'rotterdam':
-        return base + this.getRotterdamStyles();
-      case 'riga':
-        return base + this.getRigaStyles();
-      case 'ats':
-        return base + this.getATSStyles();
-      default:
-        return base;
-    }
-  }
+     switch (this.selectedTheme) {
+       case 'lima':
+         return base + this.getLimaStyles();
+       case 'rotterdam':
+         return base + this.getRotterdamStyles();
+       case 'riga':
+         return base + this.getRigaStyles();
+       case 'ats':
+         return base + this.getATSStyles();
+       default:
+         return base;
+     }
+   }
 
   private getTemplateBodyHtml(): string {
     // This needs to render the actual template HTML with data
@@ -367,7 +408,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   private getLimaStyles(): string {
     return `
-      @page { size: A4; margin: 0; }
+      @page { size: A4; margin: var(--page-margin); }
       .cv-lima-container { min-height: 100vh; display: flex; justify-content: center; font-family: 'Roboto', sans-serif; }
       .cv-page { width: 210mm; min-height: 297mm; background: linear-gradient(to right, #1a2a3a 33%, #fff 33%); box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: relative; overflow: visible; --a4-height: 297mm; --page-marker-color: #000; --page-marker-thickness: 5px; }
       @media screen { .cv-page::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--a4-height) - var(--page-marker-thickness)), var(--page-marker-color) calc(var(--a4-height) - var(--page-marker-thickness)), var(--page-marker-color) var(--a4-height)); background-size: 100% var(--a4-height); background-repeat: repeat-y; } }
@@ -395,7 +436,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
       .lm-title h1 { margin: 0; letter-spacing: 1px; text-transform: uppercase; font-weight: 800; word-break: break-word; color: ${this.customization.headingColor || this.customization.primaryColor}; }
       .lm-title h2 { margin: 8px 0 0 0; font-weight: 700; word-break: break-word; }
       .lm-contact { text-align: right; opacity: 0.8; word-break: break-word; }
-      .lm-body { margin-top: 22px; display: flex; flex-direction: column; gap: 22px; }
+      .lm-body { margin-top: var(--section-spacing); display: flex; flex-direction: column; gap: var(--section-spacing); }
       .section-title { text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 2px solid currentColor; color: ${this.customization.primaryColor}; }
       .experience-item, .education-grid > div, section { break-inside: avoid; page-break-inside: avoid; }
       .experience-item { display: grid; grid-template-columns: 24% 1fr; gap: 18px; align-items: start; padding: 14px 0; border-top: 1px solid #f1f5f9; }
@@ -419,7 +460,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   private getRotterdamStyles(): string {
     return `
-      @page { size: A4; margin: 0; }
+      @page { size: A4; margin: var(--page-margin); }
       .cv-page { width: 210mm; min-height: 297mm; box-sizing: border-box; background: white; position: relative; overflow: visible; --a4-height: 297mm; --page-marker-color: #000; --page-marker-thickness: 5px; }
       @media screen { .cv-page::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--a4-height) - var(--page-marker-thickness)), var(--page-marker-color) calc(var(--a4-height) - var(--page-marker-thickness)), var(--page-marker-color) var(--a4-height)); background-size: 100% var(--a4-height); background-repeat: repeat-y; } }
       @media print { .cv-page { page-break-after: always; } .cv-page:last-child { page-break-after: auto; } }
@@ -444,7 +485,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
       .rt-header h1 { font-family: 'Playfair Display', serif; margin: 0; line-height: 1.1; color: ${this.customization.primaryColor}; }
       .rt-header p { text-transform: uppercase; letter-spacing: 3px; font-size: 0.75rem; margin-top: 8px; opacity: 0.9; }
       .content-body { padding: 35px; flex: 1; overflow: visible; }
-      .section-title { text-transform: uppercase; font-size: 1rem; font-weight: 700; border-bottom: 2px solid #999; padding-bottom: 8px; margin: 20px 0 15px 0; letter-spacing: 1px; color: ${this.customization.primaryColor}; }
+      .section-title { text-transform: uppercase; font-size: 1rem; font-weight: 700; border-bottom: 2px solid #999; padding-bottom: 8px; margin: var(--section-spacing) 0 8px 0; letter-spacing: 1px; color: ${this.customization.primaryColor}; }
       .summary-text { color: #555; line-height: 1.6; margin: 0 0 15px 0; }
       .experience-block, .education-block, .project-block, .cert-block { margin-bottom: 18px; }
       .experience-block, .education-block, .project-block, .cert-block, .sidebar-item, .contact-item { break-inside: avoid; page-break-inside: avoid; }
@@ -464,7 +505,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   private getRigaStyles(): string {
     return `
-      @page { size: A4; margin: 0; }
+      @page { size: A4; margin: var(--page-margin); }
       .cv-page { width: 210mm; min-height: 297mm; box-sizing: border-box; background: white; position: relative; overflow: visible; --a4-height: 297mm; --page-marker-color: #000; --page-marker-thickness: 5px; }
       @media screen { .cv-page::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--a4-height) - var(--page-marker-thickness)), var(--page-marker-color) calc(var(--a4-height) - var(--page-marker-thickness)), var(--page-marker-color) var(--a4-height)); background-size: 100% var(--a4-height); background-repeat: repeat-y; } }
       @media print { .cv-page { page-break-after: always; } .cv-page:last-child { page-break-after: auto; } }
@@ -494,7 +535,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
       .lang-fill { height: 8px; background: ${this.customization.secondaryColor}; width: 60%; }
       .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 8px; }
       .skill-tag { background: #e5e7eb; padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; text-align: center; }
-      .section-title { text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin: 6px 0 12px 0; border-bottom: 1px solid #e6e6e6; padding-bottom: 8px; color: ${this.customization.primaryColor}; }
+      .section-title { text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin: var(--section-spacing) 0 12px 0; border-bottom: 1px solid #e6e6e6; padding-bottom: 8px; color: ${this.customization.primaryColor}; }
       .job { margin-bottom: 18px; }
       .job h3 { margin: 0; color: #111827; }
       .job .company { color: ${this.customization.secondaryColor}; font-weight: 700; margin-top: 6px; }
@@ -512,31 +553,199 @@ export class PreviewComponent implements OnInit, OnDestroy {
   }
 
   private getATSStyles(): string {
-    return `
-      @page { size: A4; margin: 0; }
-      .cv-page { width: 210mm; min-height: 297mm; margin: 0; background: white; box-shadow: 0 0 0 1px #e5e7eb, 0 10px 30px rgba(0,0,0,.12); position: relative; overflow: visible; --a4-height: 297mm; --page-marker-color: #000; --page-marker-thickness: 5px; }
-      @media screen { .cv-page::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--a4-height) - var(--page-marker-thickness)), var(--page-marker-color) calc(var(--a4-height) - var(--page-marker-thickness)), var(--page-marker-color) var(--a4-height)); background-size: 100% var(--a4-height); background-repeat: repeat-y; } }
-      .ats-page { width: 100%; padding: 24px; box-sizing: border-box; }
-      @media print { .cv-page { page-break-after: always; } .cv-page:last-child { page-break-after: auto; } }
+    const metaColor = this.withAlpha(this.customization.textColor, 0.72) || '#6b7280';
+ 
+     return `
+      /* For PDF/print we rely on Puppeteer margins (set in request options) */
+      @page { size: A4; margin: var(--page-margin); }
+
+      /* Screen-only: keep the A4 look if this HTML is ever viewed directly */
+      @media screen {
+        .cv-page {
+          width: 210mm;
+          min-height: 297mm;
+          margin: 0; /* page-content margin remains 0, @page defines printable margins */
+          background: white;
+          box-shadow: 0 0 0 1px #e5e7eb, 0 10px 30px rgba(0,0,0,.12);
+          position: relative;
+          overflow: visible;
+          --a4-height: 297mm;
+          --page-marker-color: #000;
+          --page-marker-thickness: 5px;
+        }
+        .cv-page::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          z-index: 9999;
+          background-image: repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent calc(var(--a4-height) - var(--page-marker-thickness)),
+            var(--page-marker-color) calc(var(--a4-height) - var(--page-marker-thickness)),
+            var(--page-marker-color) var(--a4-height)
+          );
+          background-size: 100% var(--a4-height);
+          background-repeat: repeat-y;
+        }
+        .ats-page { width: 100%; padding: 24px; box-sizing: border-box; }
+      }
+
+      /* Print/PDF: avoid fixed-width container and shadows (each PDF page already has a boundary) */
+      @media print {
+        .cv-page {
+          width: auto;
+          min-height: auto;
+          margin: 0;
+          box-shadow: none;
+          background: transparent;
+        }
+        .ats-page { width: auto; padding: 0; }
+      }
+
+      .ats-page {
+        font-size: ${this.customization.fontSize}px;
+        line-height: ${this.customization.lineHeight};
+        color: ${this.customization.textColor};
+      }
+
       .ats-section { position: relative; }
-      .experience-item, .education-item { break-inside: avoid; page-break-inside: avoid; }
-      .ats-header { text-align: center; margin-bottom: 8px; }
-      .ats-header h1 { margin: 0; font-weight: 700; letter-spacing: 2px; word-break: break-word; color: ${this.customization.primaryColor}; }
-      .ats-header .contact { color: #374151; margin-top: 8px; word-break: break-word; }
-      .ats-links { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
-      .ats-link { background: #f1f5f9; color: #1f2937; padding: 6px 10px; border-radius: 6px; font-size: 0.9rem; text-decoration: none; word-break: break-all; max-width: 100%; }
-      .ats-link:hover { background: #e2e8f0; }
-      .ats-section { margin-top: 18px; }
-      .ats-section .title { display: block; background: #eef6ff; padding: 8px 12px; border-radius: 6px; font-weight: 700; text-align: center; letter-spacing: 1px; color: ${this.customization.primaryColor}; }
-      .ats-body { padding: 12px 6px; color: #374151; word-wrap: break-word; overflow-wrap: break-word; }
-      .ats-list { margin: 8px 0 0 0; padding-left: 16px; }
-      .ats-list li { margin-bottom: 6px; word-wrap: break-word; overflow-wrap: break-word; }
-      .experience-item, .education-item { margin-bottom: 10px; }
-      .ats-subtitle { font-weight: 700; color: #111827; word-break: break-word; }
-      .ats-meta { color: #6b7280; font-size: 0.95rem; margin-top: 4px; word-break: break-word; }
-      .skills-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
-      .skill-badge { background: #f1f5f9; padding: 6px 10px; border-radius: 16px; font-size: 0.92rem; word-break: break-word; }
+
+      /* Keep items together when possible, but allow long sections to flow */
+      .experience-item, .education-item, .project-item, .certification-item, .reference-item {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      /* Header */
+      .ats-header {
+        text-align: center;
+        margin-bottom: 14px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid ${this.customization.borderColor || '#e5e7eb'};
+      }
+      .ats-header h1 {
+        margin: 0;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        word-break: break-word;
+        color: ${this.customization.primaryColor};
+      }
+      .ats-headline {
+        margin-top: 6px;
+        color: ${this.customization.textColor};
+        font-weight: 600;
+        word-break: break-word;
+      }
+      .ats-header .contact {
+        color: ${this.customization.textColor};
+        margin-top: 8px;
+        word-break: break-word;
+      }
+
+      /* Links: keep as plain text-like for ATS */
+      .ats-links {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+      .ats-link {
+        background: transparent;
+        color: ${this.customization.primaryColor};
+        padding: 0;
+        border-radius: 0;
+        font-size: 0.95em;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        word-break: break-all;
+        max-width: 100%;
+      }
+
+      /* Sections */
+      .ats-section { margin-top: 16px; }
+      .ats-section { margin-top: var(--section-spacing); }
+      .ats-section .title {
+        display: block;
+        background: transparent;
+        padding: 0 0 6px 0;
+        border-radius: 0;
+        font-weight: 800;
+        text-align: left;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: ${this.customization.primaryColor};
+        border-bottom: 2px solid ${this.customization.primaryColor};
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+
+      .ats-body {
+        padding: 10px 0 0 0;
+        color: ${this.customization.textColor};
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      /* Lists */
+      .ats-list {
+        margin: 8px 0 0 0;
+        padding-left: 18px;
+      }
+      .ats-list li {
+        margin-bottom: 6px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      /* Experience & Education */
+      .experience-item, .education-item, .project-item, .certification-item, .reference-item {
+        margin-top: 10px;
+      }
+      .ats-subtitle {
+        font-weight: 700;
+        color: ${this.customization.secondaryColor};
+        word-break: break-word;
+      }
+      .ats-meta {
+        color: ${metaColor};
+        font-size: 0.95em;
+        margin-top: 2px;
+        word-break: break-word;
+      }
+
+      /* Prevent lonely lines */
+      p, .ats-body, .ats-list li {
+        orphans: 3;
+        widows: 3;
+      }
     `;
+  }
+
+  private pxToMmString(px: number | undefined | null): string {
+    const valuePx = Number(px ?? 0);
+    if (!isFinite(valuePx) || valuePx <= 0) return '0mm';
+    // Puppeteer parses CSS-like units; mm is the most reliable for PDF.
+    const mm = valuePx / 3.7795275591;
+    return `${mm.toFixed(2)}mm`;
+  }
+
+  private withAlpha(color: string | undefined | null, alpha: number): string {
+    if (!color) return '';
+    const a = Math.min(1, Math.max(0, alpha));
+    const hex = color.trim();
+    const match = /^#([0-9a-fA-F]{6})$/.exec(hex);
+    if (!match) return '';
+    const value = match[1];
+    const r = parseInt(value.slice(0, 2), 16);
+    const g = parseInt(value.slice(2, 4), 16);
+    const b = parseInt(value.slice(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
   }
 
   backToThemeSelection(): void {

@@ -107,20 +107,42 @@ export class ExperienceComponent implements OnInit {
 
   moveExperienceUp(index: number): void {
     if (index > 0) {
-      const experiences = this.experiences;
-      const temp = experiences.at(index).value;
-      experiences.at(index).setValue(experiences.at(index - 1).value);
-      experiences.at(index - 1).setValue(temp);
+      const currentControl = this.experiences.at(index);
+      const previousControl = this.experiences.at(index - 1);
+      
+      // Salvăm valorile
+      const currentValue = currentControl.value;
+      const previousValue = previousControl.value;
+      
+      // Recreăm controalele pentru a menține starea corectă
+      this.experiences.removeAt(index);
+      this.experiences.removeAt(index - 1);
+      
+      // Inserăm în ordine inversă
+      this.experiences.insert(index - 1, this.createExperienceGroup(currentValue));
+      this.experiences.insert(index, this.createExperienceGroup(previousValue));
+      
       this.saveExperiences();
     }
   }
 
   moveExperienceDown(index: number): void {
     if (index < this.experiences.length - 1) {
-      const experiences = this.experiences;
-      const temp = experiences.at(index).value;
-      experiences.at(index).setValue(experiences.at(index + 1).value);
-      experiences.at(index + 1).setValue(temp);
+      const currentControl = this.experiences.at(index);
+      const nextControl = this.experiences.at(index + 1);
+      
+      // Salvăm valorile
+      const currentValue = currentControl.value;
+      const nextValue = nextControl.value;
+      
+      // Recreăm controalele pentru a menține starea corectă
+      this.experiences.removeAt(index + 1);
+      this.experiences.removeAt(index);
+      
+      // Inserăm în ordine inversă
+      this.experiences.insert(index, this.createExperienceGroup(nextValue));
+      this.experiences.insert(index + 1, this.createExperienceGroup(currentValue));
+      
       this.saveExperiences();
     }
   }

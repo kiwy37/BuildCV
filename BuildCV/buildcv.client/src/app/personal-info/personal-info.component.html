@@ -1,141 +1,93 @@
-<div class="section-container">
-  <div class="section-header">
-    <h2>
-      <i class="icon-user"></i>
-      Personal Information
-    </h2>
-  </div>
-  <!-- Photo Upload Card -->
-  <div class="form-card photo-upload-card">
-    <div class="photo-upload-container">
-      <div class="photo-preview">
-        <div class="photo-frame" [class.has-photo]="personalInfoForm.get('photoUrl')?.value">
-          <img *ngIf="personalInfoForm.get('photoUrl')?.value" [src]="personalInfoForm.get('photoUrl')?.value" alt="Avatar">
-          <div *ngIf="!personalInfoForm.get('photoUrl')?.value" class="photo-placeholder">
-            <i class="icon-camera"></i>
-            <p>No photo</p>
+<div class="page-wrapper">
+  
+  <div class="header-section">
+    <h2><i class="icon-user"></i> Personal Details</h2>
+    </div>
+
+  <div class="layout-grid">
+    
+    <aside class="sidebar">
+      
+      <div class="card photo-card">
+        <div class="photo-wrapper">
+          <div class="photo-circle" [class.active]="personalInfoForm.get('photoUrl')?.value">
+            <img *ngIf="personalInfoForm.get('photoUrl')?.value" [src]="personalInfoForm.get('photoUrl')?.value" alt="Avatar">
+            <i *ngIf="!personalInfoForm.get('photoUrl')?.value" class="icon-camera placeholder-icon"></i>
           </div>
         </div>
-      </div>
-
-      <div class="photo-actions">
-        <input type="file" accept="image/*" (change)="onPhotoSelected($event)" id="photoInput" style="display:none">
-        <label for="photoInput" class="btn-upload-photo">Upload photo</label>
-        <button class="btn-remove-photo" type="button" (click)="removePhoto()" [disabled]="!personalInfoForm.get('photoUrl')?.value">Remove photo</button>
-        <div class="photo-hint">Recommended: square image, at least 300x300px.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Contact Details Card -->
-  <div class="form-card">
-    <form [formGroup]="personalInfoForm" class="form-grid">
-      <div class="form-group full-width">
-        <label for="fullName">
-          Full Name <span class="required">*</span>
-        </label>
-        <input 
-          type="text" 
-          id="fullName" 
-          formControlName="fullName"
-          placeholder="John Doe"
-          class="form-input"
-          [class.ng-invalid]="personalInfoForm.get('fullName')?.invalid && personalInfoForm.get('fullName')?.touched"
-          [class.ng-touched]="personalInfoForm.get('fullName')?.touched">
-        <div class="error-message" *ngIf="personalInfoForm.get('fullName')?.invalid && personalInfoForm.get('fullName')?.touched">
-          <i class="icon-alert-circle"></i> Full name is required
+        
+        <div class="photo-controls">
+          <input type="file" accept="image/*" (change)="onPhotoSelected($event)" id="photoInput" hidden>
+          <label for="photoInput" class="btn btn-outline">Change Photo</label>
+          <button type="button" class="btn-icon-danger" (click)="removePhoto()" *ngIf="personalInfoForm.get('photoUrl')?.value">
+            <i class="icon-trash"></i>
+          </button>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="email">
-          Email Address <span class="required">*</span>
-        </label>
-        <input 
-          type="email" 
-          id="email" 
-          formControlName="email"
-          placeholder="john.doe@email.com"
-          class="form-input"
-          [class.ng-invalid]="personalInfoForm.get('email')?.invalid && personalInfoForm.get('email')?.touched"
-          [class.ng-touched]="personalInfoForm.get('email')?.touched">
-        <div class="error-message" *ngIf="personalInfoForm.get('email')?.invalid && personalInfoForm.get('email')?.touched">
-          <i class="icon-alert-circle"></i> Valid email is required
+      <div class="card sidebar-form">
+        <form [formGroup]="personalInfoForm" class="sidebar-form-content">
+          <div class="input-group">
+            <label>Full Name <span class="req">*</span></label>
+            <input type="text" formControlName="fullName" placeholder="e.g. Alex Smith">
+          </div>
+          
+          <div class="input-group">
+            <label>Email Address <span class="req">*</span></label>
+            <input type="email" formControlName="email" placeholder="alex@example.com">
+          </div>
+          
+          <div class="input-group">
+            <label>Phone Number</label>
+            <input type="tel" formControlName="phone" placeholder="+1 555 000 000">
+          </div>
+        </form>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      
+      <div class="card">
+        <div class="card-head">
+          <h3>Location & Social</h3>
         </div>
+        <form [formGroup]="personalInfoForm" class="grid-form">
+          <div class="input-group">
+            <label>City, Country</label>
+            <input type="text" formControlName="location" placeholder="London, UK">
+          </div>
+          <div class="input-group">
+            <label>LinkedIn Profile</label>
+            <input type="url" formControlName="linkedIn" placeholder="linkedin.com/in/alexsmith">
+          </div>
+          <div class="input-group full-width">
+            <label>Personal Website / Portfolio</label>
+            <input type="url" formControlName="website" placeholder="www.alexsmith.dev">
+          </div>
+        </form>
       </div>
 
-      <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <input 
-          type="tel" 
-          id="phone" 
-          formControlName="phone"
-          placeholder="+1 (555) 123-4567"
-          class="form-input">
-      </div>
-
-      <div class="form-group">
-        <label for="location">Location</label>
-        <input 
-          type="text" 
-          id="location" 
-          formControlName="location"
-          placeholder="New York, NY"
-          class="form-input">
-      </div>
-
-      <div class="form-group">
-        <label for="linkedIn">LinkedIn Profile</label>
-        <input 
-          type="url" 
-          id="linkedIn" 
-          formControlName="linkedIn"
-          placeholder="linkedin.com/in/johndoe"
-          class="form-input">
-      </div>
-
-      <div class="form-group">
-        <label for="website">Personal Website</label>
-        <input 
-          type="url" 
-          id="website" 
-          formControlName="website"
-          placeholder="www.johndoe.com"
-          class="form-input">
-      </div>
-    </form>
-  </div>
-
-  <!-- Professional Summary Card -->
-  <div class="form-card">
-    <div class="card-header">
-      <h3>Professional Summary</h3>
-      <button class="btn-toggle" (click)="toggleSummary()">
-        {{ showSummary ? 'Hide' : 'Add Summary' }}
-      </button>
-    </div>
-
-    <div class="ats-tip">
-      <i class="icon-lightbulb"></i>
-      <div>
-        <strong>ATS Tip:</strong> Include relevant keywords from the job description 
-        and quantify your achievements (e.g., "5+ years experience", "increased sales by 25%").
-      </div>
-    </div>
-
-    <form [formGroup]="professionalSummaryForm" *ngIf="showSummary">
-      <div class="form-group">
-        <label for="professionalSummary">Professional Summary</label>
-        <textarea 
-          id="professionalSummary" 
-          formControlName="professionalSummary"
-          rows="6"
-          placeholder="Write a brief summary highlighting your professional experience, key skills, and career objectives..."
-          class="form-textarea"></textarea>
-        <div class="character-count">
-          {{ getCharacterCount() }} / 500 characters
+      <div class="card">
+        <div class="card-head">
+          <h3>Professional Summary</h3>
+          <div class="toggle-switch">
+            <button type="button" class="btn-link" (click)="toggleSummary()">
+              {{ showSummary ? 'Remove' : '+ Add Summary' }}
+            </button>
+          </div>
         </div>
+
+        <form [formGroup]="professionalSummaryForm" *ngIf="showSummary">
+          <div class="input-group no-margin">
+            <textarea 
+              formControlName="professionalSummary" 
+              placeholder="Write 2-3 sentences about your career goals..."
+              rows="6"></textarea>
+            <div class="counter">{{ getCharacterCount() }} / 500</div>
+          </div>
+        </form>
       </div>
-    </form>
+
+    </main>
   </div>
 </div>

@@ -58,11 +58,12 @@ export interface Experience {
 export interface Education {
   degree: string;
   institution: string;
-  location: string;
+  location?: string;
   startDate: string;
-  endDate: string;
-  gpa: string;
-  achievements: string[];
+  endDate?: string;
+  gpa?: string;
+  isCurrent?: boolean;  // Added isCurrent property
+  achievements?: string[];
 }
 
 export interface Project {

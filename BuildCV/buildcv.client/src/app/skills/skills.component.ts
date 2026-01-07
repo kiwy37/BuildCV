@@ -1,24 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CvService } from '../cv.service';
 import { SkillEntry } from '../cv-data.model';
 
 @Component({
   selector: 'app-skills',
+  standalone: true,
   templateUrl: './skills.component.html',
-  styleUrls: ['./skills.component.css']
+  styleUrls: ['./skills.component.css'],
+  imports: [
+    CommonModule,
+    FormsModule
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class SkillsComponent implements OnInit {
+export class SkillsComponent {
   skillsForm!: FormGroup;
   skills: SkillEntry[] = [];
   currentSkill: string = '';
   currentSkillLevel = 3;
   
   skillSuggestions: string[] = [
-    'JavaScript', 'TypeScript', 'Python', 'Java', 'C#', 'C++', 'React', 'Angular',
-    'Vue.js', 'Node.js', '.NET', 'Spring Boot', 'SQL', 'MongoDB', 'AWS', 'Azure',
-    'Docker', 'Kubernetes', 'Git', 'Agile', 'Scrum', 'Project Management',
-    'Communication', 'Leadership', 'Problem Solving', 'Team Collaboration'
+    'Communication', 'Teamwork', 'Problem Solving', 'Time Management', 
+    'Leadership', 'Microsoft Office', 'Customer Service', 'Critical Thinking', 
+    'Project Management', 'Public Speaking', 'Adaptability', 'English', 
+    'Strategic Planning', 'Data Analysis', 'Negotiation', 'Research',
+    'Creativity', 'Emotional Intelligence', 'Decision Making', 'Sales'
   ];
 
   filteredSuggestions: string[] = [];
@@ -103,6 +112,11 @@ export class SkillsComponent implements OnInit {
 
   selectSuggestion(skill: string): void {
     this.addSkill(skill);
+  }
+
+  updateSkillName(index: number, name: string): void {
+    this.skills[index].name = name.trim();
+    this.saveSkills();
   }
 
   saveSkills(): void {

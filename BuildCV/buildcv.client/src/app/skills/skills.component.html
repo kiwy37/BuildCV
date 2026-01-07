@@ -1,66 +1,101 @@
 <div class="section-container">
   <div class="section-header">
-    <h2>Skills</h2>
-    <p>Add your technical and soft skills</p>
+    <h2><i class="icon-code"></i>Skills</h2>
   </div>
 
-  <div class="skills-input-card">
-    <div class="input-wrapper">
-      <input 
-        type="text" 
-        [(ngModel)]="currentSkill"
-        (input)="onSkillInput($event)"
-        (keypress)="onKeyPress($event)"
-        placeholder="Type a skill (e.g., JavaScript, Project Management)"
-        class="skill-input">
-      <div class="level-input">
-        <label>Level: {{ currentSkillLevel }}/5</label>
-        <input type="range" min="1" max="5" [(ngModel)]="currentSkillLevel" />
-      </div>
-      <button class="btn-add-skill" (click)="addSkill()" [disabled]="!currentSkill.trim()">
-        <i class="icon-plus"></i> Add
-      </button>
-    </div>
-
-    <!-- Suggestions Dropdown -->
-    <div class="suggestions-dropdown" *ngIf="filteredSuggestions.length > 0">
-      <div 
-        *ngFor="let suggestion of filteredSuggestions" 
-        class="suggestion-item"
-        (click)="selectSuggestion(suggestion)">
-        {{ suggestion }}
+  <div class="education-card">
+    <!-- 1. Popular Skills (General) -->
+    <div class="popular-skills-top">
+      <p class="subtitle">Quick select popular skills:</p>
+      <div class="popular-skills-grid">
+        <button
+          *ngFor="let skill of skillSuggestions"
+          class="popular-skill-btn"
+          (click)="addSkill(skill)"
+          [disabled]="isSkillPresent(skill)">
+          <i class="icon-plus"></i> {{ skill }}
+        </button>
       </div>
     </div>
-  </div>
 
-  <!-- Skills Display - Simplified -->
-  <div class="skills-display" *ngIf="skills.length > 0">
-    <div class="skills-simple-grid">
-      <div *ngFor="let skill of skills; let i = index" class="skill-tag-simple">
-        <span class="skill-name">{{ skill.name }} ({{ skill.level || 3 }}/5)</span>
-        <input type="range" min="1" max="5" [ngModel]="skill.level" (ngModelChange)="updateSkillLevel(i, $event)" />
-        <button class="btn-remove-skill" (click)="removeSkill(i)" title="Remove">×</button>
+    <!-- 2. Compact Add Bar -->
+    <div class="compact-add-bar">
+      <div class="input-wrapper">
+        <input
+          type="text"
+          [(ngModel)]="currentSkill"
+          (input)="onSkillInput($event)"
+          (keypress)="onKeyPress($event)"
+          placeholder="Type a custom skill..."
+          class="form-input">
+        <button class="btn-primary" (click)="addSkill()" [disabled]="!currentSkill.trim()">
+          Add
+        </button>
+        
+        <!-- Suggestions Dropdown -->
+        <div class="suggestions-dropdown" *ngIf="filteredSuggestions.length > 0">
+          <div
+            *ngFor="let suggestion of filteredSuggestions"
+            class="suggestion-item"
+            (click)="selectSuggestion(suggestion)">
+            {{ suggestion }}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="empty-state" *ngIf="skills.length === 0">
-    <i class="icon-inbox"></i>
-    <p>No skills added yet</p>
-    <p class="empty-state-subtitle">Start typing to add your skills</p>
-  </div>
+    <div class="divider" *ngIf="skills.length > 0"></div>
 
-  <!-- Popular Skills Suggestions -->
-  <div class="popular-skills">
-    <h4>Popular Skills</h4>
-    <div class="popular-skills-grid">
-      <button 
-        *ngFor="let skill of skillSuggestions.slice(0, 12)" 
-        class="popular-skill-btn"
-        (click)="addSkill(skill)"
-        [disabled]="isSkillPresent(skill)">
-        <i class="icon-plus-circle"></i> {{ skill }}
-      </button>
+    <!-- 3. Compact Skills List -->
+    <div class="compact-list" *ngIf="skills.length > 0">
+      <div *ngFor="let skill of skills; let i = index" class="skill-row">
+        <!-- Drag/Move Icons -->
+        <div class="move-actions">
+          <button type="button"
+                  class="move-btn btn-icon move-up"
+                  (click)="moveSkillUp(i)"
+                  [disabled]="i === 0"
+                  aria-label="Move skill up"
+                  title="Move up">
+            <i class="icon-arrow-up large-icon"></i>
+          </button>
+          <button type="button"
+                  class="move-btn btn-icon move-down"
+                  (click)="moveSkillDown(i)"
+                  [disabled]="i === skills.length - 1"
+                  aria-label="Move skill down"
+                  title="Move down">
+            <i class="icon-arrow-down large-icon"></i>
+          </button>
+        </div>
+
+        <!-- Skill Name Input -->
+        <div class="skill-name-col">
+          <input
+            type="text"
+            [ngModel]="skill.name"
+            (ngModelChange)="updateSkillName(i, $event)"
+            class="row-input">
+        </div>
+
+        <!-- Dot Level Selector -->
+        <div class="skill-level-col">
+          <div class="level-dots">
+            <div 
+              *ngFor="let level of [1,2,3,4,5]" 
+              class="dot" 
+              [class.filled]="(skill.level || 0) >= level"
+              (click)="updateSkillLevel(i, level)"
+              title="Level {{level}}/5">
+            </div>
+          </div>
+        </div>
+
+        <!-- Remove -->
+        <button type="button" class="btn-icon btn-danger btn-sm" (click)="removeSkill(i)">
+          <i class="icon-trash"></i>
+        </button>
+      </div>
     </div>
   </div>
 </div>

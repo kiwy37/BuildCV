@@ -37,10 +37,11 @@ export class EducationComponent implements OnInit {
       institution: [edu?.institution || '', Validators.required],
       location: [edu?.location || ''],
       startDate: [edu?.startDate || '', Validators.required],
-      endDate: [edu?.endDate || '', Validators.required],
+      endDate: [edu?.endDate || ''],  // Removed Validators.required to make it optional
       gpa: [edu?.gpa || ''],
+      isCurrent: [edu?.isCurrent || false],  // Added isCurrent field
       achievements: this.fb.array(
-        edu?.achievements?.map(a => this.fb.control(a)) || []
+        edu?.achievements?.map(a => this.fb.control(a)) || [this.fb.control('')]
       )
     });
   }
@@ -85,6 +86,7 @@ export class EducationComponent implements OnInit {
   saveEducation(): void {
     const education = this.education.value.map((edu: any) => ({
       ...edu,
+      isCurrent: edu.isCurrent,  // Added isCurrent to saved data
       achievements: edu.achievements.filter((a: string) => a.trim() !== '')
     }));
     
@@ -108,6 +110,14 @@ export class EducationComponent implements OnInit {
       education.at(index).setValue(education.at(index + 1).value);
       education.at(index + 1).setValue(temp);
       this.saveEducation();
+    }
+  }
+
+  onCurrentEducationChange(index: number): void {
+    const educationGroup = this.education.at(index);
+    const isCurrent = educationGroup.get('isCurrent')?.value;
+    if (isCurrent) {
+      educationGroup.get('endDate')?.setValue(null);
     }
   }
 }

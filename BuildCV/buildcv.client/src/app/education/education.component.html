@@ -1,15 +1,6 @@
 <div class="section-container">
   <div class="section-header">
-    <h2>Education</h2>
-    <p>Add your academic background</p>
-  </div>
-
-  <div class="ats-tip">
-    <i class="icon-lightbulb"></i>
-    <div>
-      <strong>ATS Tip:</strong> List your education in reverse chronological order. 
-      Include relevant coursework, honors, and achievements that align with the job requirements.
-    </div>
+    <h2><i class="icon-graduation-cap"></i>Education</h2>
   </div>
 
   <form [formGroup]="educationForm">
@@ -83,7 +74,7 @@
 
           <div class="form-group">
             <label [for]="'startDate' + i">
-              <i class="icon-calendar"></i> Start Date <span class="required">*</span>
+              Start Date <span class="required">*</span>
             </label>
             <input 
               type="month" 
@@ -98,22 +89,6 @@
           </div>
 
           <div class="form-group">
-            <label [for]="'endDate' + i">
-              <i class="icon-calendar"></i> End Date <span class="required">*</span>
-            </label>
-            <input 
-              type="month" 
-              [id]="'endDate' + i" 
-              formControlName="endDate"
-              class="form-input"
-              [class.ng-invalid]="edu.get('endDate')?.invalid && edu.get('endDate')?.touched"
-              [class.ng-touched]="edu.get('endDate')?.touched">
-            <div class="error-message" *ngIf="edu.get('endDate')?.invalid && edu.get('endDate')?.touched">
-              <i class="icon-alert-circle"></i> End date is required
-            </div>
-          </div>
-
-          <div class="form-group">
             <label [for]="'gpa' + i">GPA (Optional)</label>
             <input 
               type="text" 
@@ -121,6 +96,31 @@
               formControlName="gpa"
               placeholder="3.8/4.0"
               class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label [for]="'endDate' + i">End Date</label>
+            <input 
+              type="month" 
+              [id]="'endDate' + i" 
+              formControlName="endDate"
+              class="form-input"
+              [disabled]="edu.get('isCurrent')?.value"
+              [class.ng-invalid]="edu.get('endDate')?.invalid && edu.get('endDate')?.touched"
+              [class.ng-touched]="edu.get('endDate')?.touched">
+            <div class="error-message" *ngIf="edu.get('endDate')?.invalid && edu.get('endDate')?.touched">
+              <i class="icon-alert-circle"></i> End date is required
+            </div>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                formControlName="isCurrent"
+                (change)="onCurrentEducationChange(i)">
+              <span>I am still studying here</span>
+            </label>
           </div>
 
           <!-- Achievements -->

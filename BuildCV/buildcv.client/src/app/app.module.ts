@@ -30,7 +30,6 @@ import { TrustUrlPipe } from './preview/trust-url.pipe';
     PersonalInfoComponent,
     ExperienceComponent,
     EducationComponent,
-    SkillsComponent,
     ProjectsComponent,
     AdditionalComponent,
     PreviewComponent,
@@ -49,7 +48,8 @@ import { TrustUrlPipe } from './preview/trust-url.pipe';
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    ATSTemplateComponent
+    ATSTemplateComponent,
+    SkillsComponent
   ],
   providers: [
   ],

@@ -1,12 +1,6 @@
 <div class="section-container">
   <div class="section-header">
-    <div class="icon-wrapper">
-      <i class="icon-folder"></i>
-    </div>
-    <div>
-      <h2>Projects</h2>
-      <p>Showcase your portfolio and side projects</p>
-    </div>
+    <h2><i class="icon-folder"></i>Projects</h2>
   </div>
 
   <div class="ats-tip">
@@ -111,12 +105,6 @@
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <div class="empty-state" *ngIf="!project.get('technologies')?.value || project.get('technologies')?.value?.length === 0" style="padding: 2rem 1rem;">
-                <i class="icon-inbox"></i>
-                <p>No technologies added yet</p>
-                <p class="empty-state-subtitle">Start typing to add technologies</p>
               </div>
             </div>
           </div>

@@ -18,8 +18,10 @@
     </ng-container>
 
     <!-- Progress Bar: vizibil doar dacă nu ești pe preview -->
-    <div class="progress-bar" *ngIf="currentStep !== 9">
-      <div class="progress-fill" [style.width.%]="(currentStep / totalSteps) * 100"></div>
+    <div *ngIf="currentStep !== 9">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="(currentStep / totalSteps) * 100"></div>
+      </div>
     </div>
 
   <!-- Step Content -->

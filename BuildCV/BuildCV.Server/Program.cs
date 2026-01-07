@@ -1,3 +1,4 @@
+using BuildCV.Server.Service;
 using BuildCV.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ builder.Services.AddSwaggerGen();
 
 // Register CV Service
 builder.Services.AddScoped<ICVService, CVService>();
+builder.Services.AddSingleton<IPdfGenerationService, PdfGenerationService>();
 
 // Add CORS if needed
 builder.Services.AddCors(options =>

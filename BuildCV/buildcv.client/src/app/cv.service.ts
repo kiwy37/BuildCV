@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CVData, CVTemplate, ValidationResult } from './cv-data.model';
+import { CVData, CVTemplate, ValidationResult, SkillEntry, LanguageEntry } from './cv-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,8 @@ export class CvService {
     // Load from localStorage if available
     const savedData = localStorage.getItem('cvData');
     if (savedData) {
-      this.cvDataSubject.next(JSON.parse(savedData));
+      const parsed = JSON.parse(savedData);
+      this.cvDataSubject.next(this.normalizeEntries(parsed));
     }
   }
 
@@ -46,6 +47,39 @@ export class CvService {
       languages: [],
       photoUrl: ''
     };
+  }
+
+  private normalizeEntries(data: any): CVData {
+    const normalizedSkills: SkillEntry[] = (data.skills || []).map((s: any) => {
+      if (typeof s === 'string') {
+        return { name: s, level: 3 };
+      }
+      const entry: any = s;
+      return {
+        name: entry.name || entry.skill || '',
+        level: entry.level ?? (entry.levelPercent ? Math.round((entry.levelPercent / 100) * 5) : 3),
+        levelPercent: entry.levelPercent
+      };
+    });
+
+    const normalizedLanguages: LanguageEntry[] = (data.languages || []).map((l: any) => {
+      if (typeof l === 'string') {
+        return { name: l, level: 3 };
+      }
+      const entry: any = l;
+      return {
+        name: entry.name || entry.language || '',
+        level: entry.level ?? (entry.levelPercent ? Math.round((entry.levelPercent / 100) * 5) : 3),
+        levelPercent: entry.levelPercent
+      };
+    });
+
+    return {
+      ...this.getInitialCVData(),
+      ...data,
+      skills: normalizedSkills,
+      languages: normalizedLanguages,
+    } as CVData;
   }
 
   getCVData(): CVData {

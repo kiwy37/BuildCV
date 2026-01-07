@@ -10,6 +10,33 @@
   min-height: 297mm;
   box-sizing: border-box;
   background: white;
+  position: relative;
+  overflow: visible;
+  --a4-height: 297mm;
+  --page-marker-color: #000;
+  --page-marker-thickness: 5px;
+}
+
+@media screen {
+  .cv-page::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--a4-height) - var(--page-marker-thickness)),
+      var(--page-marker-color) calc(var(--a4-height) - var(--page-marker-thickness)),
+      var(--page-marker-color) var(--a4-height)
+    );
+    background-size: 100% var(--a4-height);
+    background-repeat: repeat-y;
+  }
 }
 
 @media print {
@@ -33,6 +60,8 @@
   padding: 40px 25px;
   box-sizing: border-box;
   overflow: visible;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Contact Info */
@@ -116,6 +145,8 @@
   width: 70%;
   display: flex;
   flex-direction: column;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Header */

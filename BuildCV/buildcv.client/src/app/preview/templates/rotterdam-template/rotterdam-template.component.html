@@ -57,6 +57,7 @@
           <div class="sidebar-title" [ngStyle]="getSidebarTitleStyles()">Languages</div>
           <div *ngFor="let lang of cvData.languages" class="sidebar-value language-item">
             {{getLanguageName(lang)}}
+            <span *ngIf="lang.level"> ({{lang.level}}/5)</span>
           </div>
         </div>
 
@@ -66,6 +67,7 @@
           <div class="skills-list">
             <span *ngFor="let skill of cvData.skills" class="skill-tag">
               {{getSkillName(skill)}}
+              <span *ngIf="skill.level"> ({{skill.level}}/5)</span>
             </span>
           </div>
         </div>

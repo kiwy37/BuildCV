@@ -32,7 +32,20 @@ export class RigaTemplateComponent {
 
   getLanguageLevel(lang: any): number {
     if (typeof lang === 'object') {
+      if (lang.level && lang.level <= 5) {
+        return Math.min(100, Math.max(0, (lang.level / 5) * 100));
+      }
       return lang.levelPercent || lang.level || 60;
+    }
+    return 60;
+  }
+
+  getSkillLevel(skill: any): number {
+    if (typeof skill === 'object') {
+      if (skill.level && skill.level <= 5) {
+        return Math.min(100, Math.max(0, (skill.level / 5) * 100));
+      }
+      return skill.levelPercent || skill.level || 60;
     }
     return 60;
   }

@@ -1,146 +1,40 @@
 <div class="cv-upload-container">
-  <div class="upload-section">
-    <h2>Upload Your CV</h2>
-    <div class="file-input-wrapper">
-      <input 
-        type="file" 
-        (change)="onFileSelected($event)" 
-        accept=".pdf"
-        id="fileInput"
-        #fileInput
+  <div class="upload-column">
+    <div class="upload-card">
+      <h2>Upload Your CV</h2>
+
+      <div
+        class="dropzone"
+        (click)="fileInput.click()"
+        (dragover)="$event.preventDefault()"
+        (drop)="onFileSelected($event)"
       >
-      <label for="fileInput" class="file-label">
-        <span *ngIf="!selectedFile">Select a PDF file</span>
-        <span *ngIf="selectedFile">{{ selectedFile.name }}</span>
-      </label>
-    </div>
-
-    <div *ngIf="error" class="error-message">
-      {{ error }}
-    </div>
-
-    <div *ngIf="isLoading" class="loading">
-      <div class="spinner"></div>
-      <p>Parsing CV...</p>
-    </div>
-  </div>
-
-<!-- La sfârșitul div-ului .results-section, după toate secțiunile -->
-<div *ngIf="parsedResume && !isLoading" style="margin-top: 2rem; text-align: center;">
-  <button class="btn-primary" (click)="continueToNextStep()" style="padding: 1rem 2rem;">
-    <i class="icon-arrow-right"></i> Continue to Personal Info
-  </button>
-
-    <!-- Profile Section -->
-    <div class="section">
-      <h3>Profile</h3>
-      <div class="info-grid">
-        <div class="info-item">
-          <span class="label">Name:</span>
-          <span class="value">{{ parsedResume.profile.name }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Email:</span>
-          <span class="value">{{ parsedResume.profile.email }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Phone:</span>
-          <span class="value">{{ parsedResume.profile.phone }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Location:</span>
-          <span class="value">{{ parsedResume.profile.location }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">URL:</span>
-          <span class="value">{{ parsedResume.profile.url }}</span>
-        </div>
-        <div class="info-item full-width" *ngIf="parsedResume.profile.summary">
-          <span class="label">Summary:</span>
-          <span class="value">{{ parsedResume.profile.summary }}</span>
+        <input
+          type="file"
+          (change)="onFileSelected($event)"
+          accept=".pdf"
+          id="fileInput"
+          #fileInput
+          class="hidden-input"
+        />
+        <div class="drop-inner">
+          <div class="icon-uploader">📄</div>
+          <div class="drop-text">
+            <div *ngIf="!selectedFile">Click or drag a PDF to upload</div>
+            <div *ngIf="selectedFile" class="selected-name">{{ selectedFile.name }}</div>
+            <small class="muted">We’ll parse your CV and prefill the form</small>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Education Section -->
-    <div class="section" *ngIf="parsedResume.education.length > 0">
-      <h3>Education</h3>
-      <div *ngFor="let edu of parsedResume.education" class="subsection">
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">Institution:</span>
-            <span class="value">{{ edu.school }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Degree:</span>
-            <span class="value">{{ edu.degree }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">GPA:</span>
-            <span class="value">{{ edu.gpa }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Period:</span>
-            <span class="value">{{ edu.date }}</span>
-          </div>
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+
+      <!-- loading overlay (appears over the card) -->
+      <div class="upload-overlay" *ngIf="isLoading" aria-hidden="true">
+        <div class="overlay-content">
+          <div class="spinner large"></div>
+          <span>Parsing CV…</span>
         </div>
-        <ul class="descriptions" *ngIf="edu.descriptions.length > 0">
-          <li *ngFor="let desc of edu.descriptions">{{ desc }}</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Work Experience Section -->
-    <div class="section" *ngIf="parsedResume.workExperience.length > 0">
-      <h3>Work Experience</h3>
-      <div *ngFor="let work of parsedResume.workExperience" class="subsection">
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">Company:</span>
-            <span class="value">{{ work.company }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Position:</span>
-            <span class="value">{{ work.jobTitle }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Period:</span>
-            <span class="value">{{ work.date }}</span>
-          </div>
-        </div>
-        <ul class="descriptions" *ngIf="work.descriptions.length > 0">
-          <li *ngFor="let desc of work.descriptions">{{ desc }}</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Projects Section -->
-    <div class="section" *ngIf="parsedResume.projects.length > 0">
-      <h3>Projects</h3>
-      <div *ngFor="let project of parsedResume.projects" class="subsection">
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">Project Name:</span>
-            <span class="value">{{ project.name }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Period:</span>
-            <span class="value">{{ project.date }}</span>
-          </div>
-        </div>
-        <ul class="descriptions" *ngIf="project.descriptions.length > 0">
-          <li *ngFor="let desc of project.descriptions">{{ desc }}</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Skills Section -->
-    <div class="section" *ngIf="parsedResume.skills.length > 0">
-      <h3>Skills</h3>
-      <div class="skills-list">
-        <span *ngFor="let skill of parsedResume.skills" class="skill-tag">
-          {{ skill }}
-        </span>
       </div>
     </div>
   </div>

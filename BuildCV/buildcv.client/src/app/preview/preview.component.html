@@ -1,13 +1,12 @@
-<!-- preview.component.html -->
+<!-- BuildCV/buildcv.client/src/app/preview/preview.component.html -->
 <div class="preview-container" [class.sidebar-collapsed]="!showCustomizationPanel">
   <!-- Sidebar -->
   <div class="sidebar">
     <app-customize-menu
       [customization]="customization"
       [show]="showCustomizationPanel"
-      [zoomPercent]="zoom * 100"
+      [zoomPercent]="100"
       (customizationChange)="onCustomizationChange()"
-      (zoomChange)="setZoom($event)"
       (reset)="resetCustomization()"
       (exportPdf)="downloadPDF()"
       (back)="backToThemeSelection()"
@@ -23,36 +22,59 @@
     {{ showCustomizationPanel ? "‹" : "›" }}
   </button>
 
-  <!-- CV Preview Area -->
+  <!-- PDF Preview Area -->
   <div class="cv-preview-area">
-    <div class="cv-preview-wrapper" [ngStyle]="getPreviewStyles()">
+    <!-- Error Message -->
+    <div *ngIf="pdfGenerationError" class="pdf-error">
+      <i class="icon-alert-circle"></i>
+      <span>{{ pdfGenerationError }}</span>
+      <button class="btn-retry" (click)="generatePdfPreview()">
+        <i class="icon-refresh"></i> Retry
+      </button>
+    </div>
 
-      <!-- Offscreen source (Angular renders here; Paged.js paginates it) -->
-      <div #pagedSource class="paged-source" aria-hidden="true">
-        <app-lima-template
-          *ngIf="selectedTheme === 'lima'"
-          [cvData]="cvData"
-          [customization]="customization"
-        ></app-lima-template>
-
-        <app-riga-template
-          *ngIf="selectedTheme === 'riga'"
-          [cvData]="cvData"
-          [customization]="customization"
-        ></app-riga-template>
-
-        <app-rotterdam-template
-          *ngIf="selectedTheme === 'rotterdam'"
-          [cvData]="cvData"
-          [customization]="customization"
-        ></app-rotterdam-template>
-
-        <app-ats-template
-          *ngIf="selectedTheme === 'ats'"
-          [cvData]="cvData"
-          [customization]="customization"
-        ></app-ats-template>
+    <!-- PDF iframe with loading overlay -->
+    <div class="pdf-frame-wrapper" *ngIf="!pdfGenerationError">
+      <div class="pdf-loading-overlay" *ngIf="isPdfLoading">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading...</div>
       </div>
+
+      <iframe
+        #pdfIframe
+        *ngIf="pdfBlobUrl"
+        class="pdf-iframe"
+        [src]="pdfBlobUrl"
+        frameborder="0"
+        (load)="onPdfLoad()"
+      ></iframe>
+    </div>
+
+    <!-- Hidden template container for HTML extraction -->
+    <div #templateContainer style="display: none;">
+      <app-lima-template
+        *ngIf="selectedTheme === 'lima'"
+        [cvData]="cvData"
+        [customization]="customization"
+      ></app-lima-template>
+
+      <app-riga-template
+        *ngIf="selectedTheme === 'riga'"
+        [cvData]="cvData"
+        [customization]="customization"
+      ></app-riga-template>
+
+      <app-rotterdam-template
+        *ngIf="selectedTheme === 'rotterdam'"
+        [cvData]="cvData"
+        [customization]="customization"
+      ></app-rotterdam-template>
+
+      <app-ats-template
+        *ngIf="selectedTheme === 'ats'"
+        [cvData]="cvData"
+        [customization]="customization"
+      ></app-ats-template>
     </div>
   </div>
 </div>

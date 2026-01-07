@@ -21,6 +21,7 @@ import { RotterdamTemplateComponent } from './preview/templates/rotterdam-templa
 import { RigaTemplateComponent } from './preview/templates/riga-template/riga-template.component';
 import { ATSTemplateComponent } from './preview/templates/ats-template/ats-template.component';
 import { CustomizeMenuComponent } from './preview/customize-menu/customize-menu.component';
+import { TrustUrlPipe } from './preview/trust-url.pipe';
 
 @NgModule({
   declarations: [
@@ -38,11 +39,12 @@ import { CustomizeMenuComponent } from './preview/customize-menu/customize-menu.
     CustomizeMenuComponent,
     LimaTemplateComponent,
     RigaTemplateComponent,
-    RotterdamTemplateComponent
+    RotterdamTemplateComponent,
+    TrustUrlPipe
   ],
   imports: [
-    CommonModule,
     BrowserModule,
+    CommonModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,

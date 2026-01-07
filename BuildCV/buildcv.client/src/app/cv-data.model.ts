@@ -3,14 +3,26 @@ export interface CVData {
   professionalSummary: string;
   experiences: Experience[];
   education: Education[];
-  skills: string[];
+  skills: SkillEntry[];
   projects: Project[];
   certifications: Certification[];
-  languages: string[];
+  languages: LanguageEntry[];
   hobbies?: string[];
   references?: Reference[];
   selectedTheme?: string;
   photoUrl?: string; 
+}
+
+export interface SkillEntry {
+  name: string;
+  level?: number; // 1-5 scale
+  levelPercent?: number; // legacy support
+}
+
+export interface LanguageEntry {
+  name: string;
+  level?: number; // 1-5 scale
+  levelPercent?: number; // legacy support
 }
 
 export interface Reference { 

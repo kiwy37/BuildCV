@@ -89,6 +89,9 @@ export class CvUploadComponent {
 
       // NEW: Convert parsed data to CVData format and save to service
       this.saveToCvService(this.parsedResume);
+
+      // NEW: after successful parse and save, go to next step automatically
+      this.cvService.nextStep();
     } catch (err) {
       this.error = 'Error parsing CV: ' + (err as Error).message;
       console.error(err);
@@ -147,7 +150,8 @@ export class CvUploadComponent {
 
     // Update Skills
     if (resumeData.skills && resumeData.skills.length > 0) {
-      this.cvService.updateCVData({ skills: resumeData.skills });
+      const mappedSkills = resumeData.skills.map((s: any) => ({ name: s, level: 3 }));
+      this.cvService.updateCVData({ skills: mappedSkills });
     }
 
     // Update Projects
@@ -745,5 +749,14 @@ export class CvUploadComponent {
     if (text.length > 3 && text.length < 50) score += 1;
     if (/(?:19|20)\d{2}/.test(text)) score -= 3;
     return score;
+  }
+
+  // New helper: produce initials for avatar in preview
+  getInitials(name: string | undefined | null): string {
+    if (!name) return 'CV';
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return 'CV';
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 }

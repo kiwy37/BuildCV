@@ -18,8 +18,8 @@
   position: relative;
   overflow: visible;
   --a4-height: 297mm;
-  --page-marker-color: rgba(255, 0, 0, 0.45);
-  --page-marker-thickness: 1px;
+  --page-marker-color: #000;
+  --page-marker-thickness: 5px;
 }
 
 @media screen {

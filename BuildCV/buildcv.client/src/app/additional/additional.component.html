@@ -107,6 +107,10 @@
           (keypress)="onLanguageKeyPress($event)"
           placeholder="Enter a language (e.g., English - Native)"
           class="skill-input">
+        <div class="level-input">
+          <label>Level: {{ currentLanguageLevel }}/5</label>
+          <input type="range" min="1" max="5" [(ngModel)]="currentLanguageLevel" />
+        </div>
         <button class="btn-add-skill" (click)="addLanguage()" [disabled]="!currentLanguage.trim()">
           <i class="icon-plus"></i> Add
         </button>
@@ -117,7 +121,8 @@
     <div class="skills-display" *ngIf="languages.length > 0" style="margin-top: 1.5rem;">
       <div class="skills-grid">
         <div *ngFor="let language of languages; let i = index" class="skill-chip">
-          <span class="skill-name">{{ language }}</span>
+          <span class="skill-name">{{ language.name }} ({{ language.level || 3 }}/5)</span>
+          <input type="range" min="1" max="5" [ngModel]="language.level" (ngModelChange)="updateLanguageLevel(i, $event)" />
           <button class="btn-icon-small btn-danger" (click)="removeLanguage(i)" title="Remove">
             <i class="icon-x"></i>
           </button>

@@ -76,6 +76,7 @@
           <div class="skills-container">
             <div *ngFor="let skill of cvData.skills" class="skill-badge">
               {{getSkillName(skill)}}
+              <span *ngIf="skill.level"> ({{skill.level}}/5)</span>
             </div>
           </div>
         </div>
@@ -86,7 +87,7 @@
         <div class="title" [ngStyle]="getSectionTitleStyles()">LANGUAGE</div>
         <div class="ats-body">
           <span *ngFor="let lang of cvData.languages; let last = last">
-            {{getLanguageName(lang)}}<span *ngIf="!last">, </span>
+            {{getLanguageName(lang)}}<span *ngIf="lang.level"> ({{lang.level}}/5)</span><span *ngIf="!last">, </span>
           </span>
         </div>
       </section>

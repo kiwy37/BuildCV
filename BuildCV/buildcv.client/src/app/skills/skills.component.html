@@ -13,6 +13,10 @@
         (keypress)="onKeyPress($event)"
         placeholder="Type a skill (e.g., JavaScript, Project Management)"
         class="skill-input">
+      <div class="level-input">
+        <label>Level: {{ currentSkillLevel }}/5</label>
+        <input type="range" min="1" max="5" [(ngModel)]="currentSkillLevel" />
+      </div>
       <button class="btn-add-skill" (click)="addSkill()" [disabled]="!currentSkill.trim()">
         <i class="icon-plus"></i> Add
       </button>
@@ -33,7 +37,8 @@
   <div class="skills-display" *ngIf="skills.length > 0">
     <div class="skills-simple-grid">
       <div *ngFor="let skill of skills; let i = index" class="skill-tag-simple">
-        <span class="skill-name">{{ skill }}</span>
+        <span class="skill-name">{{ skill.name }} ({{ skill.level || 3 }}/5)</span>
+        <input type="range" min="1" max="5" [ngModel]="skill.level" (ngModelChange)="updateSkillLevel(i, $event)" />
         <button class="btn-remove-skill" (click)="removeSkill(i)" title="Remove">×</button>
       </div>
     </div>
@@ -53,7 +58,7 @@
         *ngFor="let skill of skillSuggestions.slice(0, 12)" 
         class="popular-skill-btn"
         (click)="addSkill(skill)"
-        [disabled]="skills.includes(skill)">
+        [disabled]="isSkillPresent(skill)">
         <i class="icon-plus-circle"></i> {{ skill }}
       </button>
     </div>

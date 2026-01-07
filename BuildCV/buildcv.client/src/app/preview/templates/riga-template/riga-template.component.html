@@ -50,7 +50,7 @@
               </div>
               <div class="left-hr"></div>
               <div *ngFor="let lang of cvData.languages" class="lang-item">
-                <div class="lang-label">{{getLanguageName(lang)}}</div>
+                <div class="lang-label">{{getLanguageName(lang)}} <span *ngIf="lang.level">({{lang.level}}/5)</span></div>
                 <div class="lang-bar">
                   <div class="lang-fill" [style.width.%]="getLanguageLevel(lang)"></div>
                 </div>
@@ -65,7 +65,7 @@
               <div class="left-hr"></div>
               <div class="skills-grid">
                 <div *ngFor="let skill of cvData.skills" class="skill-tag">
-                  {{getSkillName(skill)}}
+                    {{getSkillName(skill)}} ({{ (skill.level || 3) }}/5)
                 </div>
               </div>
             </div>
@@ -104,7 +104,7 @@
               <div *ngFor="let skill of cvData.skills" class="skill-row">
                 <div class="skill-name">{{getSkillName(skill)}}</div>
                 <div class="skill-meter">
-                  <div class="fill"></div>
+                  <div class="fill" [style.width.%]="getSkillLevel(skill)"></div>
                 </div>
               </div>
             </div>

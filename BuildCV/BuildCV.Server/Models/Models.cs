@@ -2,6 +2,28 @@
 {
     public class CVData
     {
+        public class PdfGenerationOptions
+        {
+            public string Format { get; set; } = "A4"; // A4, Letter
+            public bool PrintBackground { get; set; } = true;
+            public double Scale { get; set; } = 1.0; // For high-quality: 1.5 or 2.0
+            public MarginOptions Margin { get; set; } = new MarginOptions();
+        }
+
+        public class MarginOptions
+        {
+            public string Top { get; set; } = "0";
+            public string Right { get; set; } = "0";
+            public string Bottom { get; set; } = "0";
+            public string Left { get; set; } = "0";
+        }
+
+        public class PdfGenerationRequest
+        {
+            public string HtmlContent { get; set; } = string.Empty;
+            public PdfGenerationOptions Options { get; set; } = new PdfGenerationOptions();
+        }
+
         public PersonalInfo PersonalInfo { get; set; } = new();
         public string ProfessionalSummary { get; set; } = string.Empty;
         public List<Experience> Experiences { get; set; } = new();

@@ -7,66 +7,61 @@
   </div>
 
   <!-- Certifications Section -->
-  <div class="form-card">
-    <div class="card-header">
-      <h3>
-        <i class="icon-trophy"></i>
-        Certifications
-      </h3>
-    </div>
-
-    <form [formGroup]="certificationsForm">
+  <div class="education-card">
+    <form [formGroup]="certificationsForm" *ngIf="certifications.length > 0">
       <div formArrayName="certifications">
-        <div *ngFor="let cert of certifications.controls; let i = index" class="education-card" style="margin-bottom: 1rem;">
-          <div class="card-header" style="border-bottom: 1px solid var(--border-color); margin-bottom: 1rem;">
-            <div class="card-title" style="font-size: 1rem;">
-              Certification {{ i + 1 }}
+        <div *ngFor="let cert of certifications.controls; let i = index" class="cert-item">
+          <!-- Cert Header -->
+          <div class="cert-item-header">
+            <div class="card-title">
+              <h3>Certification {{ i + 1 }}</h3>
             </div>
-            <button type="button" class="btn-icon btn-danger" (click)="removeCertification(i)" 
-                    *ngIf="certifications.length > 0">
-              <i class="icon-trash"></i>
-            </button>
+            <div class="cert-actions">
+              <button type="button"
+                      class="btn-icon move-btn btn-sm"
+                      (click)="moveCertificationUp(i)"
+                      [disabled]="i === 0"
+                      title="Move up">
+                <i class="icon-arrow-up"></i>
+              </button>
+              <button type="button"
+                      class="btn-icon move-btn btn-sm"
+                      (click)="moveCertificationDown(i)"
+                      [disabled]="i === certifications.length - 1"
+                      title="Move down">
+                <i class="icon-arrow-down"></i>
+              </button>
+              <button type="button" class="btn-icon btn-danger btn-sm" (click)="removeCertification(i)" title="Remove">
+                <i class="icon-trash"></i>
+              </button>
+            </div>
           </div>
 
           <div [formGroupName]="i" class="form-grid">
-            <div class="form-group">
-              <label [for]="'certName' + i">
-                Certification Name <span class="required">*</span>
-              </label>
+            <div class="input-group">
+              <label [for]="'certName' + i">Certification Name</label>
               <input 
                 type="text" 
                 [id]="'certName' + i" 
                 formControlName="name"
-                placeholder="AWS Certified Solutions Architect"
+                placeholder="Ex: AWS Certified Solutions Architect"
                 class="form-input"
-                [class.ng-invalid]="cert.get('name')?.invalid && cert.get('name')?.touched"
-                [class.ng-touched]="cert.get('name')?.touched">
-              <div class="error-message" *ngIf="cert.get('name')?.invalid && cert.get('name')?.touched">
-                <i class="icon-alert-circle"></i> Certification name is required
-              </div>
+                [class.error-border]="cert.get('name')?.invalid && cert.get('name')?.touched">
             </div>
 
-            <div class="form-group">
-              <label [for]="'issuer' + i">
-                Issuing Organization <span class="required">*</span>
-              </label>
+            <div class="input-group">
+              <label [for]="'issuer' + i">Issuing Organization</label>
               <input 
                 type="text" 
                 [id]="'issuer' + i" 
                 formControlName="issuer"
-                placeholder="Amazon Web Services"
+                placeholder="Ex: Amazon"
                 class="form-input"
-                [class.ng-invalid]="cert.get('issuer')?.invalid && cert.get('issuer')?.touched"
-                [class.ng-touched]="cert.get('issuer')?.touched">
-              <div class="error-message" *ngIf="cert.get('issuer')?.invalid && cert.get('issuer')?.touched">
-                <i class="icon-alert-circle"></i> Issuer is required
-              </div>
+                [class.error-border]="cert.get('issuer')?.invalid && cert.get('issuer')?.touched">
             </div>
 
-            <div class="form-group">
-              <label [for]="'date' + i">
-                <i class="icon-calendar"></i> Date Obtained
-              </label>
+            <div class="input-group">
+              <label [for]="'date' + i">Date Obtained</label>
               <input 
                 type="month" 
                 [id]="'date' + i" 
@@ -74,7 +69,7 @@
                 class="form-input">
             </div>
 
-            <div class="form-group">
+            <div class="input-group">
               <label [for]="'credentialId' + i">Credential ID</label>
               <input 
                 type="text" 
@@ -84,64 +79,105 @@
                 class="form-input">
             </div>
           </div>
+          <div class="divider" *ngIf="i < certifications.length - 1"></div>
         </div>
       </div>
     </form>
 
-    <button type="button" class="btn-secondary" (click)="addCertification()" style="width: 100%; margin-top: 1rem;">
-      <i class="icon-plus"></i> Add Certification
-    </button>
+    <!-- Enhanced Empty State -->
+    <div class="empty-state" *ngIf="certifications.length === 0">
+      <div class="empty-icon-wrapper">
+        <i class="icon-id-card"></i>
+      </div>
+      <p class="empty-title">No professional certifications</p>
+      <p class="empty-state-subtitle">Showcase your achievements to stand out.</p>
+      <button type="button" class="btn-primary" (click)="addCertification()">
+        <i class="icon-plus"></i> Add First Certification
+      </button>
+    </div>
+
+    <!-- Regular Add Button (only visible when list is NOT empty) -->
+    <div style="margin-top: 1.5rem;" *ngIf="certifications.length > 0">
+      <button type="button" class="btn-primary" (click)="addCertification()">
+        <i class="icon-plus"></i> Add Certification
+      </button>
+    </div>
   </div>
 
   <!-- Languages Section -->
-  <div class="form-card">
-    <div class="card-header">
-      <h3>Languages</h3>
+  <div class="education-card">
+    <div class="subtitle">
+      <i class="icon-globe"></i> Languages
     </div>
 
-    <div class="skills-input-card">
+    <!-- Compact Add Bar (Matches Skills) -->
+    <div class="compact-add-bar">
       <div class="input-wrapper">
-        <input 
-          type="text" 
+        <input
+          type="text"
           [(ngModel)]="currentLanguage"
           (keypress)="onLanguageKeyPress($event)"
-          placeholder="Enter a language (e.g., English - Native)"
-          class="skill-input">
-        <div class="level-input">
-          <label>Level: {{ currentLanguageLevel }}/5</label>
-          <input type="range" min="1" max="5" [(ngModel)]="currentLanguageLevel" />
-        </div>
-        <button class="btn-add-skill" (click)="addLanguage()" [disabled]="!currentLanguage.trim()">
-          <i class="icon-plus"></i> Add
+          placeholder="Type a language (e.g. English)..."
+          class="form-input">
+        <button class="btn-primary" (click)="addLanguage()" [disabled]="!currentLanguage.trim()">
+          Add
         </button>
       </div>
     </div>
 
-    <!-- Languages Display -->
-    <div class="skills-display" *ngIf="languages.length > 0" style="margin-top: 1.5rem;">
-      <div class="skills-grid">
-        <div *ngFor="let language of languages; let i = index" class="skill-chip">
-          <span class="skill-name">{{ language.name }} ({{ language.level || 3 }}/5)</span>
-          <input type="range" min="1" max="5" [ngModel]="language.level" (ngModelChange)="updateLanguageLevel(i, $event)" />
-          <button class="btn-icon-small btn-danger" (click)="removeLanguage(i)" title="Remove">
-            <i class="icon-x"></i>
+    <div class="divider" *ngIf="languages.length > 0"></div>
+
+    <!-- Compact List (Matches Skills) -->
+    <div class="compact-list" *ngIf="languages.length > 0">
+      <div *ngFor="let language of languages; let i = index" class="skill-row">
+        <div class="move-actions">
+          <button type="button"
+                  class="move-btn btn-icon move-up"
+                  (click)="moveLanguageUp(i)"
+                  [disabled]="i === 0"
+                  aria-label="Move language up"
+                  title="Move up">
+            <i class="icon-arrow-up large-icon"></i>
+          </button>
+          <button type="button"
+                  class="move-btn btn-icon move-down"
+                  (click)="moveLanguageDown(i)"
+                  [disabled]="i === languages.length - 1"
+                  aria-label="Move language down"
+                  title="Move down">
+            <i class="icon-arrow-down large-icon"></i>
           </button>
         </div>
+        <!-- Language Name Input -->
+        <div class="skill-name-col">
+          <input
+            type="text"
+            [(ngModel)]="language.name"
+            class="row-input">
+        </div>
+
+        <!-- Dot Level Selector -->
+        <div class="skill-level-col">
+          <div class="level-dots">
+            <div 
+              *ngFor="let level of [1,2,3,4,5]" 
+              class="dot" 
+              [class.filled]="(language.level || 0) >= level"
+              (click)="updateLanguageLevel(i, level)"
+              title="Level {{level}}/5">
+            </div>
+          </div>
+        </div>
+
+        <!-- Remove -->
+        <button type="button" class="btn-icon btn-danger btn-sm" (click)="removeLanguage(i)">
+          <i class="icon-trash"></i>
+        </button>
       </div>
     </div>
-
-    <div class="empty-state" *ngIf="languages.length === 0" style="padding: 2rem 1rem;">
-      <i class="icon-inbox"></i>
-      <p>No languages added yet</p>
-      <p class="empty-state-subtitle">Add languages you speak</p>
-    </div>
-
-    <div class="ats-tip" style="margin-top: 1.5rem;">
-      <i class="icon-lightbulb"></i>
-      <div>
-        <strong>Tip:</strong> Include your proficiency level (Native, Fluent, Professional, Conversational).
-        Example: "English - Native", "Spanish - Professional"
-      </div>
+    
+    <div class="empty-state" *ngIf="languages.length === 0">
+      <p class="empty-state-subtitle">No languages added yet.</p>
     </div>
   </div>
 </div>

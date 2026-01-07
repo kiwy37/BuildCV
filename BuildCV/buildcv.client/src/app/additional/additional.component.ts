@@ -52,6 +52,24 @@ export class AdditionalComponent implements OnInit {
     this.saveCertifications();
   }
 
+  moveCertificationUp(index: number): void {
+    if (index > 0) {
+      const control = this.certifications.at(index);
+      this.certifications.removeAt(index);
+      this.certifications.insert(index - 1, control);
+      this.saveCertifications();
+    }
+  }
+
+  moveCertificationDown(index: number): void {
+    if (index < this.certifications.length - 1) {
+      const control = this.certifications.at(index);
+      this.certifications.removeAt(index);
+      this.certifications.insert(index + 1, control);
+      this.saveCertifications();
+    }
+  }
+
   addLanguage(): void {
     const lang = this.currentLanguage.trim();
     if (!lang) return;
@@ -66,6 +84,20 @@ export class AdditionalComponent implements OnInit {
   removeLanguage(index: number): void {
     this.languages.splice(index, 1);
     this.saveLanguages();
+  }
+
+  moveLanguageUp(index: number): void {
+    if (index > 0) {
+      [this.languages[index - 1], this.languages[index]] = [this.languages[index], this.languages[index - 1]];
+      this.saveLanguages();
+    }
+  }
+
+  moveLanguageDown(index: number): void {
+    if (index < this.languages.length - 1) {
+      [this.languages[index + 1], this.languages[index]] = [this.languages[index], this.languages[index + 1]];
+      this.saveLanguages();
+    }
   }
 
   onLanguageKeyPress(event: KeyboardEvent): void {

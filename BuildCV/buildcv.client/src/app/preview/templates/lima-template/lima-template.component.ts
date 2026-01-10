@@ -21,6 +21,8 @@ export interface CustomizationSettings {
   borderColor?: string;
   headingColor?: string;
   sectionBgColor?: string;
+  /** ATS-only: background color used for ATS section headers */
+  atsThemeColor?: string;
   headingFontSize: number;
   sectionSpacing: number;
   fontFamily: string;

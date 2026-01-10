@@ -10,6 +10,7 @@ export class CustomizeMenuComponent implements OnInit {
   @Input() customization!: Partial<CustomizationSettings>;
   @Input() show: boolean = true;
   @Input() zoomPercent: number = 100;
+  @Input() selectedTheme: string = '';
 
   @Output() customizationChange = new EventEmitter<void>();
   @Output() zoomChange = new EventEmitter<number>();
@@ -38,21 +39,22 @@ export class CustomizeMenuComponent implements OnInit {
   applyDefaults() {
     const defaults: Partial<CustomizationSettings> = {
       fontSize: 16,
-      headingFontSize: 18,
-      lineHeight: 1.8,
-      sectionSpacing: 20,
+      headingFontSize: 25,
+      lineHeight: 1.5,
+      sectionSpacing: 27,
       marginLeft: 30,
-      marginTop: 20,
+      marginTop: 30,
       paddingLeft: 30,
       paddingRight: 30,
-      primaryColor: '#2563EB',
-      secondaryColor: '#10B981',
-      textColor: '#111827',
+      primaryColor: '#4F46E5',
+      secondaryColor: '#000000',
+      textColor: '#2D3748',
       backgroundColor: '#FFFFFF',
-      borderColor: '#E5E7EB',
-      headingColor: '#111827',
-      sectionBgColor: '#ffffff',
-      fontFamily: 'Lora'
+      borderColor: '#dcdfe4',
+      headingColor: '#2a303c',
+      sectionBgColor: '#f9fafb',
+      atsThemeColor: '#eef6ff',
+      fontFamily: 'Roboto'
     };
 
     // Merge defaults with existing customization WITHOUT replacing the reference.
@@ -73,10 +75,8 @@ export class CustomizeMenuComponent implements OnInit {
     }
   }
 
-  doReset(): void { 
-    this.reset.emit(); 
-    // Re-apply defaults visually if the parent doesn't instantly replace the object
-    setTimeout(() => this.applyDefaults(), 50); 
+  doReset(): void {
+    this.reset.emit();
   }
   
   doExport(): void { this.exportPdf.emit(); }

@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-ats-template',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './ats-template.component.html',
+  templateUrl: './ats-template.component.clean.html',
   styleUrls: ['./ats-template.component.css'],
 })
 export class ATSTemplateComponent {
@@ -62,8 +62,56 @@ export class ATSTemplateComponent {
     return skill.name || skill.skill || '';
   }
 
+  private toLevelNumber(level: any): number | null {
+    const n = typeof level === 'string' ? Number(level.trim()) : Number(level);
+    if (!isFinite(n)) return null;
+    const rounded = Math.round(n);
+    if (rounded <= 0) return null;
+    return rounded;
+  }
+
+  getSkillLevelLabel(skill: any): string {
+    const level = this.toLevelNumber(skill?.level);
+    if (!level) return '';
+    // Keep it ATS-friendly: short, common words.
+    switch (level) {
+      case 1:
+        return 'Beginner';
+      case 2:
+        return 'Basic';
+      case 3:
+        return 'Intermediate';
+      case 4:
+        return 'Advanced';
+      case 5:
+        return 'Expert';
+      default:
+        // For values outside 1-5, still show something meaningful.
+        return level >= 6 ? 'Expert' : '';
+    }
+  }
+
   getLanguageName(lang: any): string {
     return typeof lang === 'string' ? lang : lang.name || '';
+  }
+
+  getLanguageLevelLabel(lang: any): string {
+    const level = this.toLevelNumber(lang?.level);
+    if (!level) return '';
+    switch (level) {
+      case 1:
+        return 'Basic';
+      case 2:
+        return 'Conversational';
+      case 3:
+        return 'Professional';
+      case 4:
+        return 'Fluent';
+      case 5:
+        return 'Native';
+      default:
+        return level >= 6 ? 'Native' : '';
+    }
   }
 
   getContainerStyles(): any {
@@ -95,18 +143,21 @@ export class ATSTemplateComponent {
   getSectionTitleStyles(): any {
     const c = this.customization;
     const titleFontSize = Math.max(12, Math.round(c.headingFontSize * 0.55));
+    const themeBg = c.atsThemeColor || c.sectionBgColor || 'transparent';
 
     return {
-      background: c.sectionBgColor || 'transparent',
+      background: themeBg,
       color: c.primaryColor,
-      padding: c.sectionBgColor ? '6px 10px' : '0 0 6px 0',
-      'border-radius': c.sectionBgColor ? '6px' : '0',
+      padding: themeBg !== 'transparent' ? '6px 10px' : '0 0 6px 0',
+      'border-radius': themeBg !== 'transparent' ? '6px' : '0',
       'font-weight': '800',
       'text-align': 'left',
       'letter-spacing': '0.08em',
       'text-transform': 'uppercase',
       'font-size': `${titleFontSize}px`,
-      'border-bottom': c.sectionBgColor ? `1px solid ${c.borderColor || '#e5e7eb'}` : `2px solid ${c.primaryColor}`,
+      'border-bottom': themeBg !== 'transparent'
+        ? `1px solid ${c.borderColor || '#e5e7eb'}`
+        : `2px solid ${c.primaryColor}`,
     };
   }
 

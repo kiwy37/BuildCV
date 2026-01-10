@@ -129,10 +129,22 @@
         <div class="color-row">
           <div class="color-info">
             <label>Page Background</label>
+            <p>Fundalul din jurul paginii</p>
           </div>
           <div class="color-input-wrapper">
             <input type="color" [(ngModel)]="customization.backgroundColor" (input)="onCustomizationInput()">
             <div class="color-preview border" [style.background]="customization.backgroundColor"></div>
+          </div>
+        </div>
+
+        <div class="color-row" *ngIf="selectedTheme === 'ats'">
+          <div class="color-info">
+            <label>Theme Color</label>
+            <p>ATS section headers background</p>
+          </div>
+          <div class="color-input-wrapper">
+            <input type="color" [(ngModel)]="customization.atsThemeColor" (input)="onCustomizationInput()">
+            <div class="color-preview border" [style.background]="customization.atsThemeColor"></div>
           </div>
         </div>
       </div>

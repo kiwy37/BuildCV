@@ -1,11 +1,35 @@
 // BuildCV/buildcv.client/src/app/preview/preview.component.ts
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { CvService } from '../cv.service';
 import { CVData } from '../cv-data.model';
 import { CustomizationSettings } from './templates/lima-template/lima-template.component';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+const DEFAULT_CUSTOMIZATION: CustomizationSettings = {
+  fontSize: 16,
+  lineHeight: 1.5,
+  marginTop: 30,
+  marginBottom: 30,
+  marginLeft: 30,
+  marginRight: 30,
+  paddingTop: 32,
+  paddingBottom: 32,
+  paddingLeft: 32,
+  paddingRight: 32,
+  primaryColor: '#4F46E5',
+  secondaryColor: '#000000',
+  textColor: '#2D3748',
+  backgroundColor: '#FFFFFF',
+  borderColor: '#dcdfe4',
+  headingColor: '#2a303c',
+  sectionBgColor: '#f9fafb',
+  atsThemeColor: '#eef6ff',
+  headingFontSize: 25,
+  sectionSpacing: 27,
+  fontFamily: 'Roboto'
+};
 
 @Component({
   selector: 'app-preview',
@@ -26,32 +50,13 @@ export class PreviewComponent implements OnInit, OnDestroy {
   isPdfLoading = false;
   pdfGenerationError: string | null = null;
 
-  customization: CustomizationSettings = {
-    fontSize: 14,
-    lineHeight: 1.6,
-    marginTop: 0,
-    marginBottom: 0,
-    marginLeft: 0,
-    marginRight: 0,
-    paddingTop: 32,
-    paddingBottom: 32,
-    paddingLeft: 32,
-    paddingRight: 32,
-    primaryColor: '#4F46E5',
-    secondaryColor: '#10B981',
-    textColor: '#2D3748',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#dcdfe4',
-    headingColor: '#2a303c',
-    sectionBgColor: '#f9fafb',
-    headingFontSize: 24,
-    sectionSpacing: 20,
-    fontFamily: 'Roboto'
-  };
+  customization: CustomizationSettings = { ...DEFAULT_CUSTOMIZATION };
 
   // Debounce subject for PDF regeneration
   private regeneratePdfSubject = new Subject<void>();
   private destroy$ = new Subject<void>();
+
+  private viewReady = false;
 
   constructor(private cvService: CvService, private sanitizer: DomSanitizer) {}
 
@@ -62,7 +67,10 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
     const saved = localStorage.getItem('cvCustomization');
     if (saved) {
-      this.customization = JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      Object.assign(this.customization, DEFAULT_CUSTOMIZATION, parsed);
+    } else {
+      Object.assign(this.customization, DEFAULT_CUSTOMIZATION);
     }
 
     // Setup debounced PDF regeneration
@@ -86,8 +94,13 @@ export class PreviewComponent implements OnInit, OnDestroy {
         this.regeneratePdfSubject.next();
       });
 
-    // Initial PDF generation
-    setTimeout(() => this.generatePdfPreview(), 100);
+    // Initial PDF generation happens in ngAfterViewInit, after template is rendered.
+  }
+
+  ngAfterViewInit(): void {
+    this.viewReady = true;
+    // Let Angular render the hidden template once before we serialize it.
+    setTimeout(() => this.generatePdfPreview(), 0);
   }
 
   ngOnDestroy(): void {
@@ -111,15 +124,36 @@ export class PreviewComponent implements OnInit, OnDestroy {
   }
 
   resetCustomization(): void {
-    localStorage.removeItem('cvCustomization');
-    this.ngOnInit();
+    Object.assign(this.customization, DEFAULT_CUSTOMIZATION);
+    localStorage.setItem('cvCustomization', JSON.stringify(this.customization));
     this.generatePdfPreview();
+  }
+
+  private async waitForTemplateRender(timeoutMs: number = 2000): Promise<boolean> {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      const host = this.templateContainer?.nativeElement as HTMLElement | undefined;
+      if (host) {
+        const html = (host.innerHTML || '').trim();
+        if (html.length > 50) return true;
+      }
+      await new Promise((r) => setTimeout(r, 50));
+    }
+    return false;
   }
 
   async generatePdfPreview(): Promise<void> {
     try {
       this.isPdfLoading = true;
       this.pdfGenerationError = null;
+
+      // Avoid generating a PDF before the Angular template exists.
+      if (!this.viewReady) {
+        this.isPdfLoading = true;
+        return;
+      }
+
+      await this.waitForTemplateRender();
 
       const topMargin = this.pxToMmString(this.customization.marginTop);
       const sideMargin = this.pxToMmString(this.customization.marginLeft);
@@ -179,39 +213,16 @@ export class PreviewComponent implements OnInit, OnDestroy {
       this.isGeneratingPdf = true;
       this.pdfGenerationError = null;
 
-      const topMargin = this.pxToMmString(this.customization.marginTop);
-      const sideMargin = this.pxToMmString(this.customization.marginLeft);
-
-      // Also do not include inner padding when exporting (Puppeteer handles margins)
-      const htmlContent = this.getTemplateHtml(false);
-      
-      // Use high-quality endpoint for export
-      const response = await fetch('/api/pdf/generate-high-quality', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          htmlContent: htmlContent,
-          options: {
-            format: 'A4',
-            printBackground: true,
-            scale: 1.5, // Higher quality for export
-            margin: {
-              top: topMargin,
-              right: sideMargin,
-              bottom: topMargin,
-              left: sideMargin
-            }
-          }
-        })
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'PDF export failed');
+      // Export exactly what the preview iframe shows.
+      if (!this.pdfBlobUrlRaw) {
+        await this.generatePdfPreview();
       }
 
+      if (!this.pdfBlobUrlRaw) {
+        throw new Error('PDF preview is not available yet');
+      }
+
+      const response = await fetch(this.pdfBlobUrlRaw);
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -554,6 +565,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   private getATSStyles(): string {
     const metaColor = this.withAlpha(this.customization.textColor, 0.72) || '#6b7280';
+    const atsThemeColor = this.customization.atsThemeColor || 'transparent';
  
      return `
       /* For PDF/print we rely on Puppeteer margins (set in request options) */
@@ -672,15 +684,17 @@ export class PreviewComponent implements OnInit, OnDestroy {
       .ats-section { margin-top: var(--section-spacing); }
       .ats-section .title {
         display: block;
-        background: transparent;
-        padding: 0 0 6px 0;
-        border-radius: 0;
+        background: ${atsThemeColor};
+        padding: ${atsThemeColor !== 'transparent' ? '6px 10px' : '0 0 6px 0'};
+        border-radius: ${atsThemeColor !== 'transparent' ? '6px' : '0'};
         font-weight: 800;
         text-align: left;
         letter-spacing: 0.08em;
         text-transform: uppercase;
         color: ${this.customization.primaryColor};
-        border-bottom: 2px solid ${this.customization.primaryColor};
+        border-bottom: ${atsThemeColor !== 'transparent'
+          ? `1px solid ${this.customization.borderColor || '#e5e7eb'}`
+          : `2px solid ${this.customization.primaryColor}`};
         break-after: avoid;
         page-break-after: avoid;
       }

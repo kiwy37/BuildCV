@@ -5,6 +5,7 @@
     <app-customize-menu
       [customization]="customization"
       [show]="showCustomizationPanel"
+      [selectedTheme]="selectedTheme"
       [zoomPercent]="100"
       (customizationChange)="onCustomizationChange()"
       (reset)="resetCustomization()"
@@ -33,21 +34,22 @@
       </button>
     </div>
 
-    <!-- PDF iframe with loading overlay -->
-    <div class="pdf-frame-wrapper" *ngIf="!pdfGenerationError">
-      <div class="pdf-loading-overlay" *ngIf="isPdfLoading">
-        <div class="spinner"></div>
-        <div class="loading-text">Loading...</div>
-      </div>
+    <!-- PDF iframe -->
+    <iframe
+      #pdfIframe
+      *ngIf="!pdfGenerationError"
+      class="pdf-iframe"
+      [src]="pdfBlobUrl | trustUrl"
+      (load)="onPdfLoad()"
+      frameborder="0"
+    ></iframe>
 
-      <iframe
-        #pdfIframe
-        *ngIf="pdfBlobUrl"
-        class="pdf-iframe"
-        [src]="pdfBlobUrl"
-        frameborder="0"
-        (load)="onPdfLoad()"
-      ></iframe>
+    <!-- Loading overlay -->
+    <div *ngIf="(isPdfLoading || isGeneratingPdf) && !pdfGenerationError" class="pdf-loading-overlay">
+      <div class="pdf-loading">
+        <div class="spinner"></div>
+        <span>{{ isGeneratingPdf ? 'Exporting PDF…' : 'Updating preview…' }}</span>
+      </div>
     </div>
 
     <!-- Hidden template container for HTML extraction -->

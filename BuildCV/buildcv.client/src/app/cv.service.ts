@@ -11,7 +11,8 @@ export class CvService {
   private cvDataSubject = new BehaviorSubject<CVData>(this.getInitialCVData());
   public cvData$ = this.cvDataSubject.asObservable();
 
-  private currentStepSubject = new BehaviorSubject<number>(0); // Start at 0
+  // The UI is 1-based (1=Upload CV, 9=Preview). Keep the service aligned.
+  private currentStepSubject = new BehaviorSubject<number>(1);
   public currentStep$ = this.currentStepSubject.asObservable();
 
   constructor(private http: HttpClient) {
@@ -113,7 +114,7 @@ export class CvService {
   }
 
   previousStep(): void {
-    if (this.currentStepSubject.value > 0) {
+    if (this.currentStepSubject.value > 1) {
       this.currentStepSubject.next(this.currentStepSubject.value - 1);
     }
   }
@@ -139,6 +140,6 @@ export class CvService {
   resetCV(): void {
     this.cvDataSubject.next(this.getInitialCVData());
     localStorage.removeItem('cvData');
-    this.currentStepSubject.next(0); // Reset to upload step
+    this.currentStepSubject.next(1); // Reset to Upload CV step
   }
 }

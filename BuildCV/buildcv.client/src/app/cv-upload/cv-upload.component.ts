@@ -90,8 +90,8 @@ export class CvUploadComponent {
       // NEW: Convert parsed data to CVData format and save to service
       this.saveToCvService(this.parsedResume);
 
-      // NEW: after successful parse and save, go to next step automatically
-      this.cvService.nextStep();
+      // After successful parse and save, go to Personal Info
+      this.cvService.setCurrentStep(2);
     } catch (err) {
       this.error = 'Error parsing CV: ' + (err as Error).message;
       console.error(err);

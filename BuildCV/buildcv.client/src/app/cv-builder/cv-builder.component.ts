@@ -61,9 +61,9 @@ export class CvBuilderComponent implements OnInit, OnDestroy {
   }
 
   goToStep(step: number): void {
-    if (step <= this.currentStep || this.canProceedToStep(step)) {
-      this.cvService.setCurrentStep(step);
-    }
+    // Allow users to jump between steps (e.g. after Upload parsing incomplete data)
+    // Validation is enforced by the Next button, not by clicking the step list.
+    this.cvService.setCurrentStep(step);
   }
 
   nextStep(): void {
@@ -185,19 +185,19 @@ export class CvBuilderComponent implements OnInit, OnDestroy {
     let message = '';
     
     switch (this.currentStep) {
-      case 1:
-        message = 'Please fill in all required fields: Full Name and valid Email address.';
-        break;
       case 2:
-        message = 'Please add at least one work experience with all required fields filled in.';
+        message = 'Please fill in all required fields: Full Name and a valid Email address.';
         break;
       case 3:
-        message = 'Please add at least one education entry with all required fields filled in.';
+        message = 'Please add at least one work experience with all required fields filled in.';
         break;
       case 4:
+        message = 'Please add at least one education entry with all required fields filled in.';
+        break;
+      case 5:
         message = 'Please add at least one skill.';
         break;
-      case 7:
+      case 8:
         message = 'Please select a theme before continuing.';
         break;
       default:

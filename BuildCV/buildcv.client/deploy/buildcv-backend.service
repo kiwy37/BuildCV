@@ -1,0 +1,15 @@
+[Unit]
+Description=BuildCV Backend
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/buildcv.server
+ExecStart=/usr/bin/dotnet /opt/buildcv.server/BuildCV.Server.dll
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://127.0.0.1:5000
+Restart=always
+RestartSec=10
+User=www-data
+
+[Install]
+WantedBy=multi-user.target

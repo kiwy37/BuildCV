@@ -8,6 +8,25 @@ PUBLISH_DIR=/opt/buildcv.server
 WEB_ROOT=/var/www/buildcv.client
 
 cd "$REPO_DIR"
+
+# If dotnet is not available, attempt to install (tries SDK 8.0 then 7.0)
+if ! command -v dotnet >/dev/null 2>&1; then
+	# requires sudo
+	echo "dotnet not found — attempting to install (requires sudo)..."
+	sudo wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb
+	sudo dpkg -i /tmp/packages-microsoft-prod.deb || true
+	sudo apt update
+
+	if sudo apt install -y dotnet-sdk-8.0; then
+		echo "Installed dotnet-sdk-8.0"
+	elif sudo apt install -y dotnet-sdk-7.0; then
+		echo "Installed dotnet-sdk-7.0"
+	else
+		echo "Automatic dotnet install failed. Please install dotnet manually (example: 'sudo apt install dotnet-sdk-8.0') and re-run the script."
+		exit 1
+	fi
+fi
+
 git pull origin main
 
 # Build frontend
